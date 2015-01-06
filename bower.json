@@ -1,0 +1,24 @@
+{
+	"name": "azure-angular-providers",
+	"description": "Azure Standard API provider for AngularJS",
+	"keywords": [
+		"azure",
+		"standard",
+		"api",
+		"angular",
+		"resource",
+		"service",
+		"provider"
+	],
+	"version": "0.1.0",
+	"license": "MIT",
+	"main": "./azure-providers.js",
+	"homepage": "https://github.com/azurestandard/azure-angular-providers",
+	"dependencies": {
+		"angular": "^1.2.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/azurestandard/azure-angular-providers.git"
+	}
+}
