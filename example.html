@@ -35,35 +35,38 @@
 			</form>
 		</div>
 
-		<p>You have {{carts.carts.length}} carts. They are:</p>
-		<table>
-			<thead>
-				<th>ID</th>
-				<th>Drop</th>
-				<th>Trip</th>
-				<th>Lines</th>
-				<th>Products</th>
-				<th>Weight</th>
-				<th>Price</th>
-			</thead>
-			<tbody>
-				<tr ng-repeat="cart in carts.carts">
-					<td>
-						<button ng-click="carts.selectCart(cart.order.id)"
-						        title="select as the primary cart">
-							{{cart.order.id}}
-						</button>
-					</td>
-					<td>{{cart.drop.name}}</td>
-					<td>{{cart.trip.route}} - {{cart.trip.cutoff}}</td>
-					<td>{{cart.orderLines.length}}</td>
-					<td>{{cart.products}}</td>
-					<td>{{cart.weight}}</td>
-					<td>{{cart.price}}</td>
-				</tr>
-			</tbody>
-		</table>
-		<p>Your primary cart is {{carts.cart.order.id}}.</p>
+		<p ng-if="!carts.carts.length">You don't have any carts.</p>
+		<div ng-if="carts.carts.length">
+			<p>You have {{carts.carts.length}} carts. They are:</p>
+			<table>
+				<thead>
+					<th>ID</th>
+					<th>Drop</th>
+					<th>Trip</th>
+					<th>Lines</th>
+					<th>Products</th>
+					<th>Weight</th>
+					<th>Price</th>
+				</thead>
+				<tbody>
+					<tr ng-repeat="cart in carts.carts">
+						<td>
+							<button ng-click="carts.selectCart(cart.order.id)"
+							        title="select as the primary cart">
+								{{cart.order.id}}
+							</button>
+						</td>
+						<td>{{cart.drop.name}}</td>
+						<td>{{cart.trip.route}} - {{cart.trip.cutoff}}</td>
+						<td>{{cart.orderLines.length}}</td>
+						<td>{{cart.products}}</td>
+						<td>{{cart.weight}}</td>
+						<td>{{cart.price}}</td>
+					</tr>
+				</tbody>
+			</table>
+			<p>Your primary cart is {{carts.cart.order.id}}.</p>
+		</div>
 
 		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.min.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular-resource.min.js"></script>
