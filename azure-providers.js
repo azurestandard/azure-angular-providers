@@ -117,8 +117,10 @@ var azureProvidersModule = angular
         };
 
         Carts.prototype.selectCart = function(order_id) {
+            var _this = this;
             var match = this.carts.some(function(cart) {
                 if (cart.order.id === order_id) {
+                    _this.cart = cart;
                     return true;
                 }
             });
