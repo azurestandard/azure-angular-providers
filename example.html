@@ -7,20 +7,26 @@
 	<body ng-app="AzureApp" ng-controller="AzureCtrl">
 		<h1>Azure Standard AngularJS Providers</h1>
 
-		<p>Hello {{person.name}},</p>
-		<p>You have {{favorites.length}} favorites. They are:</p>
-		<table>
-			<thead>
-				<th>Code</th>
-				<th>Name</th>
-			</thead>
-			<tbody>
-				<tr ng-repeat="product in favorites">
-					<td>{{product.code}}</td>
-					<td>{{product.name}}</td>
-				</tr>
-			</tbody>
-		</table>
+		<div ng-if="session.person">
+			<p>Hello {{person.name}},</p>
+			<p>You have {{favorites.length}} favorites. They are:</p>
+			<table>
+				<thead>
+					<th>Code</th>
+					<th>Name</th>
+				</thead>
+				<tbody>
+					<tr ng-repeat="product in favorites">
+						<td>{{product.code}}</td>
+						<td>{{product.name}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div ng-if="!session.person">
+			<p>You're in an anonymous session.</p>
+			<button ng-click="login()">Login</botton>
+		</div>
 
 		<p>You have {{carts.carts.length}} carts. They are:</p>
 		<table>
@@ -59,12 +65,25 @@
 			angular.module('AzureApp', ['azureProviders'])
 				.controller(
 					'AzureCtrl',
-					['$scope', '$timeout', 'AzureAPI', 'AzureCarts',
-					function ($scope, $timeout, AzureAPI, AzureCarts) {
-						$scope.person = AzureAPI.person.get();
-						$scope.person.$promise.then(function (person) {
-							$scope.favorites = AzureAPI.product.query({person: person.id});
-							$scope.carts = AzureCarts(person.id);
+					['$scope', 'AzureAPI', 'AzureCarts',
+					function($scope, AzureAPI, AzureCarts) {
+						$scope.login = function() {
+							$scope.person = AzureAPI.person.get();
+							$scope.person.$promise.then(function(person) {
+								$scope.session = AzureAPI.session.get();
+								$scope.favorites = AzureAPI.product.query(
+									{person: person.id});
+								$scope.carts = AzureCarts(person.id);
+							});
+						};
+						$scope.session = AzureAPI.session.get();
+						$scope.session.$promise.then(function(session) {
+							if (session.person) {
+								$scope.login();
+							} /* else {
+								TODO: anonymous carts
+								$scope.carts = AzureCarts();
+							} */
 						});
 					}]);
 		</script>

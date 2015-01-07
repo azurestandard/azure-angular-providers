@@ -29,6 +29,9 @@ with the usual Angular $resource semantics.  For example:
     var product = AzureAPI.product.get(code='SC065');
     var favorites = AzureAPI.product.query({person: you.id});
 
+There's also `AzureAPI.session.get()` to get information about your
+existing session (e.g. whether it's anonymous or not).
+
 AzureCarts
 ==========
 

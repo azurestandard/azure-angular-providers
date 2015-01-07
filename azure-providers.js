@@ -36,7 +36,18 @@ var azureProvidersModule = angular
         };
 
         this.$get = ['$resource', function AzureAPIFactory($resource) {
-            var resources = {};
+            var resources = {
+                session: $resource(
+                    url + '/session',
+                    {},
+                    {
+                        get: {
+                            method: 'GET',
+                            withCredentials: true
+                        }
+                    }
+                ),
+            };
             _models.forEach(function(model) {
                 var plural = _plurals[model] || model + 's';
                 var key = _keys[model] || 'id';
