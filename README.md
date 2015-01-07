@@ -29,8 +29,12 @@ with the usual Angular $resource semantics.  For example:
     var product = AzureAPI.product.get(code='SC065');
     var favorites = AzureAPI.product.query({person: you.id});
 
-There's also `AzureAPI.session.get()` to get information about your
-existing session (e.g. whether it's anonymous or not).
+There's also:
+
+* `AzureAPI.session.get()` to get information about your existing
+  session (e.g. whether it's anonymous or not).
+* `AzureAPI.login(username, password)` to start an authenticated
+  session.  It returns an [HttpPromise][].
 
 AzureCarts
 ==========
@@ -73,4 +77,5 @@ See the [demo page][demo] for a brief example.
 [api]: https://github.com/azurestandard/api-spec
 [AngularJS]: https://angularjs.org/
 [resource]: https://docs.angularjs.org/api/ngResource/service/$resource
+[HttpPromise]: https://docs.angularjs.org/api/ng/service/$http#general-usage
 [demo]: example.html

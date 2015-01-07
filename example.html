@@ -25,7 +25,14 @@
 		</div>
 		<div ng-if="!session.person">
 			<p>You're in an anonymous session.</p>
-			<button ng-click="login()">Login</botton>
+			<form ng-submit="login()" ng-controller="LoginCtrl">
+				<input type="text" ng-model="credentials.username"
+				       placeholder="username or email" /><br />
+				<input type="password" ng-model="credentials.password"
+				       placeholder="password" /><br />
+				<input type="submit" value="Login" />
+				<p ng-if="warning" class="warning">{{warning}}</p>
+			</form>
 		</div>
 
 		<p>You have {{carts.carts.length}} carts. They are:</p>
@@ -65,27 +72,53 @@
 			angular.module('AzureApp', ['azureProviders'])
 				.controller(
 					'AzureCtrl',
-					['$scope', 'AzureAPI', 'AzureCarts',
-					function($scope, AzureAPI, AzureCarts) {
-						$scope.login = function() {
-							$scope.person = AzureAPI.person.get();
-							$scope.person.$promise.then(function(person) {
-								$scope.session = AzureAPI.session.get();
-								$scope.favorites = AzureAPI.product.query(
-									{person: person.id});
-								$scope.carts = AzureCarts(person.id);
-							});
+					['$rootScope', '$scope', 'AzureAPI', 'AzureCarts',
+					function($rootScope, $scope, AzureAPI, AzureCarts) {
+						$rootScope.setupPerson = function(person) {
+							$scope.person = person;
+							$scope.session = AzureAPI.session.get();
+							$scope.favorites = AzureAPI.product.query({person: person.id});
+							$scope.carts = AzureCarts(person.id);
 						};
 						$scope.session = AzureAPI.session.get();
 						$scope.session.$promise.then(function(session) {
 							if (session.person) {
-								$scope.login();
+								AzureAPI.person.get().$promise.then(function(person) {
+									$rootScope.setupPerson(person);
+								});
 							} /* else {
 								TODO: anonymous carts
 								$scope.carts = AzureCarts();
 							} */
 						});
+					}])
+				.controller(
+					'LoginCtrl',
+					['$rootScope', '$scope', '$timeout', 'AzureAPI',
+					function($rootScope, $scope, $timeout, AzureAPI) {
+						$scope.credentials = {
+							username: null,
+							password: null,
+						};
+						$scope.warning = null;
+						$scope.login = function() {
+							$scope.warning = null;
+							AzureAPI.login(
+								$scope.credentials.username,
+								$scope.credentials.password
+							).success(function(data) {
+								$rootScope.setupPerson(data);
+							}).error(function(data, status) {
+								$scope.warning = 'unable to authenticate';
+								$timeout(function() {$scope.warning = null;}, 5000);
+							});
+						};
 					}]);
 		</script>
+		<style>
+			.warning {
+				color: red;
+			}
+		</style>
 	</body>
 </html>

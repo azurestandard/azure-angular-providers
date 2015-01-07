@@ -38,7 +38,7 @@ var azureProvidersModule = angular
             url = value;
         };
 
-        this.$get = ['$resource', function AzureAPIFactory($resource) {
+        this.$get = ['$http', '$resource', function AzureAPIFactory($http, $resource) {
             var resources = {
                 session: $resource(
                     url + '/session',
@@ -51,6 +51,22 @@ var azureProvidersModule = angular
                         }
                     }
                 ),
+                login: function(username, password) {
+                    var headers = {
+                        'Authorization': 'Basic ' + window.btoa(
+                            username + ':' + password),
+                    };
+                    for (var header in _headers) {
+                        header[header] = _headers[header];
+                    }
+                    return $http.get(
+                        url + '/person',
+                        {
+                            headers: headers,
+                            withCredentials: true
+                        }
+                    );
+                },
             };
             _models.forEach(function(model) {
                 var plural = _plurals[model] || model + 's';
