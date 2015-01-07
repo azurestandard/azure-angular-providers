@@ -26,6 +26,7 @@ var azureProvidersModule = angular
             'person': 'people',
         };
         var _keys = {
+            product: 'code',
             route: 'code',
         };
         var url = 'https://api.azurestandard.com';
