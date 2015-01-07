@@ -29,6 +29,9 @@ var azureProvidersModule = angular
             product: 'code',
             route: 'code',
         };
+        var _headers = {
+            'Accept': 'application/json',
+        };
         var url = 'https://api.azurestandard.com';
 
         this.url = function(value) {
@@ -43,7 +46,8 @@ var azureProvidersModule = angular
                     {
                         get: {
                             method: 'GET',
-                            withCredentials: true
+                            withCredentials: true,
+                            headers: _headers,
                         }
                     }
                 ),
@@ -59,11 +63,13 @@ var azureProvidersModule = angular
                             method: 'GET',
                             url: url + '/' + plural,
                             isArray: true,
-                            withCredentials: true
+                            withCredentials: true,
+                            headers: _headers,
                         },
                         get: {
                             method: 'GET',
-                            withCredentials: true
+                            withCredentials: true,
+                            headers: _headers,
                         }
                     }
                 );
