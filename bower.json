@@ -15,7 +15,8 @@
 	"main": "./azure-providers.js",
 	"homepage": "https://github.com/azurestandard/azure-angular-providers",
 	"dependencies": {
-		"angular": "^1.2.0"
+		"angular": "^1.2.0",
+		"angular-resource": "^1.2.0"
 	},
 	"repository": {
 		"type": "git",
