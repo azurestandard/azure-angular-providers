@@ -93,7 +93,79 @@ var azureProvidersModule = angular
             return resources;
         }]
     })
-    .factory('AzureCarts', ['AzureAPI', function AzureCartsFactory(AzureAPI) {
+    .factory('AzureProduct', ['$q', 'AzureAPI', function AzureProductFactory($q, AzureAPI) {
+        var objects = {};    /* product objects returned by the API */
+        var promises = {};   /* product objects in flight */
+
+        var get_object_promise = function(code) {
+            var objects_entry = objects[code];
+            var promises_entry = promises[code];
+            if (objects_entry) {
+                var deferred = $q.defer();
+                var promise = deferred.promise;
+                deferred.resolve(objects_entry);
+                return promise;
+            } else if (promises_entry) {
+                return promises_entry;
+            } else {
+                var promise = AzureAPI.product.get({'code': code}).$promise;
+                promises[code] = promise;
+                promise.then(function(product) {
+                    objects[code] = product;
+                    delete promises[code];
+                    return product;
+                });
+                return promise;
+            }
+        };
+
+        var Product = function(code) {
+            var _this = this;
+            get_object_promise(code).then(function(product) {
+                _this.product = product;
+                _this.products = [product];
+                _this.code = code;
+                if (_this.product.repackaged.length) {
+                    _this.product.repackaged.forEach(function(code) {
+                        get_object_promise(code).then(function(product) {
+                            _this.products.push(product);
+                            _this.products.sort(function(a, b) {
+                                return a.price.dollars - b.price.dollars;
+                            });
+                            return product;
+                        });
+                    });
+                }
+                return product;
+            });
+        };
+
+        Product.prototype.selectPackaging = function(code) {
+            var _this = this;
+            var match = this.products.some(function(product) {
+                if (product.code === code) {
+                    _this.product = product;
+                    _this.code = code;
+                    return true;
+                }
+            });
+            if (!match) {
+                console.log('no match found for ' + code + ' in', this.products);
+            }
+        };
+
+        return function(product) {
+            var code;
+            if (product.hasOwnProperty('code')) {
+                code = product.code;
+                objects[code] = product;
+            } else {
+                code = product;
+            }
+            return new Product(code);
+        };
+    }])
+    .factory('AzureCarts', ['AzureAPI', 'AzureProduct', function AzureCartsFactory(AzureAPI, AzureProduct) {
         var cart_sets = {};
 
         var Cart = function(order) {
@@ -126,9 +198,7 @@ var azureProvidersModule = angular
                     _this.price += line.totalPrice;
                     _this.weight += line.weight;
                     _this.products += line['quantity-ordered'];
-                    line.productObject = AzureAPI.product.get({
-                        code: line.product,
-                    });
+                    line.productClass = AzureProduct(line.product);
                 });
             });
         };

@@ -14,11 +14,18 @@
 				<thead>
 					<th>Code</th>
 					<th>Name</th>
+					<th>Packaging</th>
 				</thead>
 				<tbody>
 					<tr ng-repeat="product in favorites">
-						<td>{{product.code}}</td>
-						<td>{{product.name}}</td>
+						<td>{{product.product.code}}</td>
+						<td>{{product.product.name}}</td>
+						<td>
+							<select ng-if="product.products"
+							        ng-options="prod.code as productPackagingLabel(prod) for prod in product.products"
+							        ng-model="product.code"
+							        ng-change="product.selectPackaging(product.code)">
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -75,13 +82,20 @@
 			angular.module('AzureApp', ['azureProviders'])
 				.controller(
 					'AzureCtrl',
-					['$rootScope', '$scope', 'AzureAPI', 'AzureCarts',
-					function($rootScope, $scope, AzureAPI, AzureCarts) {
+					['$rootScope', '$scope', 'AzureAPI', 'AzureCarts', 'AzureProduct',
+					function($rootScope, $scope, AzureAPI, AzureCarts, AzureProduct) {
 						$rootScope.setupPerson = function(person) {
 							$scope.person = person;
 							$scope.session = AzureAPI.session.get();
-							$scope.favorites = AzureAPI.product.query({person: person.id});
 							$scope.carts = AzureCarts(person.id);
+							$scope.favorites = [];
+							AzureAPI.product.query(
+								{person: person.id}
+							).$promise.then(function(products) {
+								products.forEach(function(product) {
+									$scope.favorites.push(AzureProduct(product.code));
+								});
+							});
 						};
 						$scope.session = AzureAPI.session.get();
 						$scope.session.$promise.then(function(session) {
@@ -94,6 +108,9 @@
 								$scope.carts = AzureCarts();
 							} */
 						});
+						$scope.productPackagingLabel = function(product) {
+							return product.code + ' (' + product.size + ', $' + product.price.dollars + ')';
+						};
 					}])
 				.controller(
 					'LoginCtrl',

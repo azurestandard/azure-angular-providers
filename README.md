@@ -36,6 +36,31 @@ There's also:
 * `AzureAPI.login(username, password)` to start an authenticated
   session.  It returns an [HttpPromise][].
 
+AzureProduct
+============
+
+Use the `AzureProduct` factory to manage a product with different
+packaging (e.g. “2.7 ozs.” and “12 x 2.7 ozs.”).  Calling:
+
+    AzureProduct(product_code)
+
+will return a *new* `Product` instance with the following properties:
+
+* `products`, an array of product objects with the various packaging
+  versions of the requested product.
+* `product`, the currently selected product (which is also in the
+  `products` array).
+* `code`, the currently selected product's code, which is mostly
+  useful as a value for [ng-model on select widgets][select] and the
+  like to avoid accidentally editing `product.code`.
+* `selectPackaging(product_code)`, a method for changing the currently
+  selected packaging (selection will not persist beyond page
+  refreshes).
+
+The underlying product objects returned by the API are cached in the
+factory, so a new `Product` instance will not need to hit the API
+again to download product information that is already in the cache.
+
 AzureCarts
 ==========
 
@@ -57,8 +82,9 @@ The `Cart` instances have the following properties:
   products, quantities, prices, ….  In addition to their usual
   properties, the order-line objects will have:
     * `totalPrice`, the total current price for the line in dollars.
-    * `productObject`, the product object associated with the line
-      (`product` is just the product's code).
+    * `productClass`, the `Product` instance associated with the line
+      (`product` is just the product's code).  See `AzureProduct` for
+      details on this class.
 * `price`, the total current price of the order.
 * `weight`, the total weight of all products on the order.
 * `products`, a count of all the products on the order.
@@ -78,4 +104,5 @@ See the [demo page][demo] for a brief example.
 [AngularJS]: https://angularjs.org/
 [resource]: https://docs.angularjs.org/api/ngResource/service/$resource
 [HttpPromise]: https://docs.angularjs.org/api/ng/service/$http#general-usage
+[select]: https://docs.angularjs.org/api/ng/directive/select
 [demo]: example.html
