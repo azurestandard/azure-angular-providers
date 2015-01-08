@@ -64,9 +64,12 @@ again to download product information that is already in the cache.
 AzureCarts
 ==========
 
-Use the `AzureCarts` factory to manage a customer's carts.  Given a
-person's ID, the factory returns a `Carts` instance with the following
-properties:
+Use the `AzureCarts` factory to manage a customer's carts.  Calling:
+
+    AzureCarts(person_id)
+
+will return a reference to that person's singleton `Carts` instance
+with the following properties:
 
 * `carts`, an array of `Cart` instances that the customer has in
   progress.
