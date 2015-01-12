@@ -25,7 +25,7 @@
 								<select ng-if="product.products"
 								        ng-options="prod.code as productPackagingLabel(prod) for prod in product.products"
 								        ng-model="product.code"
-								        ng-change="product.selectPackaging(product.code)">
+								        ng-change="product.selectPackaging(product.code)" />
 							</td>
 						</tr>
 					</tbody>
