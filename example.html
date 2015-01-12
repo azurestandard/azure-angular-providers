@@ -9,26 +9,28 @@
 
 		<div ng-if="session.person">
 			<p>Hello {{person.name}},</p>
-			<p>You have {{favorites.length}} favorites. They are:</p>
-			<table>
-				<thead>
-					<th>Code</th>
-					<th>Name</th>
-					<th>Packaging</th>
-				</thead>
-				<tbody>
-					<tr ng-repeat="product in favorites">
-						<td>{{product.product.code}}</td>
-						<td>{{product.product.name}}</td>
-						<td>
-							<select ng-if="product.products"
-							        ng-options="prod.code as productPackagingLabel(prod) for prod in product.products"
-							        ng-model="product.code"
-							        ng-change="product.selectPackaging(product.code)">
-						</td>
-					</tr>
-				</tbody>
-			</table>
+			<div ng-if="favorites.length">
+				<p>You have {{favorites.length}} favorites. They are:</p>
+				<table>
+					<thead>
+						<th>Code</th>
+						<th>Name</th>
+						<th>Packaging</th>
+					</thead>
+					<tbody>
+						<tr ng-repeat="product in favorites">
+							<td>{{product.product.code}}</td>
+							<td>{{product.product.name}}</td>
+							<td>
+								<select ng-if="product.products"
+								        ng-options="prod.code as productPackagingLabel(prod) for prod in product.products"
+								        ng-model="product.code"
+								        ng-change="product.selectPackaging(product.code)">
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
 		<div ng-if="!session.person">
 			<p>You're in an anonymous session.</p>
