@@ -89,13 +89,13 @@
 						$rootScope.setupPerson = function(person) {
 							$scope.person = person;
 							$scope.session = AzureAPI.session.get();
-							$scope.carts = AzureCarts(person.id);
+							$scope.carts = new AzureCarts(person.id);
 							$scope.favorites = [];
 							AzureAPI.product.query(
 								{person: person.id}
 							).$promise.then(function(products) {
 								products.forEach(function(product) {
-									$scope.favorites.push(AzureProduct(product.code));
+									$scope.favorites.push(new AzureProduct(product.code));
 								});
 							});
 						};
@@ -107,7 +107,7 @@
 								});
 							} /* else {
 								TODO: anonymous carts
-								$scope.carts = AzureCarts();
+								$scope.carts = new AzureCarts();
 							} */
 						});
 						$scope.productPackagingLabel = function(product) {
