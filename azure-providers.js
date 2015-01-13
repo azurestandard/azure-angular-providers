@@ -57,7 +57,7 @@ var azureProvidersModule = angular
                             username + ':' + password),
                     };
                     for (var header in _headers) {
-                        header[header] = _headers[header];
+                        headers[header] = _headers[header];
                     }
                     return $http.get(
                         url + '/person',
