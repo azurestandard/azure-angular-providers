@@ -135,11 +135,46 @@ var azureProvidersModule = angular
             return new ObjectPromiseCache(model);
         };
     }])
-    .factory('AzureProduct', ['$q', 'AzureObjectPromiseCache', function AzureProductFactory($q, AzureObjectPromiseCache) {
+    .factory('AzureCategory', ['$q', 'AzureObjectPromiseCache', function AzureCategoryFactory($q, AzureObjectPromiseCache) {
+        var cache = new AzureObjectPromiseCache('category');
+
+        var get_parent = function(category, ancestor) {
+            if (ancestor.parent !== null) {
+                cache.getObjectPromise(ancestor.parent).then(function(cat) {
+                    category.ancestors.push(cat);
+                    get_parent(category, cat);
+                    return cat;
+                });
+            }
+        };
+
+        var Category = function(id) {
+            var _this = this;
+            cache.getObjectPromise(id).then(function(category) {
+                _this.category = category;
+                _this.ancestors = [category];
+                get_parent(_this, category);
+                return category;
+            });
+        };
+
+        return function(category) {
+            var id;
+            if (category.hasOwnProperty('id')) {
+                id = category.id;
+                cache.addObject(category);
+            } else {
+                id = category;
+            }
+            return new Category(id);
+        };
+    }])
+    .factory('AzureProduct', ['$q', 'AzureAPI', 'AzureCategory', 'AzureObjectPromiseCache', function AzureProductFactory($q, AzureAPI, AzureCategory, AzureObjectPromiseCache) {
         var cache = new AzureObjectPromiseCache('product');
 
         var Product = function(code) {
             var _this = this;
+            _this._categories = null;
             cache.getObjectPromise(code).then(function(product) {
                 _this.product = product;
                 _this.products = [product];
@@ -171,6 +206,24 @@ var azureProvidersModule = angular
             if (!match) {
                 console.log('no match found for ' + code + ' in', this.products);
             }
+        };
+
+        Product.prototype.categories = function() {
+            if (!this.product) {
+                return [];
+            }
+            if (this._categories === null) {
+                var _this = this;
+                this._categories = [];
+                AzureAPI.category.query(
+                    {product: this.code}
+                ).$promise.then(function(categories) {
+                    categories.forEach(function(category) {
+                        _this._categories.push(new AzureCategory(category));
+                    });
+                });
+            }
+            return this._categories;
         };
 
         return function(product) {

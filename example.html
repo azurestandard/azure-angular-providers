@@ -16,6 +16,7 @@
 						<th>Code</th>
 						<th>Name</th>
 						<th>Packaging</th>
+						<th>Categories</th>
 					</thead>
 					<tbody>
 						<tr ng-repeat="product in favorites">
@@ -26,6 +27,17 @@
 								        ng-options="prod.code as productPackagingLabel(prod) for prod in product.products"
 								        ng-model="product.code"
 								        ng-change="product.selectPackaging(product.code)" />
+							</td>
+							<td>
+								<ul ng-if="product.categories().length">
+									<li ng-repeat="category in product.categories()">
+										<span ng-repeat="cat in category.ancestors.slice().reverse()"
+										      title="id: {{cat.id}}">
+											{{cat.name}}
+											<span ng-if="!$last">→</span>
+										</span>
+									</li>
+								<ul>
 							</td>
 						</tr>
 					</tbody>
@@ -84,8 +96,8 @@
 			angular.module('AzureApp', ['azureProviders'])
 				.controller(
 					'AzureCtrl',
-					['$rootScope', '$scope', 'AzureAPI', 'AzureCarts', 'AzureProduct',
-					function($rootScope, $scope, AzureAPI, AzureCarts, AzureProduct) {
+					['$rootScope', '$scope', 'AzureAPI', 'AzureCarts', 'AzureCategory', 'AzureProduct',
+					function($rootScope, $scope, AzureAPI, AzureCarts, AzureCategory, AzureProduct) {
 						$rootScope.setupPerson = function(person) {
 							$scope.person = person;
 							$scope.session = AzureAPI.session.get();

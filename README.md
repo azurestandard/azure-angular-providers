@@ -36,6 +36,25 @@ There's also:
 * `AzureAPI.login(username, password)` to start an authenticated
   session.  It returns an [HttpPromise][].
 
+AzureCategory
+=============
+
+Use the `AzureCategory` factory to show a category's position in the
+hierarchy.  Calling:
+
+    AzureCategory(category_id)
+
+will return a *new* `Category` instance with the following properties:
+
+* `ancestors`, an array of category objects starting wwith the leaf
+  category and working down to the root category.
+* `category`, the leaf category (which is also in the `ancestors`
+  array).
+
+The underlying category objects returned by the API are cached in the
+factory, so a new `Category` instance will not need to hit the API
+again to download category information that is already in the cache.
+
 AzureProduct
 ============
 
@@ -56,6 +75,8 @@ will return a *new* `Product` instance with the following properties:
 * `selectPackaging(product_code)`, a method for changing the currently
   selected packaging (selection will not persist beyond page
   refreshes).
+* `categories()`, a method returning an array of `AzureCategory`
+  instances for each category associated with this product.
 
 The underlying product objects returned by the API are cached in the
 factory, so a new `Product` instance will not need to hit the API
