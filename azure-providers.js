@@ -93,13 +93,22 @@ var azureProvidersModule = angular
             return resources;
         }]
     })
-    .factory('AzureProduct', ['$q', 'AzureAPI', function AzureProductFactory($q, AzureAPI) {
-        var objects = {};    /* product objects returned by the API */
-        var promises = {};   /* product objects in flight */
+    .factory('AzureObjectPromiseCache', ['$q', 'AzureAPI', 'AzureModelIdentifiers', function AzureObjectPromiseCacheFactory($q, AzureAPI, AzureModelIdentifiers) {
+        var ObjectPromiseCache = function(model) {
+            this.model = model;  /* model name */
+            this.identifier = AzureModelIdentifiers[model] || 'id';
+            this.objects = {}    /* objects returned by the API */
+            this.promises = {};  /* objects in flight */
+        };
 
-        var get_object_promise = function(code) {
-            var objects_entry = objects[code];
-            var promises_entry = promises[code];
+        ObjectPromiseCache.prototype.addObject = function(object) {
+            var id = object[this.identifier];
+            this.objects[id] = object;
+        };
+
+        ObjectPromiseCache.prototype.getObjectPromise = function(id) {
+            var objects_entry = this.objects[id];
+            var promises_entry = this.promises[id];
             if (objects_entry) {
                 var deferred = $q.defer();
                 var promise = deferred.promise;
@@ -108,26 +117,36 @@ var azureProvidersModule = angular
             } else if (promises_entry) {
                 return promises_entry;
             } else {
-                var promise = AzureAPI.product.get({'code': code}).$promise;
-                promises[code] = promise;
-                promise.then(function(product) {
-                    objects[code] = product;
-                    delete promises[code];
-                    return product;
+                var _this = this;
+                var parameters = {};
+                parameters[this.identifier] = id;
+                var promise = AzureAPI[this.model].get(parameters).$promise;
+                this.promises[id] = promise;
+                promise.then(function(object) {
+                    _this.objects[id] = object;
+                    delete _this.promises[id];
+                    return object;
                 });
                 return promise;
             }
         };
 
+        return function(model) {
+            return new ObjectPromiseCache(model);
+        };
+    }])
+    .factory('AzureProduct', ['$q', 'AzureObjectPromiseCache', function AzureProductFactory($q, AzureObjectPromiseCache) {
+        var cache = new AzureObjectPromiseCache('product');
+
         var Product = function(code) {
             var _this = this;
-            get_object_promise(code).then(function(product) {
+            cache.getObjectPromise(code).then(function(product) {
                 _this.product = product;
                 _this.products = [product];
                 _this.code = code;
                 if (_this.product.repackaged.length) {
                     _this.product.repackaged.forEach(function(code) {
-                        get_object_promise(code).then(function(product) {
+                        cache.getObjectPromise(code).then(function(product) {
                             _this.products.push(product);
                             _this.products.sort(function(a, b) {
                                 return a.price.dollars - b.price.dollars;
@@ -158,7 +177,7 @@ var azureProvidersModule = angular
             var code;
             if (product.hasOwnProperty('code')) {
                 code = product.code;
-                objects[code] = product;
+                cache.addObject(product);
             } else {
                 code = product;
             }
