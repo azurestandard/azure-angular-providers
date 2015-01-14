@@ -135,7 +135,7 @@ var azureProvidersModule = angular
             return new ObjectPromiseCache(model);
         };
     }])
-    .factory('AzureCategory', ['$q', 'AzureObjectPromiseCache', function AzureCategoryFactory($q, AzureObjectPromiseCache) {
+    .factory('AzureCategory', ['$q', 'AzureAPI', 'AzureObjectPromiseCache', function AzureCategoryFactory($q, AzureAPI, AzureObjectPromiseCache) {
         var cache = new AzureObjectPromiseCache('category');
 
         var get_parent = function(category, ancestor) {
@@ -155,6 +155,67 @@ var azureProvidersModule = angular
             text = text.replace(/-+$/, '');
             return text;
         }
+
+        var _categoryByPathCheck = function(
+                category, _slug, slugs, parent, deferred, path_string) {
+            if (slug(category.name) === _slug) {
+                if (slugs.length) {
+                    _categoryByPath(slugs, category.id, deferred, path_string);
+                } else {
+                    deferred.resolve(new Category(category.id));
+                }
+                return true;
+            }
+        };
+
+        var _categoryByPath = function(slugs, parent, deferred, path_string) {
+            var slug = slugs.shift();
+            if (!slug) {
+                deferred.reject('empty slug from path ' + path_string);
+                return;
+            }
+            for (var key in cache.objects) {
+                var category = cache.objects[key];
+                if (category.parent !== parent) {
+                    continue;
+                }
+                var match = _categoryByPathCheck(
+                    category, slug, slugs, parent, deferred, path_string);
+                if (match) {
+                    return;
+                }
+            }
+            if (parent === null) {
+                parent = 'null';
+            }
+            AzureAPI.category.query({
+                parent: parent,
+            }).$promise.then(function(categories) {
+                categories.forEach(function(category) {
+                    cache.addObject(category);
+                });
+                var match = categories.some(function(category) {
+                    return _categoryByPathCheck(
+                        category, slug, slugs, parent, deferred, path_string);
+                });
+                if (!match) {
+                    deferred.reject('no match found for slug ' + slug +
+                                    ' from path ' + path_string);
+                    return;
+                }
+            });
+        };
+
+        var categoryByPath = function(path) {
+            var deferred = $q.defer();
+            var slugs = path.split('/');
+            if (slugs.length) {
+                _categoryByPath(slugs, null, deferred, path);
+            } else {
+                deferred.reject('no slugs for path ' + path);
+            }
+            return deferred.promise;
+        };
 
         var Category = function(id) {
             var _this = this;
@@ -203,8 +264,10 @@ var azureProvidersModule = angular
             if (category.hasOwnProperty('id')) {
                 id = category.id;
                 cache.addObject(category);
-            } else {
+            } else if (category === parseInt(category, 10)) {
                 id = category;
+            } else {
+                return categoryByPath(category);
             }
             return new Category(id);
         };

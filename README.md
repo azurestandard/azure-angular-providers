@@ -63,6 +63,11 @@ can also use:
 * A category object (or any object with the category ID stored in the
   `id` property).  The category object is added to the cache, which
   may save a network lookup for previously uncached IDs.
+* A category path string (e.g. `healthy-foods/bulk/chocolate-carob`).
+  In this case, `AzureCategory` will return a [promise][], because
+  resolving the path into a category object may require network
+  lookups for uncached categories.  Successful promises will resolve
+  with `Category` instances.
 
 AzureProduct
 ============
@@ -146,5 +151,6 @@ See the [demo page][demo] for a brief example.
 [AngularJS]: https://angularjs.org/
 [resource]: https://docs.angularjs.org/api/ngResource/service/$resource
 [HttpPromise]: https://docs.angularjs.org/api/ng/service/$http#general-usage
+[promise]: https://docs.angularjs.org/api/ng/service/$q#the-promise-api
 [select]: https://docs.angularjs.org/api/ng/directive/select
 [demo]: example.html
