@@ -9,6 +9,10 @@
 
 var azureProvidersModule = angular
     .module('azureProviders', ['ngResource'])
+    .constant('AzureModelIdentifiers', {
+        product: 'code',
+        route: 'code',
+    })
     .provider('AzureAPI', function AzureAPIProvider() {
         var _models = [
             'brand',
@@ -25,10 +29,6 @@ var azureProvidersModule = angular
             'category': 'categories',
             'person': 'people',
         };
-        var _keys = {
-            product: 'code',
-            route: 'code',
-        };
         var _headers = {
             'Accept': 'application/json',
         };
@@ -38,7 +38,7 @@ var azureProvidersModule = angular
             url = value;
         };
 
-        this.$get = ['$http', '$resource', function AzureAPIFactory($http, $resource) {
+        this.$get = ['$http', '$resource', 'AzureModelIdentifiers', function AzureAPIFactory($http, $resource, AzureModelIdentifiers) {
             var resources = {
                 session: $resource(
                     url + '/session',
@@ -70,9 +70,9 @@ var azureProvidersModule = angular
             };
             _models.forEach(function(model) {
                 var plural = _plurals[model] || model + 's';
-                var key = _keys[model] || 'id';
+                var identifier = AzureModelIdentifiers[model] || 'id';
                 resources[model] = $resource(
-                    url + '/' + model + '/:' + key,
+                    url + '/' + model + '/:' + identifier,
                     {},
                     {
                         query: {
