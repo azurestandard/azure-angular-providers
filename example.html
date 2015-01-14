@@ -32,7 +32,7 @@
 								<ul ng-if="product.categories().length">
 									<li ng-repeat="category in product.categories()">
 										<span ng-repeat="cat in category.ancestors.slice().reverse()"
-										      title="id: {{cat.id}}">
+										      title="id: {{cat.id}}, path: {{category.path(cat)}}">
 											{{cat.name}}
 											<span ng-if="!$last">→</span>
 										</span>

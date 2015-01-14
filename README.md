@@ -50,6 +50,8 @@ will return a *new* `Category` instance with the following properties:
   category and working down to the root category.
 * `category`, the leaf category (which is also in the `ancestors`
   array).
+* `path(category)`, a method for converting a category from
+  `ancestors` (or that category's ID) into a slug path.
 
 The underlying category objects returned by the API are cached in the
 factory, so a new `Category` instance will not need to hit the API

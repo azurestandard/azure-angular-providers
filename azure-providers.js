@@ -148,14 +148,54 @@ var azureProvidersModule = angular
             }
         };
 
+        var slug = function(text) {
+            text = text.toLowerCase();
+            text = text.replace(/[\W\s]+/g, '-');
+            text = text.replace(/^-+/, '');
+            text = text.replace(/-+$/, '');
+            return text;
+        }
+
         var Category = function(id) {
             var _this = this;
+            this.ancestors = null;
             cache.getObjectPromise(id).then(function(category) {
                 _this.category = category;
                 _this.ancestors = [category];
                 get_parent(_this, category);
                 return category;
             });
+        };
+
+        Category.prototype.path = function(category) {
+            var id;
+            if (category.hasOwnProperty('id')) {
+                id = category.id;
+            } else {
+                id = category;
+            }
+            var match = false;
+            if (this.ancestors === null) {
+                return null;
+            }
+            var _this = this;
+            var p = null;
+            var match = this.ancestors.some(function(cat, index) {
+                if (cat.id === id) {
+                    var chunks = [];
+                    for (var i = _this.ancestors.length - 1; i >= index; i--) {
+                        chunks.push(slug(_this.ancestors[i].name));
+                    }
+                    p = chunks.join('/');
+                    return true;
+                }
+                return null;
+            });
+            if (!match) {
+                console.log(
+                    'no match found for ' + id + ' in', this.ancestors);
+            }
+            return p;
         };
 
         return function(category) {
