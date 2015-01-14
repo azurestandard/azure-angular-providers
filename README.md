@@ -51,7 +51,9 @@ will return a *new* `Category` instance with the following properties:
 * `category`, the leaf category (which is also in the `ancestors`
   array).
 * `path(category)`, a method for converting a category from
-  `ancestors` (or that category's ID) into a slug path.
+  `ancestors` (or that category's ID) into a slug path.  Called
+  without arguments, `path()` will default to the path for the leaf
+  category.
 
 The underlying category objects returned by the API are cached in the
 factory, so a new `Category` instance will not need to hit the API

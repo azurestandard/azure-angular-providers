@@ -229,6 +229,8 @@ var azureProvidersModule = angular
         };
 
         Category.prototype.path = function(category) {
+            category = typeof category !== 'undefined' ?
+                category : this.category;
             var id;
             if (category.hasOwnProperty('id')) {
                 id = category.id;
