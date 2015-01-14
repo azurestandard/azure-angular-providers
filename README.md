@@ -57,6 +57,13 @@ The underlying category objects returned by the API are cached in the
 factory, so a new `Category` instance will not need to hit the API
 again to download category information that is already in the cache.
 
+Besides using a category ID as the argument to `AzureCategory`, you
+can also use:
+
+* A category object (or any object with the category ID stored in the
+  `id` property).  The category object is added to the cache, which
+  may save a network lookup for previously uncached IDs.
+
 AzureProduct
 ============
 
@@ -85,6 +92,13 @@ will return a *new* `Product` instance with the following properties:
 The underlying product objects returned by the API are cached in the
 factory, so a new `Product` instance will not need to hit the API
 again to download product information that is already in the cache.
+
+Besides using a product ID as the argument to `AzureProduct`, you
+can also use:
+
+* A product object (or any object with the product ID stored in the
+  `id` property).  The product object is added to the cache, which may
+  save a network lookup for previously uncached IDs.
 
 AzureCarts
 ==========
