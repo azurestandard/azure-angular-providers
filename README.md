@@ -77,6 +77,8 @@ will return a *new* `Product` instance with the following properties:
   refreshes).
 * `categories()`, a method returning an array of `AzureCategory`
   instances for each category associated with this product.
+* `primaryCategory()`, a method returning the primary `AzureCategory`
+  associated with this product.
 
 The underlying product objects returned by the API are cached in the
 factory, so a new `Product` instance will not need to hit the API

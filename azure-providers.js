@@ -226,6 +226,10 @@ var azureProvidersModule = angular
             return this._categories;
         };
 
+        Product.prototype.primaryCategory = function() {
+            return this.categories()[0];  // TODO: shortest chain through Bulk?
+        };
+
         return function(product) {
             var code;
             if (product.hasOwnProperty('code')) {
