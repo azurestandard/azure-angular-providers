@@ -54,10 +54,13 @@ will return a *new* `Category` instance with the following properties:
   `ancestors` (or that category's ID) into a slug path.  Called
   without arguments, `path()` will default to the path for the leaf
   category.
+* `children()`, a method returning an array of `Category` instances
+  for child categories.
 
-The underlying category objects returned by the API are cached in the
-factory, so a new `Category` instance will not need to hit the API
-again to download category information that is already in the cache.
+The underlying category objects and children returned by the API are
+cached in the factory, so a new `Category` instance will not need to
+hit the API again to download category information that is already in
+the cache.
 
 Besides using a category ID as the argument to `AzureCategory`, you
 can also use:

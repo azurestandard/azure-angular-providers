@@ -106,6 +106,21 @@
 			</p>
 		</form>
 
+		<div ng-if="category.children().length">
+			<p>First two category levels:</p>
+			<ul>
+				<li ng-repeat="cat in category.children()"
+				    title="id: {{cat.category.id}}">
+					{{cat.category.name}}
+					<ul>
+						<li ng-repeat="c in cat.children()"
+								title="id: {{c.category.id}}">
+							{{c.category.name}}
+						</li>
+					</ul>
+				</li>
+		</div>
+
 		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.min.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular-resource.min.js"></script>
 		<script src="azure-providers.js"></script>
@@ -115,6 +130,7 @@
 					'AzureCtrl',
 					['$rootScope', '$scope', 'AzureAPI', 'AzureCarts', 'AzureCategory', 'AzureProduct',
 					function($rootScope, $scope, AzureAPI, AzureCarts, AzureCategory, AzureProduct) {
+						$scope.category = new AzureCategory(null);
 						$rootScope.setupPerson = function(person) {
 							$scope.person = person;
 							$scope.session = AzureAPI.session.get();

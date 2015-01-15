@@ -137,6 +137,7 @@ var azureProvidersModule = angular
     }])
     .factory('AzureCategory', ['$q', 'AzureAPI', 'AzureObjectPromiseCache', function AzureCategoryFactory($q, AzureAPI, AzureObjectPromiseCache) {
         var cache = new AzureObjectPromiseCache('category');
+        var children = {};
 
         var get_parent = function(category, ancestor) {
             if (ancestor.parent !== null) {
@@ -218,14 +219,19 @@ var azureProvidersModule = angular
         };
 
         var Category = function(id) {
-            var _this = this;
+            this.id = id;
             this.ancestors = null;
-            cache.getObjectPromise(id).then(function(category) {
-                _this.category = category;
-                _this.ancestors = [category];
-                get_parent(_this, category);
-                return category;
-            });
+            if (id === null) {
+                this.category = null;
+            } else {
+                var _this = this;
+                cache.getObjectPromise(id).then(function(category) {
+                    _this.category = category;
+                    _this.ancestors = [category];
+                    get_parent(_this, category);
+                    return category;
+                });
+            }
         };
 
         Category.prototype.path = function(category) {
@@ -261,13 +267,41 @@ var azureProvidersModule = angular
             return p;
         };
 
+        Category.prototype.children = function() {
+            if (this.category === undefined) {
+                return [];
+            }
+            var _children = children[this.id];
+            if (_children !== undefined) {
+                return _children;
+            }
+            _children = [];
+            children[this.id] = _children;
+            var id = this.id;
+            if (id === null) {
+                id = 'null';
+            }
+            AzureAPI.category.query({
+                parent: id,
+            }).$promise.then(function(categories) {
+                categories.forEach(function(category) {
+                    cache.addObject(category);
+                    var cat = new Category(category.id);
+                    _children.push(cat);
+                    /* TODO: sort by name */
+                });
+            });
+            return _children;
+        };
+
         return function(category) {
             var id;
-            if (category.hasOwnProperty('id')) {
+            if (category === null ||
+                    category === parseInt(category, 10)) {
+                id = category;
+            } else if (category.hasOwnProperty('id')) {
                 id = category.id;
                 cache.addObject(category);
-            } else if (category === parseInt(category, 10)) {
-                id = category;
             } else {
                 return categoryByPath(category);
             }
