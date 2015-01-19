@@ -20,6 +20,7 @@ Currently supported models:
 Each model currently supports the following actions:
 
 * query
+* count
 * get
 
 with the usual Angular $resource semantics.  For example:
@@ -28,6 +29,24 @@ with the usual Angular $resource semantics.  For example:
     var person = AzureAPI.person.get(id=123);
     var product = AzureAPI.product.get(code='SC065');
     var favorites = AzureAPI.product.query({person: you.id});
+
+Count
+-----
+
+The `count` action isn't one of Angular's standards.  It hits the same
+endpoint as the `query` action, but instead of returning an array of
+matching items, it returns a $resource whose `count` property is the
+number of possible items matching your query (how many you'd get in a
+`query` that didn't set `limit`).  Use it with controller code like:
+
+    $scope.favorites_count = AzureAPI.product.count({person: person.id});
+
+and template code like:
+
+    You have {{favorites_count.count}} favorites.
+
+Other methods
+-------------
 
 There's also:
 

@@ -10,7 +10,10 @@
 		<div ng-if="session.person">
 			<p>Hello {{person.name}},</p>
 			<div ng-if="favorites.length">
-				<p>You have {{favorites.length}} favorites. They are:</p>
+				<p>
+					You have {{favorites_count.count}} favorites. The first
+					{{favorites.length}} are:
+				</p>
 				<table>
 					<thead>
 						<th>Code</th>
@@ -135,10 +138,14 @@
 							$scope.person = person;
 							$scope.session = AzureAPI.session.get();
 							$scope.carts = new AzureCarts(person.id);
+							$scope.favorites_count = AzureAPI.product.count({
+								person: person.id,
+							});
 							$scope.favorites = [];
-							AzureAPI.product.query(
-								{person: person.id}
-							).$promise.then(function(products) {
+							AzureAPI.product.query({
+								person: person.id,
+								limit: 3,
+							}).$promise.then(function(products) {
 								products.forEach(function(product) {
 									$scope.favorites.push(new AzureProduct(product.code));
 								});

@@ -82,6 +82,22 @@ var azureProvidersModule = angular
                             withCredentials: true,
                             headers: _headers,
                         },
+                        count: {
+                            method: 'HEAD',
+                            url: url + '/' + plural,
+                            params: {
+                                limit: 0,
+                            },
+                            withCredentials: true,
+                            headers: _headers,
+                            interceptor: {
+                                response: function(response) {
+                                    response.resource.count = parseInt(
+                                        response.headers('Count'));
+                                    return response;
+                                },
+                            },
+                        },
                         get: {
                             method: 'GET',
                             withCredentials: true,
