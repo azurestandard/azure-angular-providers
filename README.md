@@ -26,7 +26,7 @@ Each model currently supports the following actions:
 with the usual Angular $resource semantics.  For example:
 
     var you = AzureAPI.person.get();
-    var person = AzureAPI.person.get(id=123);
+    var person = AzureAPI.person.get({id: 123});
     var product = AzureAPI.product.get(code='SC065');
     var favorites = AzureAPI.product.query({person: you.id});
 
