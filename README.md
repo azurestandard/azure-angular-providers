@@ -21,14 +21,29 @@ Each model currently supports the following actions:
 
 * query
 * count
+* create
 * get
+* save
+* delete
 
-with the usual Angular $resource semantics.  For example:
+with the usual Angular $resource semantics, except that `create`
+creates new instances while `save` updates existing instances.  For
+example:
 
     var you = AzureAPI.person.get();
     var person = AzureAPI.person.get({id: 123});
-    var product = AzureAPI.product.get(code='SC065');
+    var product = AzureAPI.product.get(code='SC065', function() {
+      product.description = 'Delicious!';
+      product.$save();
+    });
     var favorites = AzureAPI.product.query({person: you.id});
+    var order = AzureAPI.order.create({
+      customer: you,
+      status: 'cart',
+      drop: 456,
+      trip: 789,
+    });
+    AzureAPI.category.delete({id: 135});
 
 Count
 -----

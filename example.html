@@ -82,7 +82,38 @@
 						</td>
 						<td>{{cart.drop.name}}</td>
 						<td>{{cart.trip.route}} - {{cart.trip.cutoff}}</td>
-						<td>{{cart.orderLines.length}}</td>
+						<td>
+							<table>
+								<thead>
+									<tr>
+										<th>Product</th>
+										<th>Requested</th>
+										<th>Delete</td>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="line in cart.orderLines">
+										<td>
+											{{line.product}}
+										</td>
+										<td>
+											<form ng-controller="OrderLineUpdate">
+												<input type="number"
+												       ng-model="line['quantity-ordered']"
+												       ng-change="save(line)"
+												       min="0" step="1" required="" />
+											</form>
+										</td>
+										<td>
+											<a class="btn" ng-click="line.$delete()"
+											   title="delete order-line {{line.id}}">
+												x
+											</a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</td>
 						<td>{{cart.products}}</td>
 						<td>{{cart.weight}}</td>
 						<td>{{cart.price}}</td>
@@ -90,6 +121,15 @@
 				</tbody>
 			</table>
 			<p>Your primary cart is {{carts.cart.order.id}}.</p>
+			<form ng-submit="add()" ng-controller="OrderLineCreate">
+				<p>Add an order line:</p>
+				<input type="text" ng-model="line.product"
+				       placeholder="product code" /><br />
+				<input type="number" ng-model="line['quantity-ordered']"
+				       placeholder="quantity" /><br />
+				<input type="submit" value="Add to cart" />
+				<p ng-if="warning" class="warning">{{warning}}</p>
+			</form>
 		</div>
 
 		<form ng-controller="CategoryByPathCtrl">
@@ -167,6 +207,42 @@
 						};
 					}])
 				.controller(
+					'OrderLineCreate',
+					['$scope', '$timeout', 'AzureAPI',
+					function($scope, $timeout, AzureAPI) {
+						$scope.line = {
+							'product': null,
+							'quantity-ordered': 1,
+						};
+						$scope.warning = null;
+						$scope.add = function() {
+							$scope.warning = null;
+							$scope.line.order = $scope.carts.cart.order.id;
+							AzureAPI['order-line'].create($scope.line,
+								function() {},  /* no-op success handler */
+								function(response) {
+									if (response.status === 400) {
+										$scope.warning = response.data.message;
+										$timeout(function() {$scope.warning = null;}, 5000);
+									}
+								}
+							);
+						};
+					}])
+				.controller(
+					'OrderLineUpdate',
+					['$scope', 'AzureAPI',
+					function($scope, AzureAPI) {
+						$scope.save = function(line) {
+							AzureAPI['order-line'].save({
+								id: line.id,
+								order: line.order,
+								product: line.product,
+								'quantity-ordered': line['quantity-ordered'],
+							});
+						};
+					}])
+				.controller(
 					'LoginCtrl',
 					['$rootScope', '$scope', '$timeout', 'AzureAPI',
 					function($rootScope, $scope, $timeout, AzureAPI) {
@@ -208,6 +284,16 @@
 		<style>
 			.warning {
 				color: red;
+			}
+			.btn {
+				border-radius: 2px;
+				background-color: #99f;
+				padding-right: 0.5em;
+				padding-left: 0.5em;
+				cursor: pointer;
+			}
+			.btn:hover {
+				background-color: #aaf;
 			}
 		</style>
 	</body>

@@ -32,6 +32,9 @@ var azureProvidersModule = angular
         var _headers = {
             'Accept': 'application/json',
         };
+        var _payload_headers = {
+            'Content-Type': 'application/json; charset=UTF-8',
+        };
         var url = 'https://api.azurestandard.com';
 
         this.url = function(value) {
@@ -68,12 +71,21 @@ var azureProvidersModule = angular
                     );
                 },
             };
+            var payload_headers = {};
+            for (var header in _headers) {
+                payload_headers[header] = _headers[header];
+            }
+            for (var header in _payload_headers) {
+                payload_headers[header] = _payload_headers[header];
+            }
             _models.forEach(function(model) {
                 var plural = _plurals[model] || model + 's';
                 var identifier = AzureModelIdentifiers[model] || 'id';
+                var paramDefaults = {};
+                paramDefaults[identifier] = '@' + identifier;
                 resources[model] = $resource(
                     url + '/' + model + '/:' + identifier,
-                    {},
+                    paramDefaults,
                     {
                         query: {
                             method: 'GET',
@@ -98,8 +110,24 @@ var azureProvidersModule = angular
                                 },
                             },
                         },
+                        create: {
+                            method: 'POST',
+                            url: url + '/' + plural,
+                            withCredentials: true,
+                            headers: payload_headers,
+                        },
                         get: {
                             method: 'GET',
+                            withCredentials: true,
+                            headers: _headers,
+                        },
+                        save: {
+                            method: 'PUT',
+                            withCredentials: true,
+                            headers: payload_headers,
+                        },
+                        'delete': {
+                            method: 'DELETE',
                             withCredentials: true,
                             headers: _headers,
                         }
