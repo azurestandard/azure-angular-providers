@@ -65,7 +65,7 @@ hierarchy.  Calling:
 
 will return a *new* `Category` instance with the following properties:
 
-* `ancestors`, an array of category objects starting wwith the leaf
+* `ancestors`, an array of category objects starting with the leaf
   category and working down to the root category.
 * `category`, the leaf category (which is also in the `ancestors`
   array).
