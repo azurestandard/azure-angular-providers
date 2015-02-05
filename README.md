@@ -75,6 +75,10 @@ will return a *new* `Category` instance with the following properties:
   category.
 * `children()`, a method returning an array of `Category` instances
   for child categories.
+* `$promise`, an object with promises for data that may be filled in
+  on the fly.  Keys:
+    * `category`, resolves to `Category.category` when we set that
+      field.
 
 The underlying category objects and children returned by the API are
 cached in the factory, so a new `Category` instance will not need to

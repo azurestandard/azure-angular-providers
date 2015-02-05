@@ -237,11 +237,13 @@ var azureProvidersModule = angular
         var Category = function(id) {
             this.id = id;
             this.ancestors = null;
+            this.$promise = {};
             if (id === null) {
                 this.category = null;
             } else {
                 var _this = this;
-                cache.getObjectPromise(id).then(function(category) {
+                this.$promise.category = cache.getObjectPromise(id);
+                this.$promise.category.then(function(category) {
                     _this.category = category;
                     _this.ancestors = [category];
                     get_parent(_this, category);
