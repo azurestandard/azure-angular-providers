@@ -168,13 +168,8 @@ with the following properties:
 The `Cart` instances have the following properties:
 
 * `order`, the order object as returned by `AzureAPI.order.get(…)`.
-* `orderLines`, an array of order-line objects recording requested
-  products, quantities, prices, ….  In addition to their usual
-  properties, the order-line objects will have:
-    * `totalPrice`, the total current price for the line in dollars.
-    * `productClass`, the `Product` instance associated with the line
-      (`product` is just the product's code).  See `AzureProduct` for
-      details on this class.
+* `orderLines`, an array of `OrderLine` instances wrapping order-line
+  $resources with the requested products, quantities, prices, ….
 * `price`, the total current price of the order.
 * `weight`, the total weight of all products on the order.
 * `products`, a count of all the products on the order.
@@ -184,6 +179,15 @@ have the additional properties:
 
 * `drop`, the drop to which the customer wants the order delivered.
 * `trip`, the trip on which the customer wants the order delivered.
+
+The `OrderLine` instances have the following properties:
+
+* `orderLine`, the order-line object as returned by
+  `AzureAPI['order-line'].get(…)`.
+* `price`, the total current price for the line in dollars.
+* `product`, the `Product` instance associated with the line
+  (`product` is just the product's code).  See `AzureProduct` for
+  details on this class.
 
 Examples
 ========

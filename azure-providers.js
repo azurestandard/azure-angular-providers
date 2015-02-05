@@ -434,6 +434,17 @@ var azureProvidersModule = angular
     .factory('AzureCarts', ['AzureAPI', 'AzureProduct', function AzureCartsFactory(AzureAPI, AzureProduct) {
         var cart_sets = {};
 
+        var OrderLine = function(orderLine) {
+            this.orderLine = orderLine;
+            if (orderLine.price['per-pound']) {
+                this.price = orderLine.price.dollars * orderLine.weight;
+            } else {
+                this.price =
+                    orderLine.price.dollars * orderLine['quantity-ordered'];
+            }
+            this.product = AzureProduct(orderLine.product);
+        };
+
         var Cart = function(order) {
             var _this = this;
             this.order = order;
@@ -447,24 +458,19 @@ var azureProvidersModule = angular
                     id: order.trip,
                 });
             }
-            this.orderLines = AzureAPI['order-line'].query({
-                order: order.id,
-            });
+            this.orderLines = [];
             this.price = 0;
             this.weight = 0;
             this.products = 0;
-            this.orderLines.$promise.then(function(lines) {
-                lines.forEach(function(line) {
-                    if (line.price['per-pound']) {
-                        line.totalPrice = line.price.dollars * line.weight;
-                    } else {
-                        line.totalPrice =
-                            line.price.dollars * line['quantity-ordered'];
-                    }
-                    _this.price += line.totalPrice;
-                    _this.weight += line.weight;
-                    _this.products += line['quantity-ordered'];
-                    line.productClass = AzureProduct(line.product);
+            AzureAPI['order-line'].query({
+                order: order.id,
+            }).$promise.then(function(lines) {
+                lines.forEach(function(orderLine) {
+                    var line = new OrderLine(orderLine);
+                    _this.orderLines.push(line);
+                    _this.price += line.price;
+                    _this.weight += line.orderLine.weight;
+                    _this.products += line.orderLine['quantity-ordered'];
                 });
             });
         };

@@ -94,18 +94,18 @@
 								<tbody>
 									<tr ng-repeat="line in cart.orderLines">
 										<td>
-											{{line.product}}
+											{{line.orderLine.product}}
 										</td>
 										<td>
 											<form ng-controller="OrderLineUpdate">
 												<input type="number"
-												       ng-model="line['quantity-ordered']"
+												       ng-model="line.orderLine['quantity-ordered']"
 												       ng-change="save(line)"
 												       min="0" step="1" required="" />
 											</form>
 										</td>
 										<td>
-											<a class="btn" ng-click="line.$delete()"
+											<a class="btn" ng-click="line.orderLine.$delete()"
 											   title="delete order-line {{line.id}}">
 												x
 											</a>
@@ -235,10 +235,10 @@
 					function($scope, AzureAPI) {
 						$scope.save = function(line) {
 							AzureAPI['order-line'].save({
-								id: line.id,
-								order: line.order,
-								product: line.product,
-								'quantity-ordered': line['quantity-ordered'],
+								id: line.orderLine.id,
+								order: line.orderLine.order,
+								product: line.orderLine.product,
+								'quantity-ordered': line.orderLine['quantity-ordered'],
 							});
 						};
 					}])
