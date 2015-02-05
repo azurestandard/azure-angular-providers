@@ -286,12 +286,12 @@ var azureProvidersModule = angular
         };
 
         Category.prototype.children = function() {
-            if (this.category === undefined) {
-                return [];
-            }
             var _children = children[this.id];
             if (_children !== undefined) {
                 return _children;
+            }
+            if (this.category === undefined) {
+                return [];
             }
             _children = [];
             children[this.id] = _children;
