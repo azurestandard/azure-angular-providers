@@ -188,6 +188,9 @@ The `OrderLine` instances have the following properties:
 * `product`, the `Product` instance associated with the line
   (`product` is just the product's code).  See `AzureProduct` for
   details on this class.
+* `save`, a method wrapping `orderLine.$save()` that clears fields
+  customers shouldn't be setting (currently `price` and `weight`).
+* `cart`, the `Cart` that the order belongs to.
 
 Examples
 ========

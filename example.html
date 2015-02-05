@@ -97,10 +97,11 @@
 											{{line.orderLine.product}}
 										</td>
 										<td>
-											<form ng-controller="OrderLineUpdate">
+											<form>
 												<input type="number"
 												       ng-model="line.orderLine['quantity-ordered']"
-												       ng-change="save(line)"
+												       ng-model-options="{updateOn: 'blur'}"
+												       ng-change="line.save()"
 												       min="0" step="1" required="" />
 											</form>
 										</td>
@@ -227,19 +228,6 @@
 									}
 								}
 							);
-						};
-					}])
-				.controller(
-					'OrderLineUpdate',
-					['$scope', 'AzureAPI',
-					function($scope, AzureAPI) {
-						$scope.save = function(line) {
-							AzureAPI['order-line'].save({
-								id: line.orderLine.id,
-								order: line.orderLine.order,
-								product: line.orderLine.product,
-								'quantity-ordered': line.orderLine['quantity-ordered'],
-							});
 						};
 					}])
 				.controller(
