@@ -305,8 +305,13 @@ var azureProvidersModule = angular
                 categories.forEach(function(category) {
                     cache.addObject(category);
                     var cat = new Category(category.id);
-                    _children.push(cat);
-                    /* TODO: sort by name */
+                    cat.$promise.category.then(function() {
+                        _children.push(cat);
+                        _children.sort(function(a, b) {
+                            return a.category.name.localeCompare(
+                                b.category.name);
+                        });
+                    });
                 });
             });
             return _children;

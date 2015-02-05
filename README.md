@@ -74,7 +74,7 @@ will return a *new* `Category` instance with the following properties:
   without arguments, `path()` will default to the path for the leaf
   category.
 * `children()`, a method returning an array of `Category` instances
-  for child categories.
+  for child categories (sorted by name).
 * `$promise`, an object with promises for data that may be filled in
   on the fly.  Keys:
     * `category`, resolves to `Category.category` when we set that
