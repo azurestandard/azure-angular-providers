@@ -170,6 +170,8 @@ The `Cart` instances have the following properties:
 * `order`, the order object as returned by `AzureAPI.order.get(…)`.
 * `orderLines`, an array of `OrderLine` instances wrapping order-line
   $resources with the requested products, quantities, prices, ….
+* `addLine(product_code, quantity_ordered)`, a method to add an
+  order-line to the order and update the associated state.
 * `price`, the total current price of the order.
 * `weight`, the total weight of all products on the order.
 * `products`, a count of all the products on the order.

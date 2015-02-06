@@ -519,6 +519,21 @@ var azureProvidersModule = angular
             });
         };
 
+        Cart.prototype.addLine = function(productCode, quantityOrdered) {
+            var _this = this;
+            var resource = AzureAPI['order-line'].create({
+              'order': this.order.id,
+              'product': productCode,
+              'quantity-ordered': quantityOrdered,
+            });
+            resource.$promise.then(function(orderLine) {
+                var line = new OrderLine(orderLine, _this);
+                _this.orderLines.push(line);
+                return orderLine;
+            });
+            return resource.$promise;
+        };
+
         var Carts = function(person_id) {
             var _this = this;
             this.carts = [];

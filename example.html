@@ -209,8 +209,8 @@
 					}])
 				.controller(
 					'OrderLineCreate',
-					['$scope', '$timeout', 'AzureAPI',
-					function($scope, $timeout, AzureAPI) {
+					['$scope', '$timeout',
+					function($scope, $timeout) {
 						$scope.line = {
 							'product': null,
 							'quantity-ordered': 1,
@@ -218,16 +218,14 @@
 						$scope.warning = null;
 						$scope.add = function() {
 							$scope.warning = null;
-							$scope.line.order = $scope.carts.cart.order.id;
-							AzureAPI['order-line'].create($scope.line,
-								function() {},  /* no-op success handler */
-								function(response) {
-									if (response.status === 400) {
-										$scope.warning = response.data.message;
-										$timeout(function() {$scope.warning = null;}, 5000);
-									}
+							$scope.carts.cart.addLine(
+								$scope.product, $scope['quantity-ordered']
+							).catch(function(response) {
+								if (response.status === 400) {
+									$scope.warning = response.data.message;
+									$timeout(function() {$scope.warning = null;}, 5000);
 								}
-							);
+							});
 						};
 					}])
 				.controller(
