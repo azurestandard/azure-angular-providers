@@ -474,6 +474,14 @@ var azureProvidersModule = angular
             return resource.$promise;
         };
 
+        OrderLine.prototype.delete = function() {
+            var resource = this.orderLine.$delete();
+            var index = this.cart.orderLines.indexOf(this);
+            this.cart.orderLines.splice(index, 1);
+            this.cart._calculateTotals();
+            return resource.$promise;
+        };
+
         var Cart = function(order) {
             var _this = this;
             this.order = order;

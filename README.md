@@ -190,6 +190,8 @@ The `OrderLine` instances have the following properties:
   details on this class.
 * `save`, a method wrapping `orderLine.$save()` that clears fields
   customers shouldn't be setting (currently `price` and `weight`).
+* `delete`, a method wrapping `orderLine.$delete()` that also removes
+  the line from the `orderLines` list on the associated `Cart`.
 * `cart`, the `Cart` that the order belongs to.
 
 Examples
