@@ -83,55 +83,56 @@ var azureProvidersModule = angular
                 var identifier = AzureModelIdentifiers[model] || 'id';
                 var paramDefaults = {};
                 paramDefaults[identifier] = '@' + identifier;
+                var actions = {
+                    query: {
+                        method: 'GET',
+                        url: url + '/' + plural,
+                        isArray: true,
+                        withCredentials: true,
+                        headers: _headers,
+                    },
+                    count: {
+                        method: 'HEAD',
+                        url: url + '/' + plural,
+                        params: {
+                            limit: 0,
+                        },
+                        withCredentials: true,
+                        headers: _headers,
+                        interceptor: {
+                            response: function(response) {
+                                response.resource.count = parseInt(
+                                    response.headers('Count'));
+                                return response;
+                            },
+                        },
+                    },
+                    create: {
+                        method: 'POST',
+                        url: url + '/' + plural,
+                        withCredentials: true,
+                        headers: payload_headers,
+                    },
+                    get: {
+                        method: 'GET',
+                        withCredentials: true,
+                        headers: _headers,
+                    },
+                    save: {
+                        method: 'PUT',
+                        withCredentials: true,
+                        headers: payload_headers,
+                    },
+                    'delete': {
+                        method: 'DELETE',
+                        withCredentials: true,
+                        headers: _headers,
+                    },
+                };
                 resources[model] = $resource(
                     url + '/' + model + '/:' + identifier,
                     paramDefaults,
-                    {
-                        query: {
-                            method: 'GET',
-                            url: url + '/' + plural,
-                            isArray: true,
-                            withCredentials: true,
-                            headers: _headers,
-                        },
-                        count: {
-                            method: 'HEAD',
-                            url: url + '/' + plural,
-                            params: {
-                                limit: 0,
-                            },
-                            withCredentials: true,
-                            headers: _headers,
-                            interceptor: {
-                                response: function(response) {
-                                    response.resource.count = parseInt(
-                                        response.headers('Count'));
-                                    return response;
-                                },
-                            },
-                        },
-                        create: {
-                            method: 'POST',
-                            url: url + '/' + plural,
-                            withCredentials: true,
-                            headers: payload_headers,
-                        },
-                        get: {
-                            method: 'GET',
-                            withCredentials: true,
-                            headers: _headers,
-                        },
-                        save: {
-                            method: 'PUT',
-                            withCredentials: true,
-                            headers: payload_headers,
-                        },
-                        'delete': {
-                            method: 'DELETE',
-                            withCredentials: true,
-                            headers: _headers,
-                        }
-                    }
+                    actions
                 );
             });
             return resources;
