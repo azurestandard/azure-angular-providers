@@ -129,6 +129,14 @@ var azureProvidersModule = angular
                         headers: _headers,
                     },
                 };
+                if (model === 'trip') {
+                    actions.mail = {
+                        method: 'POST',
+                        url: url + '/mail/' + model + '/:' + identifier,
+                        withCredentials: true,
+                        headers: payload_headers,
+                    };
+                }
                 resources[model] = $resource(
                     url + '/' + model + '/:' + identifier,
                     paramDefaults,
