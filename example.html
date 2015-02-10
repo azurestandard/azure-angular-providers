@@ -219,7 +219,7 @@
 						$scope.add = function() {
 							$scope.warning = null;
 							$scope.carts.cart.addLine(
-								$scope.product, $scope['quantity-ordered']
+								$scope.line.product, $scope.line['quantity-ordered']
 							).catch(function(response) {
 								if (response.status === 400) {
 									$scope.warning = response.data.message;
