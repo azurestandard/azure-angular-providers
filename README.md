@@ -7,6 +7,7 @@ AzureAPI
 The basic API has an Angular [$resource][resource] for each API model.
 Currently supported models:
 
+* account-entry
 * brand
 * category
 * drop

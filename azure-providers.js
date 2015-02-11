@@ -15,6 +15,7 @@ var azureProvidersModule = angular
     })
     .provider('AzureAPI', function AzureAPIProvider() {
         var _models = [
+            'account-entry',
             'brand',
             'category',
             'drop',
@@ -26,6 +27,7 @@ var azureProvidersModule = angular
             'trip',
         ];
         var _plurals = {
+            'account-entry': 'account-entries',
             'category': 'categories',
             'person': 'people',
         };
