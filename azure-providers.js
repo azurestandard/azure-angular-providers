@@ -11,7 +11,7 @@ var azureProvidersModule = angular
     .module('azureProviders', ['ngResource'])
     .constant('AzureModelIdentifiers', {
         product: 'code',
-        route: 'code',
+        route: 'name',
     })
     .provider('AzureAPI', function AzureAPIProvider() {
         var _models = [
