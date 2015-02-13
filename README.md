@@ -46,6 +46,11 @@ example:
     });
     AzureAPI.category.delete({id: 135});
 
+In addition, a few models support the following actions:
+
+* mail, for contacting associated customers.  Supported models: route,
+  trip.
+
 Count
 -----
 

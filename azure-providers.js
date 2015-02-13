@@ -131,7 +131,7 @@ var azureProvidersModule = angular
                         headers: _headers,
                     },
                 };
-                if (model === 'trip') {
+                if (model === 'route' || model === 'trip') {
                     actions.mail = {
                         method: 'POST',
                         url: url + '/mail/' + model + '/:' + identifier,
