@@ -540,6 +540,7 @@ var azureProvidersModule = angular
             resource.$promise.then(function(orderLine) {
                 var line = new OrderLine(orderLine, _this);
                 _this.orderLines.push(line);
+                _this._calculateTotals();
                 return orderLine;
             });
             return resource.$promise;
