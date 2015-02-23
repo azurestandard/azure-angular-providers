@@ -128,6 +128,7 @@ packaging (e.g. “2.7 ozs.” and “12 x 2.7 ozs.”).  Calling:
 
 will return a *new* `Product` instance with the following properties:
 
+* `product`, the data for the project as returned from the API.
 * `packaging`, an array of `PackagedProduct` instances with the
   various packaging options for the product.
 * `packaged`, the currently selected `PackagedProduct` (which is also
