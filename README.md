@@ -138,7 +138,8 @@ will return a *new* `Product` instance with the following properties:
   and the like to avoid accidentally editing `packaged.code`.
 * `selectPackaging(packaged_product_code)`, a method for changing the
   currently selected packaged product (selection will not persist
-  beyond page refreshes).
+  beyond page refreshes).  Calling with a falsy argument will select
+  the product's cheapest packaging.
 
 The `PackagedProduct` instances have the following properties:
 

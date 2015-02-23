@@ -419,9 +419,14 @@ var azureProvidersModule = angular
         Product.prototype.selectPackaging = function(code) {
             var _this = this;
             var match = this.packaging.some(function(packaged_product) {
-                if (packaged_product.packaged.code === code) {
-                    _this.packaged = packaged_product;
-                    _this.code = code;
+                if (code) {
+                    if (packaged_product.packaged.code === code) {
+                        _this.packaged = packaged_product;
+                        _this.code = code;
+                        return true;
+                    }
+                } else {
+                    /* TODO: skip bargain-bin packaging */
                     return true;
                 }
             });
