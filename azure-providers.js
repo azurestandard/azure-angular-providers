@@ -10,7 +10,7 @@
 var azureProvidersModule = angular
     .module('azureProviders', ['ngResource'])
     .constant('AzureModelIdentifiers', {
-        product: 'code',
+        'packaged-product': 'code',
         route: 'name',
     })
     .provider('AzureAPI', function AzureAPIProvider() {
@@ -21,6 +21,7 @@ var azureProvidersModule = angular
             'drop',
             'order',
             'order-line',
+            'packaged-product',
             'person',
             'product',
             'route',
@@ -372,52 +373,19 @@ var azureProvidersModule = angular
     }])
     .factory('AzureProduct', ['$q', 'AzureAPI', 'AzureCategory', 'AzureObjectPromiseCache', function AzureProductFactory($q, AzureAPI, AzureCategory, AzureObjectPromiseCache) {
         var cache = new AzureObjectPromiseCache('product');
+        var packaged_cache = {};
 
-        var Product = function(code) {
-            var _this = this;
-            _this._categories = null;
-            cache.getObjectPromise(code).then(function(product) {
-                _this.product = product;
-                _this.products = [product];
-                _this.code = code;
-                if (_this.product.repackaged.length) {
-                    _this.product.repackaged.forEach(function(code) {
-                        cache.getObjectPromise(code).then(function(product) {
-                            _this.products.push(product);
-                            _this.products.sort(function(a, b) {
-                                return a.price.dollars - b.price.dollars;
-                            });
-                            return product;
-                        });
-                    });
-                }
-                return product;
-            });
+        var PackagedProduct = function(packaged_product) {
+            this.packaged = packaged_product;
+            this._categories = null;
         };
 
-        Product.prototype.selectPackaging = function(code) {
-            var _this = this;
-            var match = this.products.some(function(product) {
-                if (product.code === code) {
-                    _this.product = product;
-                    _this.code = code;
-                    return true;
-                }
-            });
-            if (!match) {
-                console.log('no match found for ' + code + ' in', this.products);
-            }
-        };
-
-        Product.prototype.categories = function() {
-            if (!this.product) {
-                return [];
-            }
+        PackagedProduct.prototype.categories = function() {
             if (this._categories === null) {
                 var _this = this;
                 this._categories = [];
                 AzureAPI.category.query(
-                    {product: this.code}
+                    {'packaged-product': this.packaged.code}
                 ).$promise.then(function(categories) {
                     categories.forEach(function(category) {
                         _this._categories.push(new AzureCategory(category));
@@ -427,29 +395,84 @@ var azureProvidersModule = angular
             return this._categories;
         };
 
-        Product.prototype.primaryCategory = function() {
+        PackagedProduct.prototype.primaryCategory = function() {
             return this.categories()[0];  // TODO: shortest chain through Bulk?
         };
 
+        var Product = function(promise, code) {
+            var _this = this;
+            promise.then(function(product) {
+                _this.product = product;
+                _this.packaging = [];
+                _this.product.packaging.forEach(function(packaged_product) {
+                    var packaged = new PackagedProduct(packaged_product);
+                    _this.packaging.push(packaged);
+                });
+                _this.selectPackaging(code);
+                _this.packaging.sort(function(a, b) {
+                    return a.packaged.price.dollars - b.packaged.price.dollars;
+                });
+                return product;
+            });
+        };
+
+        Product.prototype.selectPackaging = function(code) {
+            var _this = this;
+            var match = this.packaging.some(function(packaged_product) {
+                if (packaged_product.packaged.code === code) {
+                    _this.packaged = packaged_product;
+                    _this.code = code;
+                    return true;
+                }
+            });
+            if (!match) {
+                console.log(
+                    'no match found for ' + code + ' in', this.packaging);
+            }
+        };
+
         return function(product) {
-            var code;
+            var promise = null;
+            var id;
+            var code = null;
             if (product.hasOwnProperty('code')) {
                 code = product.code;
-                cache.addObject(product);
+                promise = packaged_cache[code];
+                if (!promise) {
+                    promise = AzureAPI.product.query({
+                        'packaged-product': code,
+                    }).$promise.then(function(products) {
+                        if (products.length !== 1) {
+                            throw new Error(
+                                'expected one product match for packaged ' +
+                                'product code ' + code + ', but got ' +
+                                products.length);
+                        }
+                        cache.addObject(products[0]);
+                        return products[0];
+                    });
+                    packaged_cache[code] = promise;
+                }
+            } else if (product.hasOwnProperty('id')) {
+                id = product.id;
             } else {
-                code = product;
+                id = product;
             }
-            return new Product(code);
+            if (!promise) {
+                promise = cache.getObjectPromise(id);
+            }
+            return new Product(promise, code);
         };
     }])
     .factory('AzureCarts', ['AzureAPI', 'AzureProduct', function AzureCartsFactory(AzureAPI, AzureProduct) {
         var cart_sets = {};
 
         var OrderLine = function(orderLine, cart) {
+            this.console = console;
             this.orderLine = orderLine;
             this.cart = cart;
             this._calculatePrice();
-            this.product = AzureProduct(orderLine.product);
+            this.product = AzureProduct({code: orderLine['packaged-product']});
         };
 
         OrderLine.prototype._calculatePrice = function() {

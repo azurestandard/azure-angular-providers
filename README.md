@@ -124,20 +124,25 @@ AzureProduct
 Use the `AzureProduct` factory to manage a product with different
 packaging (e.g. “2.7 ozs.” and “12 x 2.7 ozs.”).  Calling:
 
-    AzureProduct(product_code)
+    AzureProduct(product_id)
 
 will return a *new* `Product` instance with the following properties:
 
-* `products`, an array of product objects with the various packaging
-  versions of the requested product.
-* `product`, the currently selected product (which is also in the
-  `products` array).
-* `code`, the currently selected product's code, which is mostly
-  useful as a value for [ng-model on select widgets][select] and the
-  like to avoid accidentally editing `product.code`.
-* `selectPackaging(product_code)`, a method for changing the currently
-  selected packaging (selection will not persist beyond page
-  refreshes).
+* `packaging`, an array of `PackagedProduct` instances with the
+  various packaging options for the product.
+* `packaged`, the currently selected `PackagedProduct` (which is also
+  in the `packaging` array).
+* `code`, the code for the currently selected packaged product, which
+  is mostly useful as a value for [ng-model on select widgets][select]
+  and the like to avoid accidentally editing `packaged.code`.
+* `selectPackaging(packaged_product_code)`, a method for changing the
+  currently selected packaged product (selection will not persist
+  beyond page refreshes).
+
+The `PackagedProduct` instances have the following properties:
+
+* `packaged`, the data for the packaged-project as returned from the
+  API.
 * `categories()`, a method returning an array of `AzureCategory`
   instances for each category associated with this product.
 * `primaryCategory()`, a method returning the primary `AzureCategory`
@@ -153,6 +158,8 @@ can also use:
 * A product object (or any object with the product ID stored in the
   `id` property).  The product object is added to the cache, which may
   save a network lookup for previously uncached IDs.
+* A packaged-product object (or any object with the packaged-product
+  code stored in the `code` property).
 
 AzureCarts
 ==========

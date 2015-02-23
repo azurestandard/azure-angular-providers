@@ -23,17 +23,16 @@
 					</thead>
 					<tbody>
 						<tr ng-repeat="product in favorites">
-							<td>{{product.product.code}}</td>
+							<td>{{product.code}}</td>
 							<td>{{product.product.name}}</td>
 							<td>
-								<select ng-if="product.products"
-								        ng-options="prod.code as productPackagingLabel(prod) for prod in product.products"
+								<select ng-options="prod.packaged.code as productPackagingLabel(prod) for prod in product.packaging"
 								        ng-model="product.code"
-								        ng-change="product.selectPackaging(product.code)" />
+								        ng-change="product.selectPackaging(packaged_product.code)" />
 							</td>
 							<td>
-								<ul ng-if="product.categories().length">
-									<li ng-repeat="category in product.categories()">
+								<ul ng-if="product.packaged.categories().length">
+									<li ng-repeat="category in product.packaged.categories()">
 										<span ng-repeat="cat in category.ancestors.slice().reverse()"
 										      title="id: {{cat.id}}, path: {{category.path(cat)}}">
 											{{cat.name}}
@@ -94,7 +93,7 @@
 								<tbody>
 									<tr ng-repeat="line in cart.orderLines">
 										<td>
-											{{line.orderLine.product}}
+											{{line.product.product.name}}
 										</td>
 										<td>
 											<form>
@@ -183,12 +182,12 @@
 								person: person.id,
 							});
 							$scope.favorites = [];
-							AzureAPI.product.query({
+							AzureAPI['packaged-product'].query({
 								person: person.id,
 								limit: 3,
-							}).$promise.then(function(products) {
-								products.forEach(function(product) {
-									$scope.favorites.push(new AzureProduct(product.code));
+							}).$promise.then(function(packaged_products) {
+								packaged_products.forEach(function(packaged_product) {
+									$scope.favorites.push(new AzureProduct(packaged_product));
 								});
 							});
 						};
@@ -203,8 +202,10 @@
 								$scope.carts = new AzureCarts();
 							} */
 						});
-						$scope.productPackagingLabel = function(product) {
-							return product.code + ' (' + product.size + ', $' + product.price.dollars + ')';
+						$scope.productPackagingLabel = function(packaged_product) {
+							return packaged_product.packaged.code + ' (' +
+								packaged_product.packaged.size + ', $' +
+								packaged_product.packaged.price.dollars + ')';
 						};
 					}])
 				.controller(
