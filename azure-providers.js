@@ -416,10 +416,10 @@ var azureProvidersModule = angular
                     var packaged = new PackagedProduct(packaged_product);
                     _this.packaging.push(packaged);
                 });
-                _this.selectPackaging(code);
                 _this.packaging.sort(function(a, b) {
                     return a.packaged.price.dollars - b.packaged.price.dollars;
                 });
+                _this.selectPackaging(code);
                 return product;
             });
         };
@@ -435,6 +435,8 @@ var azureProvidersModule = angular
                     }
                 } else {
                     /* TODO: skip bargain-bin packaging */
+                    _this.packaged = packaged_product;
+                    _this.code = packaged_product.code;
                     return true;
                 }
             });
