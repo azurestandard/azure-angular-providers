@@ -331,9 +331,6 @@ var azureProvidersModule = angular
             if (_children !== undefined) {
                 return _children;
             }
-            if (this.category === undefined) {
-                return [];
-            }
             _children = [];
             children[this.id] = _children;
             var id = this.id;
