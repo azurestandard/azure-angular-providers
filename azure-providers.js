@@ -282,13 +282,14 @@ var azureProvidersModule = angular
                 this.category = null;
             } else {
                 var _this = this;
-                this.$promise.category = cache.getObjectPromise(id);
-                this.$promise.category.then(function(category) {
-                    _this.category = category;
-                    _this.ancestors = [category];
-                    get_parent(_this, category);
-                    return category;
-                });
+                this.$promise.category = cache.getObjectPromise(id).then(
+                    function(category) {
+                        _this.category = category;
+                        _this.ancestors = [category];
+                        get_parent(_this, category);
+                        return category;
+                    }
+                );
             }
         };
 
