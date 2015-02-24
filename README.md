@@ -95,7 +95,10 @@ will return a *new* `Category` instance with the following properties:
   without arguments, `path()` will default to the path for the leaf
   category.
 * `children()`, a method returning an array of `Category` instances
-  for child categories (sorted by name).
+  for child categories (sorted by name).  The array has the following
+  additional properties:
+    * `$promise`, with a promise that's resolved after the array is
+      fully populated.
 * `$promise`, an object with promises for data that may be filled in
   on the fly.  Keys:
     * `category`, resolves to `Category.category` when we set that

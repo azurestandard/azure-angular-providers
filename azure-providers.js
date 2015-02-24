@@ -333,24 +333,31 @@ var azureProvidersModule = angular
             }
             _children = [];
             children[this.id] = _children;
+            var promises = [];
             var id = this.id;
             if (id === null) {
                 id = 'null';
             }
-            AzureAPI.category.query({
+            var promise = AzureAPI.category.query({
                 parent: id,
             }).$promise.then(function(categories) {
                 categories.forEach(function(category) {
                     cache.addObject(category);
                     var cat = new Category(category.id);
-                    cat.$promise.category.then(function() {
+                    promises.push(cat.$promise.category.then(function() {
                         _children.push(cat);
                         _children.sort(function(a, b) {
                             return a.category.name.localeCompare(
                                 b.category.name);
                         });
-                    });
+                        return _children;
+                    }));
                 });
+                return _children;
+            });
+            promises.push(promise);
+            _children.$promise = $q.all(promises).then(function(results) {
+                return results[0]
             });
             return _children;
         };

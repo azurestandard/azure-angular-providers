@@ -154,7 +154,7 @@
 			<ul>
 				<li ng-repeat="cat in category.children()"
 				    title="id: {{cat.category.id}}">
-					{{cat.category.name}}
+					{{cat.category.name}} ({{cat.$index}})
 					<ul>
 						<li ng-repeat="c in cat.children()"
 								title="id: {{c.category.id}}">
@@ -174,6 +174,11 @@
 					['$rootScope', '$scope', 'AzureAPI', 'AzureCarts', 'AzureCategory', 'AzureProduct',
 					function($rootScope, $scope, AzureAPI, AzureCarts, AzureCategory, AzureProduct) {
 						$scope.category = new AzureCategory(null);
+						$scope.category.children().$promise.then(function(categories) {
+							categories.forEach(function(category, index) {
+								category.$index = index;
+							});
+						});
 						$rootScope.setupPerson = function(person) {
 							$scope.person = person;
 							$scope.session = AzureAPI.session.get();
