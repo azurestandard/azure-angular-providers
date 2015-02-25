@@ -456,7 +456,6 @@ var azureProvidersModule = angular
                 if (!promise) {
                     promise = AzureAPI.product.query({
                         'packaged-product': code,
-                        limit: 250,
                     }).$promise.then(function(products) {
                         if (products.length !== 1) {
                             throw new Error(
