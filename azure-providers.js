@@ -247,6 +247,7 @@ var azureProvidersModule = angular
             }
             AzureAPI.category.query({
                 parent: parent,
+                limit: 250,
             }).$promise.then(function(categories) {
                 categories.forEach(function(category) {
                     cache.addObject(category);
@@ -340,6 +341,7 @@ var azureProvidersModule = angular
             }
             var promise = AzureAPI.category.query({
                 parent: id,
+                limit: 250,
             }).$promise.then(function(categories) {
                 categories.forEach(function(category) {
                     cache.addObject(category);
@@ -389,9 +391,10 @@ var azureProvidersModule = angular
             if (this._categories === null) {
                 var _this = this;
                 this._categories = [];
-                AzureAPI.category.query(
-                    {'packaged-product': this.packaged.code}
-                ).$promise.then(function(categories) {
+                AzureAPI.category.query({
+                    'packaged-product': this.packaged.code,
+                    limit: 250,
+                }).$promise.then(function(categories) {
                     categories.forEach(function(category) {
                         _this._categories.push(new AzureCategory(category));
                     });
@@ -451,6 +454,7 @@ var azureProvidersModule = angular
                 if (!promise) {
                     promise = AzureAPI.product.query({
                         'packaged-product': code,
+                        limit: 250,
                     }).$promise.then(function(products) {
                         if (products.length !== 1) {
                             throw new Error(
@@ -542,6 +546,7 @@ var azureProvidersModule = angular
             this.orderLines = [];
             AzureAPI['order-line'].query({
                 order: order.id,
+                limit: 250,
             }).$promise.then(function(lines) {
                 lines.forEach(function(orderLine) {
                     var line = new OrderLine(orderLine, _this);
@@ -586,6 +591,7 @@ var azureProvidersModule = angular
             var orders = AzureAPI.order.query({
                 person: person_id,
                 status: 'cart',
+                limit: 250,
             });
             orders.$promise.then(function(orders) {
                 orders.forEach(function(order) {
