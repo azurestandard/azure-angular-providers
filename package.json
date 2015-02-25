@@ -1,6 +1,6 @@
 {
 	"name": "azure-angular-providers",
-	"version": "0.3.2",
+	"version": "0.3.3",
 	"main": "azure-providers",
 	"description": "Azure Standard API provider for AngularJS",
 	"homepage": "https://github.com/azurestandard/azure-angular-providers",
