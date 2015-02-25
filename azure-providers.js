@@ -463,8 +463,7 @@ var azureProvidersModule = angular
                                 'product code ' + code + ', but got ' +
                                 products.length);
                         }
-                        cache.addObject(products[0]);
-                        return products[0];
+                        return cache.getObjectPromise(products[0].id);
                     });
                     packaged_cache[code] = promise;
                 }
