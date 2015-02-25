@@ -436,7 +436,7 @@ var azureProvidersModule = angular
                 } else {
                     /* TODO: skip bargain-bin packaging */
                     _this.packaged = packaged_product;
-                    _this.code = packaged_product.code;
+                    _this.code = packaged_product.packaged.code;
                     return true;
                 }
             });
