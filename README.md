@@ -143,6 +143,8 @@ will return a *new* `Product` instance with the following properties:
   currently selected packaged product (selection will not persist
   beyond page refreshes).  Calling with a falsy argument will select
   the product's cheapest packaging.
+* `$promise`, a promise that resolves with the `product` $resource
+  after the `Product` setup completes.
 
 The `PackagedProduct` instances have the following properties:
 

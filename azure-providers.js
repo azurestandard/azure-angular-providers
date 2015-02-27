@@ -409,7 +409,7 @@ var azureProvidersModule = angular
 
         var Product = function(promise, code) {
             var _this = this;
-            promise.then(function(product) {
+            this.$promise = promise.then(function(product) {
                 _this.product = product;
                 _this.packaging = [];
                 _this.product.packaging.forEach(function(packaged_product) {
