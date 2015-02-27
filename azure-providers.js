@@ -412,15 +412,21 @@ var azureProvidersModule = angular
             this.$promise = promise.then(function(product) {
                 _this.product = product;
                 _this.packaging = [];
+                var promises = [];
                 _this.product.packaging.forEach(function(packaged_product) {
                     var packaged = new PackagedProduct(packaged_product);
                     _this.packaging.push(packaged);
+                    promises.push(packaged.$promise);
                 });
-                _this.packaging.sort(function(a, b) {
-                    return a.packaged.price.dollars - b.packaged.price.dollars;
+                return $q.all(promises).then(function() {
+                    _this.packaging.sort(function(a, b) {
+                        return a.packaged.price.dollars -
+                            b.packaged.price.dollars;
+                    });
+                    _this.selectPackaging(code);
+                }).then(function() {
+                    return _this;
                 });
-                _this.selectPackaging(code);
-                return product;
             });
         };
 
