@@ -140,6 +140,25 @@ var azureProvidersModule = angular
                         headers: payload_headers,
                     };
                 }
+                if (model === 'packaged-product') {
+                    var categoryUrl = url + '/' + model + '/:' + identifier +
+                        '/category/:categoryId';
+                    var params = {'categoryId': '@categoryId'};
+                    actions.addCategory = {
+                        method: 'POST',
+                        url: categoryUrl,
+                        params: params,
+                        withCredentials: true,
+                        headers: _headers,
+                    };
+                    actions.removeCategory = {
+                        method: 'DELETE',
+                        url: categoryUrl,
+                        params: params,
+                        withCredentials: true,
+                        headers: _headers,
+                    };
+                }
                 resources[model] = $resource(
                     url + '/' + model + '/:' + identifier,
                     paramDefaults,

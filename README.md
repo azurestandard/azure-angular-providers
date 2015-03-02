@@ -51,6 +51,13 @@ In addition, a few models support the following actions:
 * mail, for contacting associated customers.  Supported models: route,
   trip.
 
+The packaged-product model supports the following actions:
+
+* addCategory, which takes `code` and `categoryId` parameters to
+  associate the packaged product with the given category.
+* removeCategory, which takes `code` and `categoryId` parameters to
+  dissociate the packaged product with the given category.
+
 Count
 -----
 
