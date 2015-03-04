@@ -597,7 +597,7 @@ var azureProvidersModule = angular
             var _this = this;
             var resource = AzureAPI['order-line'].create({
               'order': this.order.id,
-              'product': productCode,
+              'packaged-product': productCode,
               'quantity-ordered': quantityOrdered,
             });
             resource.$promise.then(function(orderLine) {
