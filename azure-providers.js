@@ -25,6 +25,7 @@ var azureProvidersModule = angular
             'packaged-product',
             'person',
             'product',
+            'purchase-order',
             'route',
             'trip',
         ];

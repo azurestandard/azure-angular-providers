@@ -16,6 +16,7 @@ Currently supported models:
 * order-line
 * person
 * product
+* purchase-order
 * route
 * trip
 
