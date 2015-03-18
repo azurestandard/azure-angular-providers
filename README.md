@@ -8,6 +8,7 @@ The basic API has an Angular [$resource][resource] for each API model.
 Currently supported models:
 
 * account-entry
+* address
 * brand
 * category
 * drop
