@@ -49,8 +49,12 @@ example:
 
 In addition, a few models support the following actions:
 
-* mail, for contacting associated customers.  Supported models: route,
-  trip.
+* mail, for contacting associated customers.  Supported models:
+  route, trip.
+* mails, for contacting customers associated with multiple entities
+  using a single API call.  For example, you can mail several people
+  with a single call to `AzureAPI.person.mails(…)`.  Supported models:
+  person.
 
 The packaged-product model supports the following actions:
 

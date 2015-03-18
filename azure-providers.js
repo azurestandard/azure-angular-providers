@@ -134,10 +134,16 @@ var azureProvidersModule = angular
                         headers: _headers,
                     },
                 };
-                if (model === 'route' || model === 'trip') {
+                if (['person', 'route', 'trip'].indexOf(model) !== -1) {
                     actions.mail = {
                         method: 'POST',
                         url: url + '/mail/' + model + '/:' + identifier,
+                        withCredentials: true,
+                        headers: payload_headers,
+                    };
+                    actions.mails = {
+                        method: 'POST',
+                        url: url + '/mail/' + plural,
                         withCredentials: true,
                         headers: payload_headers,
                     };
