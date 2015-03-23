@@ -22,6 +22,7 @@ var azureProvidersModule = angular
             'drop',
             'order',
             'order-line',
+            'payment-method',
             'packaged-product',
             'person',
             'product',
