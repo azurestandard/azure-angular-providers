@@ -15,6 +15,7 @@ Currently supported models:
 * order
 * order-line
 * payment-method
+* packaged-product
 * person
 * product
 * purchase-order
