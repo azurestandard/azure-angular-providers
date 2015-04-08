@@ -181,7 +181,12 @@ can also use:
   `id` property).  The product object is added to the cache, which may
   save a network lookup for previously uncached IDs.
 * A packaged-product object (or any object with the packaged-product
-  code stored in the `code` property).
+  code stored in the `code` property).  In this case, you may want to
+  pass an additional object with query parameters:
+
+        AzureProduct(packagedProduct, {tag: 'new-not-on-sale'});
+
+  to ensure your packaged product is included in the query results.
 
 AzureCarts
 ==========

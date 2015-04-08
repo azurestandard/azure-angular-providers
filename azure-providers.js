@@ -481,7 +481,7 @@ var azureProvidersModule = angular
             }
         };
 
-        return function(product) {
+        return function(product, queryParameters) {
             var promise = null;
             var id;
             var code = null;
@@ -489,9 +489,13 @@ var azureProvidersModule = angular
                 code = product.code;
                 promise = packaged_cache[code];
                 if (!promise) {
-                    promise = AzureAPI.product.query({
-                        'packaged-product': code,
-                    }).$promise.then(function(products) {
+                    if (queryParameters === undefined) {
+                        queryParameters = {};
+                    }
+                    queryParameters['packaged-product'] = code;
+                    promise = AzureAPI.product.query(
+                        queryParameters
+                    ).$promise.then(function(products) {
                         if (products.length !== 1) {
                             throw new Error(
                                 'expected one product match for packaged ' +
