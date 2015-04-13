@@ -1,6 +1,19 @@
 azure-angular-providers is an [Azure Standard API][api] provider for
 [AngularJS][].
 
+Configuration
+=============
+
+The only configrable option is currently the base URL for the
+`AzureAPI` interface.  The default URL is
+`https://api.azurestandard.com`, but you can adjust that URL for
+testing with something like:
+
+    angular.module('yourModule', ['your', 'dependencies'])
+      .config(function(AzureAPIProvider) {
+        AzureAPIProvider.url('https://example.com/your/testing/api');
+      });
+
 AzureAPI
 ========
 
