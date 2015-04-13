@@ -217,6 +217,12 @@ with the following properties:
   array).
 * `selectCart(order_id)`, a method for changing the current default
   cart (selection will not persist beyond page refreshes).
+* `createCart(order[, select])`, a method for creating a new cart.
+  The `order` argument can be either an `AzureAPI.order` $resource or
+  an object containing the data to be used for a new `AzureAPI.order`
+  $resource (in which case `createCart` will create the order
+  $resource internally).  If `select` is truthy, the new cart will be
+  selected as the current default cart.
 
 The `Cart` instances have the following properties:
 

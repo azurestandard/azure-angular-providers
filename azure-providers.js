@@ -653,6 +653,25 @@ var azureProvidersModule = angular
             }
         };
 
+        Carts.prototype.createCart = function(order, select) {
+            var _this = this;
+
+            var createCart = function(order) {
+                var cart = new Cart(order);
+                _this.carts.push(cart);
+                if (select) {
+                    _this.cart = cart;
+                }
+            };
+
+            if (order.id === undefined) {
+                order = AzureAPI.order.create(order);
+                order.$promise.then(createCart);
+            } else {
+                createCart(order);
+            }
+        };
+
         return function(person_id) {
             if (!cart_sets.hasOwnProperty(person_id)) {
                 /* we don't have an existing instance */
