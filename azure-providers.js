@@ -569,6 +569,38 @@ var azureProvidersModule = angular
             return resource.$promise;
         };
 
+        OrderLine.prototype.increment = function() {
+            this.orderLine['quantity-ordered'] += 1;
+            save(this)
+        };
+
+        OrderLine.prototype.decrement = function() {
+            if (this.orderLine['quantity-ordered'] > 1) {
+                this.orderLine['quantity-ordered'] -= 1;
+                save(this);
+            }
+        };
+
+        function saveUntilItSticks(resource) {
+            resource.orderLine['quantity-ordered'] = resource['$quantity-ordered'];
+            resource.save().then(function(newResource) {
+                if (newResource['quantity-ordered'] === resource['$quantity-ordered']) {
+                    delete resource['$quantity-ordered'];
+                } else {
+                    saveUntilItSticks(resource);
+                }
+                return newResource;
+            });
+        };
+
+        function save(resource) {
+            var inFlight = resource['$quantity-ordered'];
+            resource['$quantity-ordered'] = resource.orderLine['quantity-ordered'];
+            if (!inFlight) {
+                saveUntilItSticks(resource);
+            }
+        };
+
         var Cart = function(order) {
             var _this = this;
             this.order = order;
