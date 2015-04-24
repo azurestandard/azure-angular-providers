@@ -224,6 +224,14 @@ with the following properties:
   $resource internally).  If `select` is truthy, the new cart will be
   selected as the current default cart.
 
+* `findCart(parameters)`, a method that returns the cart who's value
+  is a subset of `parameters` and throws an `Error` if no match is
+  found.  For example:
+
+        carts.findCart({order: {drop: 5}})
+
+  will look for the first cart where `cart.order.drop === 5`.
+
 The `Cart` instances have the following properties:
 
 * `order`, the order object as returned by `AzureAPI.order.get(…)`.

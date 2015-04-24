@@ -672,6 +672,42 @@ var azureProvidersModule = angular
             }
         };
 
+        var objectSubset = function(a, b) {  /* Is 'a' a subset of 'b'? */
+            for (var key in a) {
+                var aVal = a[key];
+                if (!b.hasOwnProperty(key)) {
+                    return false;
+                }
+                var bVal = b[key];
+                if (typeof(aVal) === 'object') {
+                    if (typeof(bVal) === 'object') {
+                        return objectSubset(aVal, bVal);
+                    }
+                    return false;
+                } else if (typeof(bVal) === 'object') {
+                    return false;
+                }
+                return aVal === bVal;
+            }
+            return true;
+        };
+
+        Carts.prototype.findCart = function(parameters) {
+            var _this = this;
+            var match = null;
+            this.carts.some(function(cart) {
+                if (objectSubset(parameters, cart)) {
+                    match = cart;
+                    return true;
+                }
+            });
+            if (match) {
+                return match;
+            }
+            throw new Error(
+                'no match found for ' + JSON.stringify(parameters));
+        };
+
         return function(person_id) {
             if (!cart_sets.hasOwnProperty(person_id)) {
                 /* we don't have an existing instance */
