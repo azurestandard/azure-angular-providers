@@ -87,6 +87,8 @@
 									<tr>
 										<th>Product</th>
 										<th>Requested</th>
+										<th>+</th>
+										<th>-</th>
 										<th>Delete</td>
 									</tr>
 								</thead>
@@ -103,6 +105,18 @@
 												       ng-change="line.save()"
 												       min="0" step="1" required="" />
 											</form>
+										</td>
+										<td>
+											<a class="btn" ng-click="line.increment()"
+											   title="increment order-line {{line.id}}">
+												+
+											</a>
+										</td>
+										<td>
+											<a class="btn" ng-click="line.decrement()"
+											   title="decrement order-line {{line.id}}">
+												-
+											</a>
 										</td>
 										<td>
 											<a class="btn" ng-click="line.delete()"
