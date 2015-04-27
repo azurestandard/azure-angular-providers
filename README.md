@@ -261,6 +261,10 @@ The `OrderLine` instances have the following properties:
   customers shouldn't be setting (currently `price` and `weight`).
 * `delete`, a method wrapping `orderLine.$delete()` that also removes
   the line from the `orderLines` list on the associated `Cart`.
+* `increment`, a method that increases the ordered quantity by one.
+* `decrement`, a method that decreases the ordered quantity by one if
+  the ordered quantity was greater than one.  If the ordered quantity
+  was less than or equal to one, this is a no-op.
 * `cart`, the `Cart` that the order belongs to.
 
 Examples
