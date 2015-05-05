@@ -28,6 +28,7 @@ var azureProvidersModule = angular
             'product',
             'purchase-order',
             'route',
+            'stop',
             'trip',
         ];
         var _plurals = {
