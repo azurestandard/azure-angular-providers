@@ -33,6 +33,7 @@ Currently supported models:
 * product
 * purchase-order
 * route
+* route-stop
 * stop
 * trip
 

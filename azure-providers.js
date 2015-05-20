@@ -28,6 +28,7 @@ var azureProvidersModule = angular
             'product',
             'purchase-order',
             'route',
+            'route-stop',
             'stop',
             'trip',
         ];
