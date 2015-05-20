@@ -262,8 +262,15 @@
 							AzureAPI.login(
 								$scope.credentials.username,
 								$scope.credentials.password
-							).success(function(data) {
-								$rootScope.setupPerson(data);
+							).success(function(session) {
+								var person = AzureAPI.person.get({id: session.person});
+								person.$promise.then(function(person) {
+									$rootScope.setupPerson(person);
+								})
+								person.$promise.catch(function(error) {
+									$scope.warning = 'unable to get person ' + session.person;
+									$timeout(function() {$scope.warning = null;}, 5000);
+								})
 							}).error(function(data, status) {
 								$scope.warning = 'unable to authenticate';
 								$timeout(function() {$scope.warning = null;}, 5000);

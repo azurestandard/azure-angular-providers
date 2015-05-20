@@ -104,7 +104,7 @@ There's also:
 * `AzureAPI.session.get()` to get information about your existing
   session (e.g. whether it's anonymous or not).
 * `AzureAPI.login(username, password)` to start an authenticated
-  session.  It returns an [HttpPromise][].
+  session.  It returns an [HttpPromise][] for a session object.
 
 AzureCategory
 =============
