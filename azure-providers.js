@@ -64,17 +64,14 @@ var azureProvidersModule = angular
                     }
                 ),
                 login: function(username, password) {
-                    var headers = {
-                        'Authorization': 'Basic ' + window.btoa(
-                            username + ':' + password),
-                    };
-                    for (var header in _headers) {
-                        headers[header] = _headers[header];
-                    }
-                    return $http.get(
-                        url + '/person',
+                    return $http.post(
+                        url + '/login',
                         {
-                            headers: headers,
+                            'username': username,
+                            'password': password,
+                        },
+                        {
+                            headers: _headers,
                             withCredentials: true
                         }
                     );
