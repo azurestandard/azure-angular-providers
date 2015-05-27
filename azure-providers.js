@@ -76,6 +76,16 @@ var azureProvidersModule = angular
                         }
                     );
                 },
+                logout: function() {
+                    return $http.post(
+                        url + '/logout',
+                        {},
+                        {
+                            headers: _headers,
+                            withCredentials: true
+                        }
+                    );
+                },
             };
             var payload_headers = {};
             for (var header in _headers) {
