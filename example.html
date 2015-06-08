@@ -9,6 +9,7 @@
 
 		<div ng-if="session.person">
 			<p>Hello {{person.name}},</p>
+			<button ng-click="logout()">Logout</button>
 			<div ng-if="favorites.length">
 				<p>
 					You have {{favorites_count.count}} favorites. The first
@@ -209,6 +210,14 @@
 									$scope.favorites.push(new AzureProduct(packaged_product));
 								});
 							});
+						};
+						$scope.logout = function() {
+							AzureAPI.logout();
+							$scope.person = null;
+							$scope.session = null;
+							$scope.carts = null;
+							$scope.favorites_count = null;
+							$scope.favorites = null;
 						};
 						$scope.session = AzureAPI.session.get();
 						$scope.session.$promise.then(function(session) {
