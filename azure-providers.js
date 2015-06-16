@@ -180,6 +180,15 @@ var azureProvidersModule = angular
                         headers: _headers,
                     };
                 }
+                if (model === 'drop') {
+                    actions.locations = {
+                        method: 'GET',
+                        url: url + '/' + plural + '/locations',
+                        isArray: true,
+                        withCredentials: true,
+                        headers: _headers,
+                    };
+                }
                 resources[model] = $resource(
                     url + '/' + model + '/:' + identifier,
                     paramDefaults,

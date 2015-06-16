@@ -83,6 +83,11 @@ The packaged-product model supports the following actions:
 * removeCategory, which takes `code` and `categoryId` parameters to
   dissociate the packaged product with the given category.
 
+The drop model also supports the following action:
+
+* locations, which returns an array of all active drops with name and
+  location for map display.
+
 Count
 -----
 
