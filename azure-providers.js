@@ -88,6 +88,44 @@ var azureProvidersModule = angular
                         }
                     );
                 },
+                register: function(baseURL, person, address, telephone, drop) {
+                    return $http.post(
+                        url + '/registration/register',
+                        {
+                            'base-url': baseURL,
+                            person: person,
+                            address: address,
+                            telephone: telephone,
+                            drop: drop,
+                        },
+                        {
+                            headers: _headers,
+                        }
+                    );
+                },
+                activate: function(token) {
+                    return $http.post(
+                        url + '/registration/confirm',
+                        {
+                            token: token,
+                        },
+                        {
+                            headers: _headers,
+                        }
+                    );
+                },
+                resendConfirmationEmail: function(token, baseURL) {
+                    return $http.post(
+                        url + '/registration/resend',
+                        {
+                            token: token,
+                            'base-url': baseURL,
+                        },
+                        {
+                            headers: _headers,
+                        }
+                    );
+                }
             };
             var payload_headers = {};
             for (var header in _headers) {
