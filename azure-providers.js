@@ -20,6 +20,8 @@ var azureProvidersModule = angular
             'brand',
             'category',
             'drop',
+            'notification',
+            'notification-dismissal',
             'order',
             'order-line',
             'payment-method',
