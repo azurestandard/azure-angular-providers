@@ -537,12 +537,9 @@ var azureProvidersModule = angular
             return new Product(promise, code);
         };
     }])
-    .factory('AzureCarts', ['AzureAPI', 'AzureProduct', function AzureCartsFactory(AzureAPI, AzureProduct) {
-        var cart_sets = {};
-
-        var OrderLine = function(orderLine, cart) {
+    .factory('AzureOrderLine', ['AzureProduct', function AzureOrderLineFactory(AzureProduct) {
+        var OrderLine = function (orderLine) {
             this.orderLine = orderLine;
-            this.cart = cart;
             this._calculatePrice();
             this.product = AzureProduct({code: orderLine['packaged-product']});
         };
@@ -557,6 +554,121 @@ var azureProvidersModule = angular
                     this.orderLine['quantity-ordered'];
             }
         };
+
+        return OrderLine;
+    }])
+    .factory('AzureOrder', ['AzureAPI', 'AzureOrderLine', function AzureOrderFactory(AzureAPI, AzureOrderLine) {
+        var Order = function(order) {
+            this.order = order;
+            if (order.drop) {
+                this._drop();
+            }
+            if (order.trip) {
+                this._stop();
+            }
+            if (order['checkout-payment']) {
+                this._payment();
+            }
+            this._getOrderLines();
+            return this;
+        };
+
+        Order.prototype._newOrderLine = function(orderLine) {
+            return new AzureOrderLine(orderLine);
+        };
+
+        Order.prototype._drop = function() {
+            this.drop = AzureAPI.drop.get({
+                id: this.order.drop,
+                person: this.order.customer
+            });
+        };
+
+        Order.prototype._stop = function() {
+            this.stop = AzureAPI.stop.query({
+                trip: this.order.trip
+            });
+        };
+
+        Order.prototype._payment = function() {
+            this.payment = AzureAPI['payment-method'].get({
+                id: this.order['checkout-payment'].method
+            });
+        };
+
+        Order.prototype._calculateTotals = function() {
+            var _this = this;
+            this.price = 0;
+            this.weight = 0;
+            this.products = 0;
+            this.shipping = 0;
+            this.orderLines.forEach(function(line) {
+                _this.price += line.price;
+                _this.weight += line.orderLine.weight;
+                _this.products += line.orderLine['quantity-ordered'];
+            });
+        };
+
+        Order.prototype._calculateShipping = function() {
+            if (this.order['checkout-payment']) {
+                this.shipping = this.order['checkout-payment'].amount - this.price;
+            }
+        };
+
+        Order.prototype._getOrderLines = function() {
+            var _this = this;
+            this.orderLines = [];
+
+            AzureAPI['order-line'].query({
+                order: this.order.id,
+                limit: 250,
+            }).$promise.then(function(lines) {
+                lines.forEach(function(line) {
+                    _this.orderLines.push(_this._newOrderLine(line));
+                });
+                _this._calculateTotals();
+                _this._calculateShipping();
+            });
+        };
+
+        return Order;
+    }])
+    .factory('AzureOrders', ['AzureAPI', 'AzureOrder', function AzureOrdersFactory(AzureAPI, AzureOrder) {
+        var orderSets = {};
+
+        var Orders = function(personId) {
+            var _this = this;
+            this.orders = [];
+            var orders = AzureAPI.order.query({
+                person: personId,
+                limit: 250,
+            });
+            orders.$promise.then(function(orders) {
+                orders.forEach(function(order) {
+                    _this.orders.push(new AzureOrder(order));
+                });
+                // TODO: sort by (estimated) delivery date
+            });
+        };
+
+        return function(personId) {
+            if (!orderSets.hasOwnProperty(personId)) {
+                /* we don't have an existing instance */
+                orderSets[personId] = new Orders(personId);
+            }
+            return orderSets[personId];
+        };
+    }])
+    .factory('AzureCarts', ['AzureAPI', 'AzureOrder', 'AzureOrderLine', function AzureCartsFactory(AzureAPI, AzureOrder, AzureOrderLine) {
+        var cart_sets = {};
+
+        var OrderLine = function(orderLine, cart) {
+            AzureOrderLine.call(this, orderLine);
+            this.cart = cart;
+        };
+
+        OrderLine.prototype = Object.create(AzureOrderLine.prototype);
+        OrderLine.prototype.constructor = OrderLine;
 
         OrderLine.prototype.save = function() {
             var _this = this;
@@ -621,41 +733,14 @@ var azureProvidersModule = angular
         };
 
         var Cart = function(order) {
-            var _this = this;
-            this.order = order;
-            if (order.drop) {
-                this.drop = AzureAPI.drop.get({
-                    id: order.drop,
-                });
-            }
-            if (order.trip) {
-                this.trip = AzureAPI.trip.get({
-                    id: order.trip,
-                });
-            }
-            this.orderLines = [];
-            AzureAPI['order-line'].query({
-                order: order.id,
-                limit: 250,
-            }).$promise.then(function(lines) {
-                lines.forEach(function(orderLine) {
-                    var line = new OrderLine(orderLine, _this);
-                    _this.orderLines.push(line);
-                });
-                _this._calculateTotals();
-            });
+            AzureOrder.call(this, order);
         };
 
-        Cart.prototype._calculateTotals = function() {
-            var _this = this;
-            this.price = 0;
-            this.weight = 0;
-            this.products = 0;
-            this.orderLines.forEach(function(line) {
-                _this.price += line.price;
-                _this.weight += line.orderLine.weight;
-                _this.products += line.orderLine['quantity-ordered'];
-            });
+        Cart.prototype = Object.create(AzureOrder.prototype);
+        Cart.prototype.constructor = Cart;
+
+        Cart.prototype._newOrderLine = function (orderLine) {
+            return new OrderLine(orderLine, this);
         };
 
         Cart.prototype.addLine = function(productCode, quantityOrdered) {
@@ -666,7 +751,7 @@ var azureProvidersModule = angular
               'quantity-ordered': quantityOrdered,
             });
             resource.$promise.then(function(orderLine) {
-                var line = new OrderLine(orderLine, _this);
+                var line = _this._newOrderLine(orderLine);
                 _this.orderLines.push(line);
                 _this._calculateTotals();
                 return orderLine;

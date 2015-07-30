@@ -123,7 +123,7 @@ hierarchy.  Calling:
 
     AzureCategory(category_id)
 
-will return a *new* `Category` instance with the following properties:
+will return an `Category` instance with the following properties:
 
 * `ancestors`, an array of category objects starting with the leaf
   category and working down to the root category.
@@ -168,7 +168,7 @@ packaging (e.g. “2.7 ozs.” and “12 x 2.7 ozs.”).  Calling:
 
     AzureProduct(product_id)
 
-will return a *new* `Product` instance with the following properties:
+will return an `Product` instance with the following properties:
 
 * `product`, the data for the project as returned from the API.
 * `packaging`, an array of `PackagedProduct` instances with the
@@ -212,6 +212,65 @@ can also use:
 
   to ensure your packaged product is included in the query results.
 
+AzureOrderLine
+==============
+
+Use the `AzureOrderLine` factory to wrap an order-line resource
+with additional properties. Calling:
+
+    new AzureOrderLine(orderLine)
+
+will return an `OrderLine` instance with the following properties:
+
+* `orderLine`, the order-line object as returned by
+  `AzureAPI['order-line'].get(…)`.
+* `price`, the total current price for the line in dollars.
+* `product`, the `Product` instance associated with the line
+  (`product` is just the product's code).  See `AzureProduct` for
+  details on this class.
+
+AzureOrder
+==========
+
+Use the `AzureOrder` factory to wrap an order resource with
+additional properties. Calling:
+
+    new AzureOrder(order)
+
+will return an `Order` instance with the following properties:
+
+* `order`, the order object as returned by `AzureAPI.order.get(…)`.
+* `orderLines`, an array of `OrderLine` instances wrapping order-line
+  $resources with the requested products, quantities, prices, ….
+* `price`, the total price of all order-lines.
+* `products`, a count of all the products on the order.
+* `shipping`, the shipping amount in dollars.
+* `weight`, the total weight of all products on the order.
+
+For orders that have been placed, the `Order` instance will have
+the additional property:
+
+* `payment`, the payment the customer used for the order.
+
+For orders scheduled for delivery by a trip, the `Order` instance will
+have the additional properties:
+
+* `drop`, the drop to which the customer wants the order delivered.
+* `stop`, the stop on which the customer's order will be delivered.
+
+AzureOrders
+===========
+
+Use the `AzureOrders` factory to create an `Orders` instance. Calling:
+
+    AzureOrders(person_id)
+
+will return a reference to that person's `Orders` instance
+with the following properties:
+
+* 'orders', an array of `Order` instances, past and present.
+  See `AzureOrder` for details on the `Order` class.
+
 AzureCarts
 ==========
 
@@ -234,7 +293,6 @@ with the following properties:
   $resource (in which case `createCart` will create the order
   $resource internally).  If `select` is truthy, the new cart will be
   selected as the current default cart.
-
 * `findCart(parameters)`, a method that returns the cart who's value
   is a subset of `parameters` and throws an `Error` if no match is
   found.  For example:
@@ -243,31 +301,15 @@ with the following properties:
 
   will look for the first cart where `cart.order.drop === 5`.
 
-The `Cart` instances have the following properties:
+The `Cart` instance subclasses `AzureOrder` and has the additional
+property:
 
-* `order`, the order object as returned by `AzureAPI.order.get(…)`.
-* `orderLines`, an array of `OrderLine` instances wrapping order-line
-  $resources with the requested products, quantities, prices, ….
 * `addLine(product_code, quantity_ordered)`, a method to add an
   order-line to the order and update the associated state.
-* `price`, the total current price of the order.
-* `weight`, the total weight of all products on the order.
-* `products`, a count of all the products on the order.
 
-For orders scheduled for delivery by a trip, the `Cart` instance will
-have the additional properties:
+The `OrderLine` instances subclass `AzureOrderLine` and have the
+additional properties:
 
-* `drop`, the drop to which the customer wants the order delivered.
-* `trip`, the trip on which the customer wants the order delivered.
-
-The `OrderLine` instances have the following properties:
-
-* `orderLine`, the order-line object as returned by
-  `AzureAPI['order-line'].get(…)`.
-* `price`, the total current price for the line in dollars.
-* `product`, the `Product` instance associated with the line
-  (`product` is just the product's code).  See `AzureProduct` for
-  details on this class.
 * `save`, a method wrapping `orderLine.$save()` that clears fields
   customers shouldn't be setting (currently `price` and `weight`).
 * `delete`, a method wrapping `orderLine.$delete()` that also removes
