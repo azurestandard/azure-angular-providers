@@ -532,7 +532,6 @@ var azureProvidersModule = angular
         var cart_sets = {};
 
         var OrderLine = function(orderLine, cart) {
-            this.console = console;
             this.orderLine = orderLine;
             this.cart = cart;
             this._calculatePrice();
