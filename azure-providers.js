@@ -635,15 +635,30 @@ var azureProvidersModule = angular
         };
 
         Order.prototype._calculateTotals = function() {
-            var _this = this;
+            var _this, totalQuantityOrdered, totalQuantityShipped;
+            _this = this;
             this.price = 0;
             this.weight = 0;
             this.products = 0;
             this.shipping = 0;
+            totalQuantityOrdered = {};
+            totalQuantityShipped = {};
             this.orderLines.forEach(function(line) {
                 _this.price += line.price;
                 _this.weight += line.orderLine.weight;
                 _this.products += line.orderLine['quantity-ordered'];
+                var code = line.orderLine['packaged-product'];
+                totalQuantityOrdered[code] = (
+                    totalQuantityOrdered[code] || 0) +
+                    line.orderLine['quantity-ordered'];
+                totalQuantityShipped[code] = (
+                    totalQuantityShipped[code] || 0) +
+                    line.orderLine['quantity-shipped'];
+            });
+            this.orderLines.forEach(function(line) {
+                var code = line.orderLine['packaged-product'];
+                line['total-quantity-ordered'] = totalQuantityOrdered[code];
+                line['total-quantity-shipped'] = totalQuantityShipped[code];
             });
         };
 

@@ -268,6 +268,14 @@ have the additional properties:
 * `drop`, the drop to which the customer wants the order delivered.
 * `stop`, the stop on which the customer's order will be delivered.
 
+The `AzureOrder` factory also adds the following properties to each
+`OrderLine` instance:
+
+* `total-quantity-ordered`, the sum of `quantity-ordered` across
+  all order-lines of the same `packaged-product`.
+* `total-quantity-shipped`, the sum of `quantity-shipped` across
+  all order-lines of the same `packaged-product`.
+
 AzureOrders
 ===========
 
