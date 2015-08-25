@@ -25,70 +25,74 @@ var azureProvidersModule = angular
         // This is the factory that is returned.
         this.$get = ['$http', '$resource', 'AzureModelIdentifiers', function AzureAPIFactory($http, $resource, AzureModelIdentifiers) {
 
+            // ################################################################
+            // References and Common Functions:
+            // ################################################################
 
-            // references and workers:
+            // Custom pluralizations. Used by the pluralize() function.
             var _plurals = {
                 'account-entry': 'account-entries',
                 'address': 'addresses',
                 'category': 'categories',
                 'person': 'people',
             };
+            function pluralize(word) {
+                return _plurals[word] || word + 's';
+            }
 
+            // HTTP Headers to be added to api calls.
             var _headers = {
                 'Accept': 'application/json',
             };
 
+            // HTTP Headers to be added to api calls that include sent data, i.e. POST, PUT, etc.
             var _payload_headers = {
                 'Content-Type': 'application/json; charset=UTF-8',
             };
 
+            // combines _headers and _payload_headers. Use this to include both sets of headers in the api call.
             var payload_headers = angular.extend({}, _headers, _payload_headers);
 
+            // common configuration for angular $http calls.
             var http_config = {
                 headers: _headers,
                 withCredentials: true
             };
 
-            function pluralize(word) {
-                return _plurals[word] || word + 's';
-            }
-
+            // returns the name of the identifier attribute for the given api name.
             function get_identifier(model) {
                 return AzureModelIdentifiers[model] || 'id';
             }
 
+            // The common 'get' action for angular $resource objects
+            // AzureAPI.<model>.get({id: ###})
             var get_action = {
                 method: 'GET',
                 withCredentials: true,
                 headers: _headers,
             };
 
+            // The common 'save' action for angular $resource objects
+            // AzureAPI.<model>.save({data: altered_object})
             var save_action = {
                 method: 'PUT',
                 withCredentials: true,
                 headers: payload_headers,
             };
 
+            // The common 'delete' action for angular $resource objects
+            // AzureAPI.<model>.delete({id: ###})
             var delete_action = {
                 method: 'DELETE',
                 withCredentials: true,
                 headers: _headers,
             };
 
-            function resource_defaults(model){
-                var identifier = get_identifier(model);
-                var model_url = url + '/' + model + '/:' + identifier;
-
-                return {
-                    url: url + '/' + model + '/:' + identifier,
-                    params: { identifier: '@' + identifier },
-                    actions: default_actions(model),
-                };
-            }
-
+            // The common actions that are attached to most $resource objects.
             function default_actions(model){
                 var plural = pluralize(model);
 
+                // AzureAPI.<model>.query({id: ###})
                 var query_action = {
                     method: 'GET',
                     url: url + '/' + plural,
@@ -97,6 +101,7 @@ var azureProvidersModule = angular
                     headers: _headers,
                 };
 
+                // AzureAPI.<model>.count()
                 var count_action = {
                     method: 'HEAD',
                     url: url + '/' + plural,
@@ -114,6 +119,7 @@ var azureProvidersModule = angular
                     },
                 };
 
+                // AzureAPI.<model>.create({data: new_object})
                 var create_action = {
                     method: 'POST',
                     url: url + '/' + plural,
@@ -131,13 +137,16 @@ var azureProvidersModule = angular
                 };
             }
 
+            // Mail actions that can be attached to an angular $resource
             function mail_actions(model){
+                // AzureAPI.<model>.mail({id: ###})
                 var mail = {
                     method: 'POST',
                     url: url + '/mail/' + model + '/:' + get_identifier(model),
                     withCredentials: true,
                     headers: payload_headers,
                 };
+                // AzureAPI.<model>.mails({id: ###})
                 var mails = {
                     method: 'POST',
                     url: url + '/mail/' + pluralize(model),
@@ -151,7 +160,29 @@ var azureProvidersModule = angular
                 };
             };
 
-            // These return an angular $http object
+            // Takes a model name and returns the url, default parameters, and default actions to be used in an angular $resource object
+            function resource_defaults(model){
+                var identifier = get_identifier(model);
+                var model_url = url + '/' + model + '/:' + identifier;
+
+                return {
+                    url: url + '/' + model + '/:' + identifier,
+                    params: { identifier: '@' + identifier },
+                    actions: default_actions(model),
+                };
+            }
+
+
+            // ################################################################
+            // Methods called by the user directly on the AzureAPI object
+            //
+            // Do not invoke these functions when assigning them as an
+            // attribute of the return object. Only assign the name of the
+            // function to the attribute.
+            // ################################################################
+
+            // AzureAPI.login('username', 'password');
+            // Returns an angular $http object.
             function login_resource(username, password) {
                 var credentials = {
                     'username': username,
@@ -160,10 +191,14 @@ var azureProvidersModule = angular
                 return $http.post(url + '/login', credentials, http_config);
             };
 
+            // AzureAPI.logout();
+            // Returns an angular $http object.
             function logout_resource() {
                 return $http.post(url + '/logout', {}, http_config);
             }
 
+            // AzureAPI.register(...);
+            // Returns an angular $http object.
             function register_resource(baseURL, person, address, telephone, drop) {
                 // I think that the prameters should be passed as one object.
                 // That way the developer can refer to the api-spec for the proper data formatting
@@ -179,11 +214,15 @@ var azureProvidersModule = angular
                 return $http.post(url + '/registration/register', data, config );
             }
 
+            // AzureAPI.activate('token');
+            // Returns an angular $http object.
             function activate_resource(token) {
                 var config = { headers: _headers };
                 return $http.post(url + '/registration/confirm', { token: token }, config);
             };
 
+            // AzureAPI.resendConfirmationEmail('token', 'baseURL');
+            // Returns an angular $http object.
             function resend_confirmation_resource(token, baseURL) {
                 var data = {
                     token: token,
@@ -193,34 +232,57 @@ var azureProvidersModule = angular
                 return $http.post(url + '/registration/resend', data, config);
             }
 
-            // these return an angular $resource object
+
+            // ################################################################
+            // Functions that return an angular $resource object to be used as
+            // a property of AzureAPI.
+            //
+            // When using these functions to assign a $resource to an attribute
+            // of the return object below, these functions should be invoked so
+            // as to assign the $resource object that is returned by the function
+            // rather than these functions themselves.
+            // ################################################################
+
+            // Returns $resource for /api/session
+            // AzureAPI.session.<action>({...});
             function build_session_resource(){
                 return $resource(url + '/session', {}, {get: get_action});
             }
 
+            // Returns $resource for /api/account-entry
+            // AzureAPI['account-entry'].<action>({...}); (must use bracket notation due to hyphen in key name)
             function build_account_entry_resource(){
                 var data = resource_defaults('account-entry');
                 return $resource(data.url, data.params, data.actions);
             }
 
+            // Returns $resource for /api/address
+            // AzureAPI.address.<action>({...});
             function build_address_resource(){
                 var data = resource_defaults('address');
                 return $resource(data.url, data.params, data.actions);
             }
 
+            // Returns $resource for /api/brand
+            // AzureAPI.brand.<action>({...});
             function build_brand_resource(){
                 var data = resource_defaults('brand');
                 return $resource(data.url, data.params, data.actions);
             }
 
+            // Returns $resource for /api/category
+            // AzureAPI.category.<action>({...});
             function build_category_resource(){
                 var data = resource_defaults('category');
                 return $resource(data.url, data.params, data.actions);
             }
 
+            // Returns $resource for /api/drop
+            // AzureAPI.drop.<action>({...});
             function build_drop_resource(){
                 var data = resource_defaults('drop');
 
+                // add the /api/drops/locations endpoint
                 data.actions.locations = {
                     method: 'GET',
                     url: url + '/' + pluralize('drop') + '/locations',
@@ -232,37 +294,51 @@ var azureProvidersModule = angular
                 return $resource(data.url, data.params, data.actions);
             }
 
+            // Returns $resource for /api/notification
+            // AzureAPI.notification.<action>({...});
             function build_notification_resource(){
                 var data = resource_defaults('notification');
                 return $resource(data.url, data.params, data.actions);
             }
 
+            // Returns $resource for /api/notification-dismissal
+            // AzureAPI['notification-dismissal'].<action>({...}); (must use bracket notation due to hyphen in key name)
             function build_notification_dismissal_resource(){
                 var data = resource_defaults('notification-dismissal');
                 return $resource(data.url, data.params, data.actions);
             }
 
+            // Returns $resource for /api/order
+            // AzureAPI.order.<action>({...});
             function build_order_resource(){
                 var data = resource_defaults('order');
                 return $resource(data.url, data.params, data.actions);
             }
 
+            // Returns $resource for /api/order-line
+            // AzureAPI['order-line'].<action>({...}); (must use bracket notation due to hyphen in key name)
             function build_order_line_resource(){
                 var data = resource_defaults('order-line');
                 return $resource(data.url, data.params, data.actions);
             }
 
+            // Returns $resource for /api/payment-method
+            // AzureAPI['payment-method'].<action>({...}); (must use bracket notation due to hyphen in key name)
             function build_payment_method_resource(){
                 var data = resource_defaults('payment-method');
                 return $resource(data.url, data.params, data.actions);
             }
 
+            // Returns $resource for /api/packaged-product
+            // AzureAPI['packaged-product'].<action>({...}); (must use bracket notation due to hyphen in key name)
             function build_packaged_product_resource(){
                 var data = resource_defaults('packaged-product');
 
+                // add the /api/packaged-product/:code/category endpoints
                 var categoryUrl = url + '/packaged-product/:' + get_identifier('packaged-product') +
                     '/category/:categoryId';
                 var params = {'categoryId': '@categoryId'};
+                // AzureAPI['packaged-product'].addCategory({...})
                 data.actions.addCategory = {
                     method: 'POST',
                     url: categoryUrl,
@@ -270,6 +346,7 @@ var azureProvidersModule = angular
                     withCredentials: true,
                     headers: _headers,
                 };
+                // AzureAPI['packaged-product'].removeCategory({...})
                 data.actions.removeCategory = {
                     method: 'DELETE',
                     url: categoryUrl,
@@ -281,40 +358,57 @@ var azureProvidersModule = angular
                 return $resource(data.url, data.params, data.actions);
             }
 
+            // Returns $resource for /api/person
+            // AzureAPI.person.<action>({...});
             function build_person_resource(){
                 var data = resource_defaults('person');
+                // include the mail actions
                 angular.extend(data.actions, mail_actions('trip'));
                 return $resource(data.url, data.params, data.actions);
             }
 
+            // Returns $resource for /api/product
+            // AzureAPI.product.<action>({...});
             function build_product_resource(){
                 var data = resource_defaults('product');
                 return $resource(data.url, data.params, data.actions);
             }
 
+            // Returns $resource for /api/purchase-order
+            // AzureAPI['purchase-order'].<action>({...}); (must use bracket notation due to hyphen in key name)
             function build_purchase_order_resource(){
                 var data = resource_defaults('purchase-order');
                 return $resource(data.url, data.params, data.actions);
             }
 
+            // Returns $resource for /api/route
+            // AzureAPI.route.<action>({...});
             function build_route_resource(){
                 var data = resource_defaults('route');
+                // include the mail actions
                 angular.extend(data.actions, mail_actions('trip'));
                 return $resource(data.url, data.params, data.actions);
             }
 
+            // Returns $resource for /api/route-stop
+            // AzureAPI['route-stop'].<action>({...}); (must use bracket notation due to hyphen in key name)
             function build_route_stop_resource(){
                 var data = resource_defaults('route-stop');
                 return $resource(data.url, data.params, data.actions);
             }
 
+            // Returns $resource for /api/stop
+            // AzureAPI.stop.<action>({...});
             function build_stop_resource(){
                 var data = resource_defaults('notification');
                 return $resource(data.url, data.params, data.actions);
             }
 
+            // Returns $resource for /api/trip
+            // AzureAPI.trip.<action>({...});
             function build_trip_resource(){
                 var data = resource_defaults('trip');
+                // include the mail actions
                 angular.extend(data.actions, mail_actions('trip'));
                 return $resource(data.url, data.params, data.actions);
             }
