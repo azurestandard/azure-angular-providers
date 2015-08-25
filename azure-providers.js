@@ -14,226 +14,338 @@ var azureProvidersModule = angular
         route: 'name',
     })
     .provider('AzureAPI', function AzureAPIProvider() {
-        var _models = [
-            'account-entry',
-            'address',
-            'brand',
-            'category',
-            'drop',
-            'notification',
-            'notification-dismissal',
-            'order',
-            'order-line',
-            'payment-method',
-            'packaged-product',
-            'person',
-            'product',
-            'purchase-order',
-            'route',
-            'route-stop',
-            'stop',
-            'trip',
-        ];
-        var _plurals = {
-            'account-entry': 'account-entries',
-            'address': 'addresses',
-            'category': 'categories',
-            'person': 'people',
-        };
-        var _headers = {
-            'Accept': 'application/json',
-        };
-        var _payload_headers = {
-            'Content-Type': 'application/json; charset=UTF-8',
-        };
+
         var url = 'https://api.azurestandard.com';
 
+        // allows the url to be set in tha app config
         this.url = function(value) {
             url = value;
         };
 
+        // This is the factory that is returned.
         this.$get = ['$http', '$resource', 'AzureModelIdentifiers', function AzureAPIFactory($http, $resource, AzureModelIdentifiers) {
-            var resources = {
-                session: $resource(
-                    url + '/session',
-                    {},
-                    {
-                        get: {
-                            method: 'GET',
-                            withCredentials: true,
-                            headers: _headers,
-                        }
-                    }
-                ),
-                login: function(username, password) {
-                    return $http.post(
-                        url + '/login',
-                        {
-                            'username': username,
-                            'password': password,
-                        },
-                        {
-                            headers: _headers,
-                            withCredentials: true
-                        }
-                    );
-                },
-                logout: function() {
-                    return $http.post(
-                        url + '/logout',
-                        {},
-                        {
-                            headers: _headers,
-                            withCredentials: true
-                        }
-                    );
-                },
-                register: function(baseURL, person, address, telephone, drop) {
-                    return $http.post(
-                        url + '/registration/register',
-                        {
-                            'base-url': baseURL,
-                            person: person,
-                            address: address,
-                            telephone: telephone,
-                            drop: drop,
-                        },
-                        {
-                            headers: _headers,
-                        }
-                    );
-                },
-                activate: function(token) {
-                    return $http.post(
-                        url + '/registration/confirm',
-                        {
-                            token: token,
-                        },
-                        {
-                            headers: _headers,
-                        }
-                    );
-                },
-                resendConfirmationEmail: function(token, baseURL) {
-                    return $http.post(
-                        url + '/registration/resend',
-                        {
-                            token: token,
-                            'base-url': baseURL,
-                        },
-                        {
-                            headers: _headers,
-                        }
-                    );
-                }
+
+
+            // references and workers:
+            var _plurals = {
+                'account-entry': 'account-entries',
+                'address': 'addresses',
+                'category': 'categories',
+                'person': 'people',
             };
-            var payload_headers = {};
-            for (var header in _headers) {
-                payload_headers[header] = _headers[header];
+
+            var _headers = {
+                'Accept': 'application/json',
+            };
+
+            var _payload_headers = {
+                'Content-Type': 'application/json; charset=UTF-8',
+            };
+
+            var payload_headers = angular.extend({}, _headers, _payload_headers);
+
+            var http_config = {
+                headers: _headers,
+                withCredentials: true
+            };
+
+            function pluralize(word) {
+                return _plurals[word] || word + 's';
             }
-            for (var header in _payload_headers) {
-                payload_headers[header] = _payload_headers[header];
+
+            function get_identifier(model) {
+                return AzureModelIdentifiers[model] || 'id';
             }
-            _models.forEach(function(model) {
-                var plural = _plurals[model] || model + 's';
-                var identifier = AzureModelIdentifiers[model] || 'id';
-                var paramDefaults = {};
-                paramDefaults[identifier] = '@' + identifier;
-                var actions = {
-                    query: {
-                        method: 'GET',
-                        url: url + '/' + plural,
-                        isArray: true,
-                        withCredentials: true,
-                        headers: _headers,
+
+            var get_action = {
+                method: 'GET',
+                withCredentials: true,
+                headers: _headers,
+            };
+
+            var save_action = {
+                method: 'PUT',
+                withCredentials: true,
+                headers: payload_headers,
+            };
+
+            var delete_action = {
+                method: 'DELETE',
+                withCredentials: true,
+                headers: _headers,
+            };
+
+            function resource_defaults(model){
+                var identifier = get_identifier(model);
+                var model_url = url + '/' + model + '/:' + identifier;
+
+                return {
+                    url: url + '/' + model + '/:' + identifier,
+                    params: { identifier: '@' + identifier },
+                    actions: default_actions(model),
+                };
+            }
+
+            function default_actions(model){
+                var plural = pluralize(model);
+
+                var query_action = {
+                    method: 'GET',
+                    url: url + '/' + plural,
+                    isArray: true,
+                    withCredentials: true,
+                    headers: _headers,
+                };
+
+                var count_action = {
+                    method: 'HEAD',
+                    url: url + '/' + plural,
+                    params: {
+                        limit: 0,
                     },
-                    count: {
-                        method: 'HEAD',
-                        url: url + '/' + plural,
-                        params: {
-                            limit: 0,
+                    withCredentials: true,
+                    headers: _headers,
+                    interceptor: {
+                        response: function(response) {
+                            response.resource.count = parseInt(
+                                response.headers('Count'));
+                            return response;
                         },
-                        withCredentials: true,
-                        headers: _headers,
-                        interceptor: {
-                            response: function(response) {
-                                response.resource.count = parseInt(
-                                    response.headers('Count'));
-                                return response;
-                            },
-                        },
-                    },
-                    create: {
-                        method: 'POST',
-                        url: url + '/' + plural,
-                        withCredentials: true,
-                        headers: payload_headers,
-                    },
-                    get: {
-                        method: 'GET',
-                        withCredentials: true,
-                        headers: _headers,
-                    },
-                    save: {
-                        method: 'PUT',
-                        withCredentials: true,
-                        headers: payload_headers,
-                    },
-                    'delete': {
-                        method: 'DELETE',
-                        withCredentials: true,
-                        headers: _headers,
                     },
                 };
-                if (['person', 'route', 'trip'].indexOf(model) !== -1) {
-                    actions.mail = {
-                        method: 'POST',
-                        url: url + '/mail/' + model + '/:' + identifier,
-                        withCredentials: true,
-                        headers: payload_headers,
-                    };
-                    actions.mails = {
-                        method: 'POST',
-                        url: url + '/mail/' + plural,
-                        withCredentials: true,
-                        headers: payload_headers,
-                    };
-                }
-                if (model === 'packaged-product') {
-                    var categoryUrl = url + '/' + model + '/:' + identifier +
-                        '/category/:categoryId';
-                    var params = {'categoryId': '@categoryId'};
-                    actions.addCategory = {
-                        method: 'POST',
-                        url: categoryUrl,
-                        params: params,
-                        withCredentials: true,
-                        headers: _headers,
-                    };
-                    actions.removeCategory = {
-                        method: 'DELETE',
-                        url: categoryUrl,
-                        params: params,
-                        withCredentials: true,
-                        headers: _headers,
-                    };
-                }
-                if (model === 'drop') {
-                    actions.locations = {
-                        method: 'GET',
-                        url: url + '/' + plural + '/locations',
-                        isArray: true,
-                        withCredentials: true,
-                        headers: _headers,
-                    };
-                }
-                resources[model] = $resource(
-                    url + '/' + model + '/:' + identifier,
-                    paramDefaults,
-                    actions
-                );
-            });
-            return resources;
+
+                var create_action = {
+                    method: 'POST',
+                    url: url + '/' + plural,
+                    withCredentials: true,
+                    headers: payload_headers,
+                };
+
+                return {
+                    'query': query_action,
+                    'count': count_action,
+                    'create': create_action,
+                    'get': get_action,
+                    'save': save_action,
+                    'delete': delete_action,
+                };
+            }
+
+            function mail_actions(model){
+                var mail = {
+                    method: 'POST',
+                    url: url + '/mail/' + model + '/:' + get_identifier(model),
+                    withCredentials: true,
+                    headers: payload_headers,
+                };
+                var mails = {
+                    method: 'POST',
+                    url: url + '/mail/' + pluralize(model),
+                    withCredentials: true,
+                    headers: payload_headers,
+                };
+
+                return {
+                    mail: mail,
+                    mails: mails
+                };
+            };
+
+            // These return an angular $http object
+            function login_resource(username, password) {
+                var credentials = {
+                    'username': username,
+                    'password': password,
+                };
+                return $http.post(url + '/login', credentials, http_config);
+            };
+
+            function logout_resource() {
+                return $http.post(url + '/logout', {}, http_config);
+            }
+
+            function register_resource(baseURL, person, address, telephone, drop) {
+                // I think that the prameters should be passed as one object.
+                // That way the developer can refer to the api-spec for the proper data formatting
+                // without whaving to check the order of the parameters in this function.
+                var data = {
+                    'base-url': baseURL,
+                    'person': person,
+                    'address': address,
+                    'telephone': telephone,
+                    'drop': drop,
+                },
+                var config = { headers: _headers };
+                return $http.post(url + '/registration/register', data, config );
+            }
+
+            function activate_resource(token) {
+                var config = { headers: _headers };
+                return $http.post(url + '/registration/confirm', { token: token }, config);
+            };
+
+            function resend_confirmation_resource(token, baseURL) {
+                var data = {
+                    token: token,
+                    'base-url': baseURL,
+                };
+                var config = { headers: _headers };
+                return $http.post(url + '/registration/resend', data, config);
+            }
+
+            // these return an angular $resource object
+            function build_session_resource(){
+                return $resource(url + '/session', {}, {get: get_action});
+            }
+
+            function build_account_entry_resource(){
+                var data = resource_defaults('account-entry');
+                return $resource(data.url, data.params, data.actions);
+            }
+
+            function build_address_resource(){
+                var data = resource_defaults('address');
+                return $resource(data.url, data.params, data.actions);
+            }
+
+            function build_brand_resource(){
+                var data = resource_defaults('brand');
+                return $resource(data.url, data.params, data.actions);
+            }
+
+            function build_category_resource(){
+                var data = resource_defaults('category');
+                return $resource(data.url, data.params, data.actions);
+            }
+
+            function build_drop_resource(){
+                var data = resource_defaults('drop');
+
+                data.actions.locations = {
+                    method: 'GET',
+                    url: url + '/' + pluralize('drop') + '/locations',
+                    isArray: true,
+                    withCredentials: true,
+                    headers: _headers,
+                };
+
+                return $resource(data.url, data.params, data.actions);
+            }
+
+            function build_notification_resource(){
+                var data = resource_defaults('notification');
+                return $resource(data.url, data.params, data.actions);
+            }
+
+            function build_notification_dismissal_resource(){
+                var data = resource_defaults('notification-dismissal');
+                return $resource(data.url, data.params, data.actions);
+            }
+
+            function build_order_resource(){
+                var data = resource_defaults('order');
+                return $resource(data.url, data.params, data.actions);
+            }
+
+            function build_order_line_resource(){
+                var data = resource_defaults('order-line');
+                return $resource(data.url, data.params, data.actions);
+            }
+
+            function build_payment_method_resource(){
+                var data = resource_defaults('payment-method');
+                return $resource(data.url, data.params, data.actions);
+            }
+
+            function build_packaged_product_resource(){
+                var data = resource_defaults('packaged-product');
+
+                var categoryUrl = url + '/packaged-product/:' + get_identifier('packaged-product') +
+                    '/category/:categoryId';
+                var params = {'categoryId': '@categoryId'};
+                data.actions.addCategory = {
+                    method: 'POST',
+                    url: categoryUrl,
+                    params: params,
+                    withCredentials: true,
+                    headers: _headers,
+                };
+                data.actions.removeCategory = {
+                    method: 'DELETE',
+                    url: categoryUrl,
+                    params: params,
+                    withCredentials: true,
+                    headers: _headers,
+                };
+
+                return $resource(data.url, data.params, data.actions);
+            }
+
+            function build_person_resource(){
+                var data = resource_defaults('person');
+                angular.extend(data.actions, mail_actions('trip'));
+                return $resource(data.url, data.params, data.actions);
+            }
+
+            function build_product_resource(){
+                var data = resource_defaults('product');
+                return $resource(data.url, data.params, data.actions);
+            }
+
+            function build_purchase_order_resource(){
+                var data = resource_defaults('purchase-order');
+                return $resource(data.url, data.params, data.actions);
+            }
+
+            function build_route_resource(){
+                var data = resource_defaults('route');
+                angular.extend(data.actions, mail_actions('trip'));
+                return $resource(data.url, data.params, data.actions);
+            }
+
+            function build_route_stop_resource(){
+                var data = resource_defaults('route-stop');
+                return $resource(data.url, data.params, data.actions);
+            }
+
+            function build_stop_resource(){
+                var data = resource_defaults('notification');
+                return $resource(data.url, data.params, data.actions);
+            }
+
+            function build_trip_resource(){
+                var data = resource_defaults('trip');
+                angular.extend(data.actions, mail_actions('trip'));
+                return $resource(data.url, data.params, data.actions);
+            }
+
+            return {
+                'login': login_resource,
+                'logout': logout_resource,
+                'register': register_resource,
+                'activate': activate_resource,
+                'resendConfirmationEmail': resend_confirmation_resource,
+                'session': build_session_resource(),
+                'account-entry': build_account_entry_resource(),
+                'address': build_address_resource(),
+                'brand': build_brand_resource(),
+                'category': build_category_resource(),
+                'drop': build_drop_resource(),
+                'notification': build_notification_resource(),
+                'notification-dismissal': build_notification_dismissal_resource(),
+                'order': build_order_resource(),
+                'order-line': build_order_line_resource(),
+                'payment-method': build_payment_method_resource(),
+                'packaged-product': build_packaged_product_resource(),
+                'person': build_person_resource(),
+                'product': build_product_resource(),
+                'purchase-order': build_purchase_order_resource(),
+                'route': build_route_resource(),
+                'route-stop': build_route_stop_resource(),
+                'stop': build_stop_resource(),
+                'trip': build_trip_resource(),
+            };
+
         }]
     })
     .factory('AzureObjectPromiseCache', ['$q', 'AzureAPI', 'AzureModelIdentifiers', function AzureObjectPromiseCacheFactory($q, AzureAPI, AzureModelIdentifiers) {
