@@ -8,7 +8,7 @@
  */
 
 var azureProvidersModule = angular
-    .module('azureProviders', ['ngResource'])
+    .module('azureProviders', ['ngResource', 'algoliasearch'])
     .constant('AzureModelIdentifiers', {
         'packaged-product': 'code',
         route: 'name',
@@ -16,18 +16,33 @@ var azureProvidersModule = angular
     .provider('AzureAPI', function AzureAPIProvider() {
 
         var url = 'https://api.azurestandard.com';
+        var app_id = ''; // the algolia application id. required to be set in the app config.
+        var api_key = ''; // the algolia api key. required to be set in the app config.
 
         // allows the url to be set in tha app config
         this.url = function(value) {
             url = value;
         };
 
+        // allows the algolia applicaion_id to be set in the app config
+        this.algolia_application_id = function(val) {
+            app_id = val;
+        };
+
+        // allows the algolia api_key to be set in the app config
+        this.algolia_api_key = function(val) {
+            api_key = val;
+        }
+
         // This is the factory that is returned.
-        this.$get = ['$http', '$resource', 'AzureModelIdentifiers', function AzureAPIFactory($http, $resource, AzureModelIdentifiers) {
+        this.$get = ['$http', '$resource', 'AzureModelIdentifiers', 'algolia', function AzureAPIFactory($http, $resource, AzureModelIdentifiers, algolia) {
 
             // ################################################################
             // References and Common Functions:
             // ################################################################
+
+            // create an algolia search client
+            var algolia_client = algolia.Client(app_id, api_key);
 
             // Custom pluralizations. Used by the pluralize() function.
             var _plurals = {
@@ -209,7 +224,7 @@ var azureProvidersModule = angular
                     'address': address,
                     'telephone': telephone,
                     'drop': drop,
-                },
+                };
                 var config = { headers: _headers };
                 return $http.post(url + '/registration/register', data, config );
             }
@@ -371,7 +386,12 @@ var azureProvidersModule = angular
             // AzureAPI.product.<action>({...});
             function build_product_resource(){
                 var data = resource_defaults('product');
-                return $resource(data.url, data.params, data.actions);
+
+                var rtn = $resource(data.url, data.params, data.actions);
+                var index = algolia_client.initIndex('products');
+                rtn.index = index;
+
+                return rtn;
             }
 
             // Returns $resource for /api/purchase-order
