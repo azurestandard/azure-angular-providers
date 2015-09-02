@@ -489,13 +489,21 @@ var azureProvidersModule = angular
                 var _this = this;
                 var parameters = {};
                 parameters[this.identifier] = id;
-                var promise = AzureAPI[this.model].get(parameters).$promise;
+
+                if (this.model == 'product') {
+                    // use algolia
+                    var promise = AzureAPI.product.index.getObject(id);
+                } else {
+                    var promise = AzureAPI[this.model].get(parameters).$promise;
+                }
+
                 this.promises[id] = promise;
                 promise.then(function(object) {
                     _this.objects[id] = object;
                     delete _this.promises[id];
                     return object;
                 });
+
                 return promise;
             }
         };
@@ -777,6 +785,7 @@ var azureProvidersModule = angular
                         queryParameters = {};
                     }
                     queryParameters['packaged-product'] = code;
+                    // TODO: change to use index
                     promise = AzureAPI.product.query(
                         queryParameters
                     ).$promise.then(function(products) {
