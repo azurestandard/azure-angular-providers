@@ -823,7 +823,9 @@ var azureProvidersModule = angular
             });
             orders.$promise.then(function(orders) {
                 orders.forEach(function(order) {
-                    _this.carts.push(new Cart(order));
+                    if (order.drop) {   // Filter out carts from old website
+                        _this.carts.push(new Cart(order));
+                    }
                 });
                 _this.cart = _this.carts[0];  // TODO: pick next-to-cutoff cart
             });
