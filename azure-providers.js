@@ -270,37 +270,24 @@ var azureProvidersModule = angular
             // rather than these functions themselves.
             // ################################################################
 
+            // Returns $resource with default actions for /api/<model>
+            // AzureAPI.<model>.<action>({...});
+            function build_default_resource(model){
+                var data = resource_defaults(model);
+                return $resource(data.url, data.params, data.actions);
+            }
+
             // Returns $resource for /api/session
             // AzureAPI.session.<action>({...});
             function build_session_resource(){
                 return $resource(url + '/session', {}, {get: get_action});
             }
 
-            // Returns $resource for /api/account-entry
-            // AzureAPI['account-entry'].<action>({...}); (must use bracket notation due to hyphen in key name)
-            function build_account_entry_resource(){
-                var data = resource_defaults('account-entry');
-                return $resource(data.url, data.params, data.actions);
-            }
-
-            // Returns $resource for /api/address
-            // AzureAPI.address.<action>({...});
-            function build_address_resource(){
-                var data = resource_defaults('address');
-                return $resource(data.url, data.params, data.actions);
-            }
-
-            // Returns $resource for /api/brand
-            // AzureAPI.brand.<action>({...});
-            function build_brand_resource(){
-                var data = resource_defaults('brand');
-                return $resource(data.url, data.params, data.actions);
-            }
-
             // Returns $resource for /api/category
             // AzureAPI.category.<action>({...});
             function build_category_resource(){
                 var data = resource_defaults('category');
+                // TODO: add algolia index
                 return $resource(data.url, data.params, data.actions);
             }
 
@@ -318,41 +305,8 @@ var azureProvidersModule = angular
                     headers: _headers,
                 };
 
-                return $resource(data.url, data.params, data.actions);
-            }
+                // TODO: add algolia index
 
-            // Returns $resource for /api/notification
-            // AzureAPI.notification.<action>({...});
-            function build_notification_resource(){
-                var data = resource_defaults('notification');
-                return $resource(data.url, data.params, data.actions);
-            }
-
-            // Returns $resource for /api/notification-dismissal
-            // AzureAPI['notification-dismissal'].<action>({...}); (must use bracket notation due to hyphen in key name)
-            function build_notification_dismissal_resource(){
-                var data = resource_defaults('notification-dismissal');
-                return $resource(data.url, data.params, data.actions);
-            }
-
-            // Returns $resource for /api/order
-            // AzureAPI.order.<action>({...});
-            function build_order_resource(){
-                var data = resource_defaults('order');
-                return $resource(data.url, data.params, data.actions);
-            }
-
-            // Returns $resource for /api/order-line
-            // AzureAPI['order-line'].<action>({...}); (must use bracket notation due to hyphen in key name)
-            function build_order_line_resource(){
-                var data = resource_defaults('order-line');
-                return $resource(data.url, data.params, data.actions);
-            }
-
-            // Returns $resource for /api/payment-method
-            // AzureAPI['payment-method'].<action>({...}); (must use bracket notation due to hyphen in key name)
-            function build_payment_method_resource(){
-                var data = resource_defaults('payment-method');
                 return $resource(data.url, data.params, data.actions);
             }
 
@@ -398,7 +352,7 @@ var azureProvidersModule = angular
             function build_person_resource(){
                 var data = resource_defaults('person');
                 // include the mail actions
-                angular.extend(data.actions, mail_actions('trip'));
+                angular.extend(data.actions, mail_actions('person'));
                 return $resource(data.url, data.params, data.actions);
             }
 
@@ -416,33 +370,12 @@ var azureProvidersModule = angular
                 return rtn;
             }
 
-            // Returns $resource for /api/purchase-order
-            // AzureAPI['purchase-order'].<action>({...}); (must use bracket notation due to hyphen in key name)
-            function build_purchase_order_resource(){
-                var data = resource_defaults('purchase-order');
-                return $resource(data.url, data.params, data.actions);
-            }
-
             // Returns $resource for /api/route
             // AzureAPI.route.<action>({...});
             function build_route_resource(){
                 var data = resource_defaults('route');
                 // include the mail actions
-                angular.extend(data.actions, mail_actions('trip'));
-                return $resource(data.url, data.params, data.actions);
-            }
-
-            // Returns $resource for /api/route-stop
-            // AzureAPI['route-stop'].<action>({...}); (must use bracket notation due to hyphen in key name)
-            function build_route_stop_resource(){
-                var data = resource_defaults('route-stop');
-                return $resource(data.url, data.params, data.actions);
-            }
-
-            // Returns $resource for /api/stop
-            // AzureAPI.stop.<action>({...});
-            function build_stop_resource(){
-                var data = resource_defaults('notification');
+                angular.extend(data.actions, mail_actions('route'));
                 return $resource(data.url, data.params, data.actions);
             }
 
@@ -461,24 +394,24 @@ var azureProvidersModule = angular
                 'register': register_resource,
                 'activate': activate_resource,
                 'resendConfirmationEmail': resend_confirmation_resource,
+                'account-entry': build_default_resource('account-entry'),
+                'address': build_default_resource('address'),
+                'brand': build_default_resource('brand'),
+                'notification': build_default_resource('notification'),
+                'notification-dismissal': build_default_resource('notification-dismissal'),
+                'order': build_default_resource('order'),
+                'order-line': build_default_resource('order-line'),
+                'payment-method': build_default_resource('payment-method'),
+                'purchase-order': build_default_resource('purchase-order'),
+                'route-stop': build_default_resource('route-stop'),
+                'stop': build_default_resource('stop'),
                 'session': build_session_resource(),
-                'account-entry': build_account_entry_resource(),
-                'address': build_address_resource(),
-                'brand': build_brand_resource(),
                 'category': build_category_resource(),
                 'drop': build_drop_resource(),
-                'notification': build_notification_resource(),
-                'notification-dismissal': build_notification_dismissal_resource(),
-                'order': build_order_resource(),
-                'order-line': build_order_line_resource(),
-                'payment-method': build_payment_method_resource(),
                 'packaged-product': build_packaged_product_resource(),
                 'person': build_person_resource(),
                 'product': build_product_resource(),
-                'purchase-order': build_purchase_order_resource(),
                 'route': build_route_resource(),
-                'route-stop': build_route_stop_resource(),
-                'stop': build_stop_resource(),
                 'trip': build_trip_resource(),
             };
 
