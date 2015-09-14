@@ -88,6 +88,24 @@ The drop model also supports the following action:
 * locations, which returns an array of all active drops with name and
   location for map display.
 
+Algolia Search Client
+---------------------
+
+Certain models have the Algolia Angular search client built in. These models are:
+
+* products
+* packaged_products
+
+On these models, the initialized Algolia search client is attached as the .index property. For Example:
+
+    AzureAPI.products.index.search(...);
+    
+or
+
+    AzureAPI['packaged-products'].index.getObject(...);
+
+See [Algolia's documentation](https://www.algolia.com/doc/javascript#search) for more information.
+
 Count
 -----
 
