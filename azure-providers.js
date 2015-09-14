@@ -382,7 +382,15 @@ var azureProvidersModule = angular
                     headers: _headers,
                 };
 
-                return $resource(data.url, data.params, data.actions);
+                var data = resource_defaults('product');
+
+                var rtn = $resource(data.url, data.params, data.actions);
+
+                // add the algolia client for the packaged_products index
+                var index = algolia_client.initIndex(algolia_names.packaged_products);
+                rtn.index = index;
+
+                return rtn;
             }
 
             // Returns $resource for /api/person
