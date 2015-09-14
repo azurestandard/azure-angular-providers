@@ -32,7 +32,19 @@ var azureProvidersModule = angular
         // allows the algolia api_key to be set in the app config
         this.algolia_api_key = function(val) {
             api_key = val;
-        }
+        };
+
+        // set the names of the indices in algolia
+        var algolia_names = {
+          products: 'products',
+          packaged_products: 'packaged_products',
+        };
+        // allows overriding algolia index names for development and testing purposes
+        this.algolia_indices = function(ind){
+          angular.forEach(ind, function(val, key){
+            algolia_names[key] = val;
+          });
+        };
 
         // This is the factory that is returned.
         this.$get = ['$http', '$resource', 'AzureModelIdentifiers', 'algolia', function AzureAPIFactory($http, $resource, AzureModelIdentifiers, algolia) {
@@ -388,7 +400,9 @@ var azureProvidersModule = angular
                 var data = resource_defaults('product');
 
                 var rtn = $resource(data.url, data.params, data.actions);
-                var index = algolia_client.initIndex('products');
+
+                // add the algolia client for the products index
+                var index = algolia_client.initIndex(algolia_names.products);
                 rtn.index = index;
 
                 return rtn;
