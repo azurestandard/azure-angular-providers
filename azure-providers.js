@@ -36,14 +36,15 @@ var azureProvidersModule = angular
 
         // set the names of the indices in algolia
         var algolia_names = {
-          products: 'products',
-          packaged_products: 'packaged_products',
+            products: 'products',
+            packaged_products: 'packaged_products',
+            drops: 'drops',
         };
         // allows overriding algolia index names for development and testing purposes
         this.algolia_indices = function(ind){
-          angular.forEach(ind, function(val, key){
-            algolia_names[key] = val;
-          });
+            angular.forEach(ind, function(val, key){
+                algolia_names[key] = val;
+            });
         };
 
         // This is the factory that is returned.
@@ -305,9 +306,13 @@ var azureProvidersModule = angular
                     headers: _headers,
                 };
 
-                // TODO: add algolia index
+                var rtn = $resource(data.url, data.params, data.actions);
 
-                return $resource(data.url, data.params, data.actions);
+                // add algolia index
+                var index = algolia.client.initIndex(algolia_name.drops);
+                rtn.index = index;
+
+                return rtn;
             }
 
             // Returns $resource for /api/packaged-product
