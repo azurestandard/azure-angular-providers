@@ -192,7 +192,6 @@ var azureProvidersModule = angular
             // Takes a model name and returns the url, default parameters, and default actions to be used in an angular $resource object
             function resource_defaults(model){
                 var identifier = get_identifier(model);
-                var model_url = url + '/' + model + '/:' + identifier;
 
                 return {
                     url: url + '/' + model + '/:' + identifier,
