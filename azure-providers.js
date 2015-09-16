@@ -38,6 +38,7 @@ var azureProvidersModule = angular
         var algolia_names = {
             products: 'products',
             packaged_products: 'packaged_products',
+            categories: 'categories',
             drops: 'drops',
         };
         // allows overriding algolia index names for development and testing purposes
@@ -288,8 +289,14 @@ var azureProvidersModule = angular
             // AzureAPI.category.<action>({...});
             function build_category_resource(){
                 var data = resource_defaults('category');
-                // TODO: add algolia index
-                return $resource(data.url, data.params, data.actions);
+
+                var rtn = $resource(data.url, data.params, data.actions);
+
+                // add algolia index
+                var index = algolia.client.initIndex(algolia_name.categoires);
+                rtn.index = index;
+
+                return rtn;
             }
 
             // Returns $resource for /api/drop
