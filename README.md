@@ -93,8 +93,10 @@ Algolia Search Client
 
 Certain models have the Algolia Angular search client built in. These models are:
 
-* products
-* packaged_products
+* product
+* packaged_product
+* category
+* drop
 
 On these models, the initialized Algolia search client is attached as the .index property. For Example:
 
