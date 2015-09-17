@@ -156,20 +156,21 @@ There's also:
 
 * `AzureAPI.session.get()` to get information about your existing
   session (e.g. whether it's anonymous or not).
-* `AzureAPI.login(username, password)` to start an authenticated
-  session.  It returns an [HttpPromise][] for a session object.
+* `AzureAPI.login({username: ..., password: ...})` to start an
+  authenticated session.  It returns an [HttpPromise][] for a session
+  object.
 * `AzureAPI.logout()` to leave an authenticated session.  It returns
   an [HttpPromise][] for an unauthenticated session object.
-* `AzureAPI.register(baseURL, person, address, telephone, drop)` to
-  register a new user. It returns an [HttpPromise][] for an object
-  containing the resend token.
-* `AzureAPI.activate(token)` to activate a registration using the
-  confirmation token (which was emailed to the registrant, and is
+* `AzureAPI.register({'base-url': ..., person: ..., address: ...,
+  telephone: ..., drop: ...})` to register a new user. It returns an
+  [HttpPromise][] for an object containing the resend token.
+* `AzureAPI.activate({token: ...})` to activate a registration using
+  the confirmation token (which was emailed to the registrant, and is
   different from the resend token returned by `AzureAPI.register`). It
   returns an [HttpPromise][] for a the activated person object.
-* `AzureAPI.resendConfirmationEmail(token, baseURL)` to resend the
-  confirmation email to the user with the given resend token. It
-  returns an [HttpPromise][] for a 204 response.
+* `AzureAPI.resendConfirmationEmail({token: ..., 'base-url': ...})` to
+  resend the confirmation email to the user with the given resend
+  token. It returns an [HttpPromise][] for a 204 response.
 
 AzureCategory
 =============

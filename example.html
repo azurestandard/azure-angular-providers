@@ -316,10 +316,10 @@
 						$scope.warning = null;
 						$scope.login = function() {
 							$scope.warning = null;
-							AzureAPI.login(
-								$scope.credentials.username,
-								$scope.credentials.password
-							).success(function(session) {
+							AzureAPI.login({
+								username: $scope.credentials.username,
+								password: $scope.credentials.password
+							}).success(function(session) {
 								var person = AzureAPI.person.get({id: session.person});
 								person.$promise.then(function(person) {
 									$rootScope.setupPerson(person);
