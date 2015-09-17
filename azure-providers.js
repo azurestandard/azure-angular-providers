@@ -282,11 +282,11 @@ var azureProvidersModule = angular
         var cache = new AzureObjectPromiseCache('category');
         var children = {};
 
-        var get_parent = function(category, ancestor) {
+        var getParent = function(category, ancestor) {
             if (ancestor.parent !== null) {
                 cache.getObjectPromise(ancestor.parent).then(function(cat) {
                     category.ancestors.push(cat);
-                    get_parent(category, cat);
+                    getParent(category, cat);
                     return cat;
                 });
             }
@@ -374,7 +374,7 @@ var azureProvidersModule = angular
                     function(category) {
                         _this.category = category;
                         _this.ancestors = [category];
-                        get_parent(_this, category);
+                        getParent(_this, category);
                         return category;
                     }
                 );
