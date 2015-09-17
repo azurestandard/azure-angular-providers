@@ -301,10 +301,10 @@ var azureProvidersModule = angular
         }
 
         var _categoryByPathCheck = function(
-                category, _slug, slugs, parent, deferred, path_string) {
+                category, _slug, slugs, parent, deferred, pathString) {
             if (slug(category.name) === _slug) {
                 if (slugs.length) {
-                    _categoryByPath(slugs, category.id, deferred, path_string);
+                    _categoryByPath(slugs, category.id, deferred, pathString);
                 } else {
                     deferred.resolve(new Category(category.id));
                 }
@@ -312,10 +312,10 @@ var azureProvidersModule = angular
             }
         };
 
-        var _categoryByPath = function(slugs, parent, deferred, path_string) {
+        var _categoryByPath = function(slugs, parent, deferred, pathString) {
             var slug = slugs.shift();
             if (!slug) {
-                deferred.reject('empty slug from path ' + path_string);
+                deferred.reject('empty slug from path ' + pathString);
                 return;
             }
             for (var key in cache.objects) {
@@ -324,7 +324,7 @@ var azureProvidersModule = angular
                     continue;
                 }
                 var match = _categoryByPathCheck(
-                    category, slug, slugs, parent, deferred, path_string);
+                    category, slug, slugs, parent, deferred, pathString);
                 if (match) {
                     return;
                 }
@@ -341,11 +341,11 @@ var azureProvidersModule = angular
                 });
                 var match = categories.some(function(category) {
                     return _categoryByPathCheck(
-                        category, slug, slugs, parent, deferred, path_string);
+                        category, slug, slugs, parent, deferred, pathString);
                 });
                 if (!match) {
                     deferred.reject('no match found for slug ' + slug +
-                                    ' from path ' + path_string);
+                                    ' from path ' + pathString);
                     return;
                 }
             });
