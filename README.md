@@ -322,7 +322,7 @@ with the following properties:
 The `Cart` instance subclasses `AzureOrder` and has the additional
 property:
 
-* `addLine(product_code, quantity_ordered)`, a method to add an
+* `addLine(productCode, quantity_ordered)`, a method to add an
   order-line to the order and update the associated state.
 
 The `OrderLine` instances subclass `AzureOrderLine` and have the
