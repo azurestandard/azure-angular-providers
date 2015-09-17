@@ -188,7 +188,7 @@ will return an `Product` instance with the following properties:
 * `code`, the code for the currently selected packaged product, which
   is mostly useful as a value for [ng-model on select widgets][select]
   and the like to avoid accidentally editing `packaged.code`.
-* `selectPackaging(packaged_product_code)`, a method for changing the
+* `selectPackaging(packagedProductCode)`, a method for changing the
   currently selected packaged product (selection will not persist
   beyond page refreshes).  Calling with a falsy argument will select
   the product's cheapest packaging.

@@ -252,9 +252,9 @@
 							AzureAPI['packaged-product'].query({
 								person: person.id,
 								limit: 3,
-							}).$promise.then(function(packaged_products) {
-								packaged_products.forEach(function(packaged_product) {
-									$scope.favorites.push(new AzureProduct(packaged_product));
+							}).$promise.then(function(packagedProducts) {
+								packagedProducts.forEach(function(packagedProduct) {
+									$scope.favorites.push(new AzureProduct(packagedProduct));
 								});
 							});
 						};
@@ -278,10 +278,10 @@
 								$scope.carts = new AzureCarts();
 							} */
 						});
-						$scope.productPackagingLabel = function(packaged_product) {
-							return packaged_product.packaged.code + ' (' +
-								packaged_product.packaged.size + ', $' +
-								packaged_product.packaged.price.dollars + ')';
+						$scope.productPackagingLabel = function(packagedProduct) {
+							return packagedProduct.packaged.code + ' (' +
+								packagedProduct.packaged.size + ', $' +
+								packagedProduct.packaged.price.dollars + ')';
 						};
 					}])
 				.controller(

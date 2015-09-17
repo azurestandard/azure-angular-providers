@@ -469,8 +469,8 @@ var azureProvidersModule = angular
         var cache = new AzureObjectPromiseCache('product');
         var packagedCache = {};
 
-        var PackagedProduct = function(packaged_product) {
-            this.packaged = packaged_product;
+        var PackagedProduct = function(packagedProduct) {
+            this.packaged = packagedProduct;
             this._categories = null;
         };
 
@@ -500,8 +500,8 @@ var azureProvidersModule = angular
                 _this.product = product;
                 _this.packaging = [];
                 var promises = [];
-                _this.product.packaging.forEach(function(packaged_product) {
-                    var packaged = new PackagedProduct(packaged_product);
+                _this.product.packaging.forEach(function(packagedProduct) {
+                    var packaged = new PackagedProduct(packagedProduct);
                     _this.packaging.push(packaged);
                     promises.push(packaged.$promise);
                 });
@@ -519,17 +519,17 @@ var azureProvidersModule = angular
 
         Product.prototype.selectPackaging = function(code) {
             var _this = this;
-            var match = this.packaging.some(function(packaged_product) {
+            var match = this.packaging.some(function(packagedProduct) {
                 if (code) {
-                    if (packaged_product.packaged.code === code) {
-                        _this.packaged = packaged_product;
+                    if (packagedProduct.packaged.code === code) {
+                        _this.packaged = packagedProduct;
                         _this.code = code;
                         return true;
                     }
-                } else if (packaged_product.packaged.tags.indexOf(
+                } else if (packagedProduct.packaged.tags.indexOf(
                         'bargain-bin') == -1) {
-                    _this.packaged = packaged_product;
-                    _this.code = packaged_product.packaged.code;
+                    _this.packaged = packagedProduct;
+                    _this.code = packagedProduct.packaged.code;
                     return true;
                 }
             });
