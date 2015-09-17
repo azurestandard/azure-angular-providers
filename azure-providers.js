@@ -713,7 +713,7 @@ var azureProvidersModule = angular
         };
     }])
     .factory('AzureCarts', ['AzureAPI', 'AzureOrder', 'AzureOrderLine', function AzureCartsFactory(AzureAPI, AzureOrder, AzureOrderLine) {
-        var cart_sets = {};
+        var cartSets = {};
 
         var OrderLine = function(orderLine, cart) {
             AzureOrderLine.call(this, orderLine);
@@ -900,10 +900,10 @@ var azureProvidersModule = angular
         };
 
         return function(personId) {
-            if (!cart_sets.hasOwnProperty(personId)) {
+            if (!cartSets.hasOwnProperty(personId)) {
                 /* we don't have an existing instance */
-                cart_sets[personId] = new Carts(personId);
+                cartSets[personId] = new Carts(personId);
             }
-            return cart_sets[personId];
+            return cartSets[personId];
         };
     }]);
