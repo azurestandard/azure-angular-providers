@@ -251,14 +251,14 @@ var azureProvidersModule = angular
 
         ObjectPromiseCache.prototype.getObjectPromise = function(id) {
             var objectsEntry = this.objects[id];
-            var promises_entry = this.promises[id];
+            var promisesEntry = this.promises[id];
             if (objectsEntry) {
                 var deferred = $q.defer();
                 var promise = deferred.promise;
                 deferred.resolve(objectsEntry);
                 return promise;
-            } else if (promises_entry) {
-                return promises_entry;
+            } else if (promisesEntry) {
+                return promisesEntry;
             } else {
                 var _this = this;
                 var parameters = {};
