@@ -98,13 +98,13 @@ Certain models have the Algolia Angular search client built in. These models are
 * category
 * drop
 
-On these models, the initialized Algolia search client is attached as the .index property. For Example:
+On these models, the initialized Algolia search client is attached as the `.algolia` property. For Example:
 
-    AzureAPI.products.index.search(...);
-    
+    AzureAPI.products.algolia.search(...);
+
 or
 
-    AzureAPI['packaged-products'].index.getObject(...);
+    AzureAPI['packaged-products'].algolia.getObject(...);
 
 See [Algolia's documentation](https://www.algolia.com/doc/javascript#search) for more information.
 
