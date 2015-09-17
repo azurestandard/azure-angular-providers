@@ -131,7 +131,7 @@ AzureCategory
 Use the `AzureCategory` factory to show a category's position in the
 hierarchy.  Calling:
 
-    AzureCategory(category_id)
+    AzureCategory(categoryId)
 
 will return an `Category` instance with the following properties:
 
