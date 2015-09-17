@@ -467,7 +467,7 @@ var azureProvidersModule = angular
     }])
     .factory('AzureProduct', ['$q', 'AzureAPI', 'AzureCategory', 'AzureObjectPromiseCache', function AzureProductFactory($q, AzureAPI, AzureCategory, AzureObjectPromiseCache) {
         var cache = new AzureObjectPromiseCache('product');
-        var packaged_cache = {};
+        var packagedCache = {};
 
         var PackagedProduct = function(packaged_product) {
             this.packaged = packaged_product;
@@ -545,7 +545,7 @@ var azureProvidersModule = angular
             var code = null;
             if (product.hasOwnProperty('code')) {
                 code = product.code;
-                promise = packaged_cache[code];
+                promise = packagedCache[code];
                 if (!promise) {
                     if (queryParameters === undefined) {
                         queryParameters = {};
@@ -562,7 +562,7 @@ var azureProvidersModule = angular
                         }
                         return cache.getObjectPromise(products[0].id);
                     });
-                    packaged_cache[code] = promise;
+                    packagedCache[code] = promise;
                 }
             } else if (product.hasOwnProperty('id')) {
                 id = product.id;
