@@ -303,7 +303,7 @@ with the following properties:
   progress.
 * `cart`, the currently selected `Cart` (which is also in the `carts`
   array).
-* `selectCart(order_id)`, a method for changing the current default
+* `selectCart(orderId)`, a method for changing the current default
   cart (selection will not persist beyond page refreshes).
 * `createCart(order[, select])`, a method for creating a new cart.
   The `order` argument can be either an `AzureAPI.order` $resource or
