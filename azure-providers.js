@@ -80,6 +80,13 @@ var azureProvidersModule = angular
             if (algoliaAppId && algoliaApiKey) {
                 algoliaClient = algolia.Client(algoliaAppId, algoliaApiKey);
             }
+            var payloadHeaders = {};
+            for (var header in _headers) {
+                payloadHeaders[header] = _headers[header];
+            }
+            for (var header in _payloadHeaders) {
+                payloadHeaders[header] = _payloadHeaders[header];
+            }
             var resources = {
                 session: $resource(
                     url + '/session',
@@ -100,7 +107,7 @@ var azureProvidersModule = angular
                             'password': password,
                         },
                         {
-                            headers: _headers,
+                            headers: payloadHeaders,
                             withCredentials: true
                         }
                     );
@@ -110,7 +117,7 @@ var azureProvidersModule = angular
                         url + '/logout',
                         {},
                         {
-                            headers: _headers,
+                            headers: payloadHeaders,
                             withCredentials: true
                         }
                     );
@@ -126,7 +133,7 @@ var azureProvidersModule = angular
                             drop: drop,
                         },
                         {
-                            headers: _headers,
+                            headers: payloadHeaders,
                         }
                     );
                 },
@@ -137,7 +144,7 @@ var azureProvidersModule = angular
                             token: token,
                         },
                         {
-                            headers: _headers,
+                            headers: payloadHeaders,
                         }
                     );
                 },
@@ -149,18 +156,11 @@ var azureProvidersModule = angular
                             'base-url': baseURL,
                         },
                         {
-                            headers: _headers,
+                            headers: payloadHeaders,
                         }
                     );
                 }
             };
-            var payloadHeaders = {};
-            for (var header in _headers) {
-                payloadHeaders[header] = _headers[header];
-            }
-            for (var header in _payloadHeaders) {
-                payloadHeaders[header] = _payloadHeaders[header];
-            }
             _models.forEach(function(model) {
                 var plural = _plurals[model] || model + 's';
                 var identifier = AzureModelIdentifiers[model] || 'id';
