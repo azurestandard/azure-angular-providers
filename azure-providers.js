@@ -812,12 +812,12 @@ var azureProvidersModule = angular
             return resource.$promise;
         };
 
-        var Carts = function(person_id) {
+        var Carts = function(personId) {
             var _this = this;
             this.carts = [];
             this.cart = null;
             var orders = AzureAPI.order.query({
-                person: person_id,
+                person: personId,
                 status: 'cart',
                 limit: 250,
             });
@@ -899,11 +899,11 @@ var azureProvidersModule = angular
                 'no match found for ' + JSON.stringify(parameters));
         };
 
-        return function(person_id) {
-            if (!cart_sets.hasOwnProperty(person_id)) {
+        return function(personId) {
+            if (!cart_sets.hasOwnProperty(personId)) {
                 /* we don't have an existing instance */
-                cart_sets[person_id] = new Carts(person_id);
+                cart_sets[personId] = new Carts(personId);
             }
-            return cart_sets[person_id];
+            return cart_sets[personId];
         };
     }]);

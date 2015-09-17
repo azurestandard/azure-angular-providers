@@ -281,7 +281,7 @@ AzureOrders
 
 Use the `AzureOrders` factory to create an `Orders` instance. Calling:
 
-    AzureOrders(person_id)
+    AzureOrders(personId)
 
 will return a reference to that person's `Orders` instance
 with the following properties:
@@ -294,7 +294,7 @@ AzureCarts
 
 Use the `AzureCarts` factory to manage a customer's carts.  Calling:
 
-    AzureCarts(person_id)
+    AzureCarts(personId)
 
 will return a reference to that person's singleton `Carts` instance
 with the following properties:
