@@ -97,11 +97,11 @@ matching items, it returns a $resource whose `count` property is the
 number of possible items matching your query (how many you'd get in a
 `query` that didn't set `limit`).  Use it with controller code like:
 
-    $scope.favorites_count = AzureAPI.product.count({person: person.id});
+    $scope.favoritesCount = AzureAPI.product.count({person: person.id});
 
 and template code like:
 
-    You have {{favorites_count.count}} favorites.
+    You have {{favoritesCount.count}} favorites.
 
 Other methods
 -------------
@@ -131,7 +131,7 @@ AzureCategory
 Use the `AzureCategory` factory to show a category's position in the
 hierarchy.  Calling:
 
-    AzureCategory(category_id)
+    AzureCategory(categoryId)
 
 will return an `Category` instance with the following properties:
 
@@ -176,7 +176,7 @@ AzureProduct
 Use the `AzureProduct` factory to manage a product with different
 packaging (e.g. “2.7 ozs.” and “12 x 2.7 ozs.”).  Calling:
 
-    AzureProduct(product_id)
+    AzureProduct(productId)
 
 will return an `Product` instance with the following properties:
 
@@ -188,7 +188,7 @@ will return an `Product` instance with the following properties:
 * `code`, the code for the currently selected packaged product, which
   is mostly useful as a value for [ng-model on select widgets][select]
   and the like to avoid accidentally editing `packaged.code`.
-* `selectPackaging(packaged_product_code)`, a method for changing the
+* `selectPackaging(packagedProductCode)`, a method for changing the
   currently selected packaged product (selection will not persist
   beyond page refreshes).  Calling with a falsy argument will select
   the product's cheapest packaging.
@@ -281,7 +281,7 @@ AzureOrders
 
 Use the `AzureOrders` factory to create an `Orders` instance. Calling:
 
-    AzureOrders(person_id)
+    AzureOrders(personId)
 
 will return a reference to that person's `Orders` instance
 with the following properties:
@@ -294,7 +294,7 @@ AzureCarts
 
 Use the `AzureCarts` factory to manage a customer's carts.  Calling:
 
-    AzureCarts(person_id)
+    AzureCarts(personId)
 
 will return a reference to that person's singleton `Carts` instance
 with the following properties:
@@ -303,7 +303,7 @@ with the following properties:
   progress.
 * `cart`, the currently selected `Cart` (which is also in the `carts`
   array).
-* `selectCart(order_id)`, a method for changing the current default
+* `selectCart(orderId)`, a method for changing the current default
   cart (selection will not persist beyond page refreshes).
 * `createCart(order[, select])`, a method for creating a new cart.
   The `order` argument can be either an `AzureAPI.order` $resource or
@@ -322,7 +322,7 @@ with the following properties:
 The `Cart` instance subclasses `AzureOrder` and has the additional
 property:
 
-* `addLine(product_code, quantity_ordered)`, a method to add an
+* `addLine(productCode, quantityOrdered)`, a method to add an
   order-line to the order and update the associated state.
 
 The `OrderLine` instances subclass `AzureOrderLine` and have the

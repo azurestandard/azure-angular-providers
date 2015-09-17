@@ -43,7 +43,7 @@ var azureProvidersModule = angular
         var _headers = {
             'Accept': 'application/json',
         };
-        var _payload_headers = {
+        var _payloadHeaders = {
             'Content-Type': 'application/json; charset=UTF-8',
         };
         var url = 'https://api.azurestandard.com';
@@ -127,12 +127,12 @@ var azureProvidersModule = angular
                     );
                 }
             };
-            var payload_headers = {};
+            var payloadHeaders = {};
             for (var header in _headers) {
-                payload_headers[header] = _headers[header];
+                payloadHeaders[header] = _headers[header];
             }
-            for (var header in _payload_headers) {
-                payload_headers[header] = _payload_headers[header];
+            for (var header in _payloadHeaders) {
+                payloadHeaders[header] = _payloadHeaders[header];
             }
             _models.forEach(function(model) {
                 var plural = _plurals[model] || model + 's';
@@ -167,7 +167,7 @@ var azureProvidersModule = angular
                         method: 'POST',
                         url: url + '/' + plural,
                         withCredentials: true,
-                        headers: payload_headers,
+                        headers: payloadHeaders,
                     },
                     get: {
                         method: 'GET',
@@ -177,7 +177,7 @@ var azureProvidersModule = angular
                     save: {
                         method: 'PUT',
                         withCredentials: true,
-                        headers: payload_headers,
+                        headers: payloadHeaders,
                     },
                     'delete': {
                         method: 'DELETE',
@@ -190,13 +190,13 @@ var azureProvidersModule = angular
                         method: 'POST',
                         url: url + '/mail/' + model + '/:' + identifier,
                         withCredentials: true,
-                        headers: payload_headers,
+                        headers: payloadHeaders,
                     };
                     actions.mails = {
                         method: 'POST',
                         url: url + '/mail/' + plural,
                         withCredentials: true,
-                        headers: payload_headers,
+                        headers: payloadHeaders,
                     };
                 }
                 if (model === 'packaged-product') {
@@ -250,15 +250,15 @@ var azureProvidersModule = angular
         };
 
         ObjectPromiseCache.prototype.getObjectPromise = function(id) {
-            var objects_entry = this.objects[id];
-            var promises_entry = this.promises[id];
-            if (objects_entry) {
+            var objectsEntry = this.objects[id];
+            var promisesEntry = this.promises[id];
+            if (objectsEntry) {
                 var deferred = $q.defer();
                 var promise = deferred.promise;
-                deferred.resolve(objects_entry);
+                deferred.resolve(objectsEntry);
                 return promise;
-            } else if (promises_entry) {
-                return promises_entry;
+            } else if (promisesEntry) {
+                return promisesEntry;
             } else {
                 var _this = this;
                 var parameters = {};
@@ -282,11 +282,11 @@ var azureProvidersModule = angular
         var cache = new AzureObjectPromiseCache('category');
         var children = {};
 
-        var get_parent = function(category, ancestor) {
+        var getParent = function(category, ancestor) {
             if (ancestor.parent !== null) {
                 cache.getObjectPromise(ancestor.parent).then(function(cat) {
                     category.ancestors.push(cat);
-                    get_parent(category, cat);
+                    getParent(category, cat);
                     return cat;
                 });
             }
@@ -301,10 +301,10 @@ var azureProvidersModule = angular
         }
 
         var _categoryByPathCheck = function(
-                category, _slug, slugs, parent, deferred, path_string) {
+                category, _slug, slugs, parent, deferred, pathString) {
             if (slug(category.name) === _slug) {
                 if (slugs.length) {
-                    _categoryByPath(slugs, category.id, deferred, path_string);
+                    _categoryByPath(slugs, category.id, deferred, pathString);
                 } else {
                     deferred.resolve(new Category(category.id));
                 }
@@ -312,10 +312,10 @@ var azureProvidersModule = angular
             }
         };
 
-        var _categoryByPath = function(slugs, parent, deferred, path_string) {
+        var _categoryByPath = function(slugs, parent, deferred, pathString) {
             var slug = slugs.shift();
             if (!slug) {
-                deferred.reject('empty slug from path ' + path_string);
+                deferred.reject('empty slug from path ' + pathString);
                 return;
             }
             for (var key in cache.objects) {
@@ -324,7 +324,7 @@ var azureProvidersModule = angular
                     continue;
                 }
                 var match = _categoryByPathCheck(
-                    category, slug, slugs, parent, deferred, path_string);
+                    category, slug, slugs, parent, deferred, pathString);
                 if (match) {
                     return;
                 }
@@ -341,11 +341,11 @@ var azureProvidersModule = angular
                 });
                 var match = categories.some(function(category) {
                     return _categoryByPathCheck(
-                        category, slug, slugs, parent, deferred, path_string);
+                        category, slug, slugs, parent, deferred, pathString);
                 });
                 if (!match) {
                     deferred.reject('no match found for slug ' + slug +
-                                    ' from path ' + path_string);
+                                    ' from path ' + pathString);
                     return;
                 }
             });
@@ -374,7 +374,7 @@ var azureProvidersModule = angular
                     function(category) {
                         _this.category = category;
                         _this.ancestors = [category];
-                        get_parent(_this, category);
+                        getParent(_this, category);
                         return category;
                     }
                 );
@@ -467,10 +467,10 @@ var azureProvidersModule = angular
     }])
     .factory('AzureProduct', ['$q', 'AzureAPI', 'AzureCategory', 'AzureObjectPromiseCache', function AzureProductFactory($q, AzureAPI, AzureCategory, AzureObjectPromiseCache) {
         var cache = new AzureObjectPromiseCache('product');
-        var packaged_cache = {};
+        var packagedCache = {};
 
-        var PackagedProduct = function(packaged_product) {
-            this.packaged = packaged_product;
+        var PackagedProduct = function(packagedProduct) {
+            this.packaged = packagedProduct;
             this._categories = null;
         };
 
@@ -500,8 +500,8 @@ var azureProvidersModule = angular
                 _this.product = product;
                 _this.packaging = [];
                 var promises = [];
-                _this.product.packaging.forEach(function(packaged_product) {
-                    var packaged = new PackagedProduct(packaged_product);
+                _this.product.packaging.forEach(function(packagedProduct) {
+                    var packaged = new PackagedProduct(packagedProduct);
                     _this.packaging.push(packaged);
                     promises.push(packaged.$promise);
                 });
@@ -519,17 +519,17 @@ var azureProvidersModule = angular
 
         Product.prototype.selectPackaging = function(code) {
             var _this = this;
-            var match = this.packaging.some(function(packaged_product) {
+            var match = this.packaging.some(function(packagedProduct) {
                 if (code) {
-                    if (packaged_product.packaged.code === code) {
-                        _this.packaged = packaged_product;
+                    if (packagedProduct.packaged.code === code) {
+                        _this.packaged = packagedProduct;
                         _this.code = code;
                         return true;
                     }
-                } else if (packaged_product.packaged.tags.indexOf(
+                } else if (packagedProduct.packaged.tags.indexOf(
                         'bargain-bin') == -1) {
-                    _this.packaged = packaged_product;
-                    _this.code = packaged_product.packaged.code;
+                    _this.packaged = packagedProduct;
+                    _this.code = packagedProduct.packaged.code;
                     return true;
                 }
             });
@@ -545,7 +545,7 @@ var azureProvidersModule = angular
             var code = null;
             if (product.hasOwnProperty('code')) {
                 code = product.code;
-                promise = packaged_cache[code];
+                promise = packagedCache[code];
                 if (!promise) {
                     if (queryParameters === undefined) {
                         queryParameters = {};
@@ -562,7 +562,7 @@ var azureProvidersModule = angular
                         }
                         return cache.getObjectPromise(products[0].id);
                     });
-                    packaged_cache[code] = promise;
+                    packagedCache[code] = promise;
                 }
             } else if (product.hasOwnProperty('id')) {
                 id = product.id;
@@ -713,7 +713,7 @@ var azureProvidersModule = angular
         };
     }])
     .factory('AzureCarts', ['AzureAPI', 'AzureOrder', 'AzureOrderLine', function AzureCartsFactory(AzureAPI, AzureOrder, AzureOrderLine) {
-        var cart_sets = {};
+        var cartSets = {};
 
         var OrderLine = function(orderLine, cart) {
             AzureOrderLine.call(this, orderLine);
@@ -812,12 +812,12 @@ var azureProvidersModule = angular
             return resource.$promise;
         };
 
-        var Carts = function(person_id) {
+        var Carts = function(personId) {
             var _this = this;
             this.carts = [];
             this.cart = null;
             var orders = AzureAPI.order.query({
-                person: person_id,
+                person: personId,
                 status: 'cart',
                 limit: 250,
             });
@@ -831,16 +831,16 @@ var azureProvidersModule = angular
             });
         };
 
-        Carts.prototype.selectCart = function(order_id) {
+        Carts.prototype.selectCart = function(orderId) {
             var _this = this;
             var match = this.carts.some(function(cart) {
-                if (cart.order.id === order_id) {
+                if (cart.order.id === orderId) {
                     _this.cart = cart;
                     return true;
                 }
             });
             if (!match) {
-                console.log('no match found for ' + order_id + ' in', this.carts);
+                console.log('no match found for ' + orderId + ' in', this.carts);
             }
         };
 
@@ -899,11 +899,11 @@ var azureProvidersModule = angular
                 'no match found for ' + JSON.stringify(parameters));
         };
 
-        return function(person_id) {
-            if (!cart_sets.hasOwnProperty(person_id)) {
+        return function(personId) {
+            if (!cartSets.hasOwnProperty(personId)) {
                 /* we don't have an existing instance */
-                cart_sets[person_id] = new Carts(person_id);
+                cartSets[personId] = new Carts(personId);
             }
-            return cart_sets[person_id];
+            return cartSets[personId];
         };
     }]);

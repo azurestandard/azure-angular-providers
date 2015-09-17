@@ -12,7 +12,7 @@
 			<button ng-click="logout()">Logout</button>
 			<div ng-if="favorites.length">
 				<p>
-					You have {{favorites_count.count}} favorites. The first
+					You have {{favoritesCount.count}} favorites. The first
 					{{favorites.length}} are:
 				</p>
 				<table>
@@ -245,16 +245,16 @@
 							$scope.session = AzureAPI.session.get();
 							$scope.orders = new AzureOrders(person.id);
 							$scope.carts = new AzureCarts(person.id);
-							$scope.favorites_count = AzureAPI.product.count({
+							$scope.favoritesCount = AzureAPI.product.count({
 								person: person.id,
 							});
 							$scope.favorites = [];
 							AzureAPI['packaged-product'].query({
 								person: person.id,
 								limit: 3,
-							}).$promise.then(function(packaged_products) {
-								packaged_products.forEach(function(packaged_product) {
-									$scope.favorites.push(new AzureProduct(packaged_product));
+							}).$promise.then(function(packagedProducts) {
+								packagedProducts.forEach(function(packagedProduct) {
+									$scope.favorites.push(new AzureProduct(packagedProduct));
 								});
 							});
 						};
@@ -264,7 +264,7 @@
 							$scope.session = null;
 							$scope.carts = null;
 							$scope.orders = null;
-							$scope.favorites_count = null;
+							$scope.favoritesCount = null;
 							$scope.favorites = null;
 						};
 						$scope.session = AzureAPI.session.get();
@@ -278,10 +278,10 @@
 								$scope.carts = new AzureCarts();
 							} */
 						});
-						$scope.productPackagingLabel = function(packaged_product) {
-							return packaged_product.packaged.code + ' (' +
-								packaged_product.packaged.size + ', $' +
-								packaged_product.packaged.price.dollars + ')';
+						$scope.productPackagingLabel = function(packagedProduct) {
+							return packagedProduct.packaged.code + ' (' +
+								packagedProduct.packaged.size + ', $' +
+								packagedProduct.packaged.price.dollars + ')';
 						};
 					}])
 				.controller(
