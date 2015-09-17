@@ -97,11 +97,11 @@ matching items, it returns a $resource whose `count` property is the
 number of possible items matching your query (how many you'd get in a
 `query` that didn't set `limit`).  Use it with controller code like:
 
-    $scope.favorites_count = AzureAPI.product.count({person: person.id});
+    $scope.favoritesCount = AzureAPI.product.count({person: person.id});
 
 and template code like:
 
-    You have {{favorites_count.count}} favorites.
+    You have {{favoritesCount.count}} favorites.
 
 Other methods
 -------------
