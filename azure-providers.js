@@ -43,7 +43,7 @@ var azureProvidersModule = angular
         var _headers = {
             'Accept': 'application/json',
         };
-        var _payload_headers = {
+        var _payloadHeaders = {
             'Content-Type': 'application/json; charset=UTF-8',
         };
         var url = 'https://api.azurestandard.com';
@@ -127,12 +127,12 @@ var azureProvidersModule = angular
                     );
                 }
             };
-            var payload_headers = {};
+            var payloadHeaders = {};
             for (var header in _headers) {
-                payload_headers[header] = _headers[header];
+                payloadHeaders[header] = _headers[header];
             }
-            for (var header in _payload_headers) {
-                payload_headers[header] = _payload_headers[header];
+            for (var header in _payloadHeaders) {
+                payloadHeaders[header] = _payloadHeaders[header];
             }
             _models.forEach(function(model) {
                 var plural = _plurals[model] || model + 's';
@@ -167,7 +167,7 @@ var azureProvidersModule = angular
                         method: 'POST',
                         url: url + '/' + plural,
                         withCredentials: true,
-                        headers: payload_headers,
+                        headers: payloadHeaders,
                     },
                     get: {
                         method: 'GET',
@@ -177,7 +177,7 @@ var azureProvidersModule = angular
                     save: {
                         method: 'PUT',
                         withCredentials: true,
-                        headers: payload_headers,
+                        headers: payloadHeaders,
                     },
                     'delete': {
                         method: 'DELETE',
@@ -190,13 +190,13 @@ var azureProvidersModule = angular
                         method: 'POST',
                         url: url + '/mail/' + model + '/:' + identifier,
                         withCredentials: true,
-                        headers: payload_headers,
+                        headers: payloadHeaders,
                     };
                     actions.mails = {
                         method: 'POST',
                         url: url + '/mail/' + plural,
                         withCredentials: true,
-                        headers: payload_headers,
+                        headers: payloadHeaders,
                     };
                 }
                 if (model === 'packaged-product') {
