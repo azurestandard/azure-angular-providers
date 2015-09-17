@@ -176,7 +176,7 @@ AzureProduct
 Use the `AzureProduct` factory to manage a product with different
 packaging (e.g. “2.7 ozs.” and “12 x 2.7 ozs.”).  Calling:
 
-    AzureProduct(product_id)
+    AzureProduct(productId)
 
 will return an `Product` instance with the following properties:
 
