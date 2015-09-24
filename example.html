@@ -246,12 +246,12 @@
 							$scope.orders = new AzureOrders(person.id);
 							$scope.carts = new AzureCarts(person.id);
 							$scope.favoritesCount = AzureAPI.product.count({
-								person: person.id,
+								'filter-person': person.id,
 							});
 							$scope.favorites = [];
 							AzureAPI['packaged-product'].query({
-								person: person.id,
-								limit: 3,
+								'filter-person': person.id,
+								'limit': 3,
 							}).$promise.then(function(packagedProducts) {
 								packagedProducts.forEach(function(packagedProduct) {
 									$scope.favorites.push(new AzureProduct(packagedProduct));
