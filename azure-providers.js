@@ -618,7 +618,6 @@ var azureProvidersModule = angular
         Order.prototype._drop = function() {
             this.drop = AzureAPI.drop.get({
                 id: this.order.drop,
-                person: this.order.customer
             });
         };
 
