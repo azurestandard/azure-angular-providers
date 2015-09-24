@@ -692,8 +692,8 @@ var azureProvidersModule = angular
             var _this = this;
             this.orders = [];
             var orders = AzureAPI.order.query({
-                person: personId,
-                limit: 250,
+                'filter-person': personId,
+                'limit': 250,
             });
             orders.$promise.then(function(orders) {
                 orders.forEach(function(order) {
@@ -816,9 +816,9 @@ var azureProvidersModule = angular
             this.carts = [];
             this.cart = null;
             var orders = AzureAPI.order.query({
-                person: personId,
-                status: 'cart',
-                limit: 250,
+                'filter-person': personId,
+                'status': 'cart',
+                'limit': 250,
             });
             orders.$promise.then(function(orders) {
                 orders.forEach(function(order) {

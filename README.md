@@ -58,7 +58,7 @@ example:
       product.description = 'Delicious!';
       product.$save();
     });
-    var favorites = AzureAPI.product.query({person: you.id});
+    var favorites = AzureAPI.product.query({'filter-person': you.id});
     var order = AzureAPI.order.create({
       customer: you,
       status: 'cart',
@@ -97,7 +97,9 @@ matching items, it returns a $resource whose `count` property is the
 number of possible items matching your query (how many you'd get in a
 `query` that didn't set `limit`).  Use it with controller code like:
 
-    $scope.favoritesCount = AzureAPI.product.count({person: person.id});
+    $scope.favoritesCount = AzureAPI.product.count({
+      'filter-person': person.id
+    });
 
 and template code like:
 
