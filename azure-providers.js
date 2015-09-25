@@ -574,6 +574,16 @@ var azureProvidersModule = angular
             }
         };
 
+        function _handleProducts(code, products) {
+            if (products.length !== 1) {
+                throw new Error(
+                    'expected one product match for packaged ' +
+                        'product code ' + code + ', but got ' +
+                        products.length);
+            }
+            return cache.getObjectPromise(products[0].id);
+        }
+
         return function(product, queryParameters) {
             var promise = null;
             var id;
@@ -585,18 +595,27 @@ var azureProvidersModule = angular
                     if (queryParameters === undefined) {
                         queryParameters = {};
                     }
-                    queryParameters['packaged-product'] = code;
-                    promise = AzureAPI.product.query(
-                        queryParameters
-                    ).$promise.then(function(products) {
-                        if (products.length !== 1) {
-                            throw new Error(
-                                'expected one product match for packaged ' +
-                                'product code ' + code + ', but got ' +
-                                products.length);
-                        }
-                        return cache.getObjectPromise(products[0].id);
-                    });
+
+                    if (AzureAPI.product.algolia) {
+                        var algoliaParameters = {
+                            facets: '*',
+                            facetFilters: ['packaging.code:'+code],
+                        };
+                        angular.extend(algoliaParameters, queryParameters);
+                        promise = AzureAPI.product.algolia.search(
+                            algoliaParameters
+                        ).then(function(response) {
+                            return _handleProducts(code, response.hits);
+                        });
+                    } else {
+                        queryParameters['packaged-product'] = code;
+                        promise = AzureAPI.product.query(
+                            queryParameters
+                        ).$promise.then(function(products) {
+                            return _handleProducts(code, products);
+                        });
+                    }
+
                     packagedCache[code] = promise;
                 }
             } else if (product.hasOwnProperty('id')) {
