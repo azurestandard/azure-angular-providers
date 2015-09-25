@@ -8,7 +8,7 @@
  */
 
 var azureProvidersModule = angular
-    .module('azureProviders', ['ngResource'])
+    .module('azureProviders', ['ngResource', 'algoliasearch'])
     .constant('AzureModelIdentifiers', {
         'packaged-product': 'code',
         route: 'name',
@@ -52,7 +52,34 @@ var azureProvidersModule = angular
             url = value;
         };
 
-        this.$get = ['$http', '$resource', 'AzureModelIdentifiers', function AzureAPIFactory($http, $resource, AzureModelIdentifiers) {
+        var algoliaApiKey = '';
+        this.setAlgoliaApiKey = function(key) {
+            algoliaApiKey = key;
+        };
+
+        var algoliaAppId = '';
+        this.setAlgoliaAppId = function(id) {
+            algoliaAppId = id;
+        };
+
+        var algoliaIndexNames = {
+            'category': 'categories',
+            'drop': 'drops',
+            'packaged-product': 'packaged-products',
+            'product': 'products',
+        };
+
+        this.setAlgoliaIndexNames = function(names) {
+            angular.forEach(names, function(val, key) {
+                algoliaIndexNames[key] = val;
+            });
+        };
+
+        this.$get = ['$http', '$resource', 'algolia', 'AzureModelIdentifiers', function AzureAPIFactory($http, $resource, algolia, AzureModelIdentifiers) {
+            var algoliaClient;
+            if (algoliaAppId && algoliaApiKey) {
+                algoliaClient = algolia.Client(algoliaAppId, algoliaApiKey);
+            }
             var resources = {
                 session: $resource(
                     url + '/session',
@@ -232,6 +259,9 @@ var azureProvidersModule = angular
                     paramDefaults,
                     actions
                 );
+                if (algoliaClient && algoliaIndexNames.hasOwnProperty(model)) {
+                    resources[model].algolia = algoliaClient.initIndex(algoliaIndexNames[model]);
+                }
             });
             return resources;
         }]
@@ -261,9 +291,14 @@ var azureProvidersModule = angular
                 return promisesEntry;
             } else {
                 var _this = this;
-                var parameters = {};
-                parameters[this.identifier] = id;
-                var promise = AzureAPI[this.model].get(parameters).$promise;
+                var promise;
+                if (AzureAPI[this.model].hasOwnProperty('algolia')) {
+                    promise = AzureAPI[this.model].algolia.getObject(id);
+                } else {
+                    var parameters = {};
+                    parameters[this.identifier] = id;
+                    promise = AzureAPI[this.model].get(parameters).$promise;
+                }
                 this.promises[id] = promise;
                 promise.then(function(object) {
                     _this.objects[id] = object;
@@ -539,6 +574,16 @@ var azureProvidersModule = angular
             }
         };
 
+        function _handleProducts(code, products) {
+            if (products.length !== 1) {
+                throw new Error(
+                    'expected one product match for packaged ' +
+                        'product code ' + code + ', but got ' +
+                        products.length);
+            }
+            return cache.getObjectPromise(products[0].id);
+        }
+
         return function(product, queryParameters) {
             var promise = null;
             var id;
@@ -550,18 +595,27 @@ var azureProvidersModule = angular
                     if (queryParameters === undefined) {
                         queryParameters = {};
                     }
-                    queryParameters['packaged-product'] = code;
-                    promise = AzureAPI.product.query(
-                        queryParameters
-                    ).$promise.then(function(products) {
-                        if (products.length !== 1) {
-                            throw new Error(
-                                'expected one product match for packaged ' +
-                                'product code ' + code + ', but got ' +
-                                products.length);
-                        }
-                        return cache.getObjectPromise(products[0].id);
-                    });
+
+                    if (AzureAPI.product.algolia) {
+                        var algoliaParameters = {
+                            facets: '*',
+                            facetFilters: ['packaging.code:'+code],
+                        };
+                        angular.extend(algoliaParameters, queryParameters);
+                        promise = AzureAPI.product.algolia.search(
+                            algoliaParameters
+                        ).then(function(response) {
+                            return _handleProducts(code, response.hits);
+                        });
+                    } else {
+                        queryParameters['packaged-product'] = code;
+                        promise = AzureAPI.product.query(
+                            queryParameters
+                        ).$promise.then(function(products) {
+                            return _handleProducts(code, products);
+                        });
+                    }
+
                     packagedCache[code] = promise;
                 }
             } else if (product.hasOwnProperty('id')) {

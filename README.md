@@ -14,6 +14,35 @@ testing with something like:
         AzureAPIProvider.setUrl('https://example.com/your/testing/api');
       });
 
+In a similar configuration block, you can update the Algolia
+connection information:
+
+    AzureAPIProvider.setAlgoliaAppId('your-application-id');
+    AzureAPIProvider.setAlgoliaApiKey('your-API-key');
+
+If you don't set both of these, no Algolia indexes will be attached to
+your $resources.  To attach an [`.algolia` index
+attribute](#algolia-search) to a particular $resource, add an entry
+mapping the model name to your Algolia index name:
+
+    AzureAPIProvider.setAlgoliaIndexNames({
+        'drop': 'my-drop-index',
+        'route': 'routes',
+    })'
+
+By default, indexes are provided for the following models:
+
+* category
+* drop
+* packaged-product
+* product
+
+Where the default index name is just the plural model name
+(e.g. “categories”).  Entries passed to `setAlgoliaIndexNames` are
+added to the default list, so the example above changes the drop index
+and adds a route index, but leaves the category, etc., indexes with
+their default values.
+
 AzureAPI
 ========
 
@@ -87,6 +116,21 @@ The drop model also supports the following action:
 
 * locations, which returns an array of all active drops with name and
   location for map display.
+
+Algolia search
+--------------
+
+If you've [configured the Algolia client](#configuration), models
+listed in `algoliaIndexNames` will have an initialized index attached
+as the `.algolia` property. For example, with the earlier
+[configuration examples](#configuration), you could use:
+
+    AzureAPI.category.algolia.search(…);
+    AzureAPI.drop.algolia.search(…);
+    AzureAPI.route.algolia.search(…);
+    …
+
+See [Algolia's documentation][algolia-search] for more information.
 
 Count
 -----
