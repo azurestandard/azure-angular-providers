@@ -11,7 +11,7 @@ testing with something like:
 
     angular.module('yourModule', ['your', 'dependencies'])
       .config(function(AzureAPIProvider) {
-        AzureAPIProvider.url('https://example.com/your/testing/api');
+        AzureAPIProvider.setUrl('https://example.com/your/testing/api');
       });
 
 AzureAPI

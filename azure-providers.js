@@ -48,7 +48,7 @@ var azureProvidersModule = angular
         };
         var url = 'https://api.azurestandard.com';
 
-        this.url = function(value) {
+        this.setUrl = function(value) {
             url = value;
         };
 
