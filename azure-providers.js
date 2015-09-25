@@ -8,7 +8,7 @@
  */
 
 var azureProvidersModule = angular
-    .module('azureProviders', ['ngResource'])
+    .module('azureProviders', ['ngResource', 'algoliasearch'])
     .constant('AzureModelIdentifiers', {
         'packaged-product': 'code',
         route: 'name',
@@ -52,7 +52,34 @@ var azureProvidersModule = angular
             url = value;
         };
 
-        this.$get = ['$http', '$resource', 'AzureModelIdentifiers', function AzureAPIFactory($http, $resource, AzureModelIdentifiers) {
+        var algoliaApiKey = '';
+        this.setAlgoliaApiKey = function(key) {
+            algoliaApiKey = key;
+        };
+
+        var algoliaAppId = '';
+        this.setAlgoliaAppId = function(id) {
+            algoliaAppId = id;
+        };
+
+        var algoliaIndexNames = {
+            'category': 'categories',
+            'drop': 'drops',
+            'packaged-product': 'packaged-products',
+            'product': 'products',
+        };
+
+        this.setAlgoliaIndexNames = function(names) {
+            angular.forEach(names, function(val, key) {
+                algoliaIndexNames[key] = val;
+            });
+        };
+
+        this.$get = ['$http', '$resource', 'algolia', 'AzureModelIdentifiers', function AzureAPIFactory($http, $resource, algolia, AzureModelIdentifiers) {
+            var algoliaClient;
+            if (algoliaAppId && algoliaApiKey) {
+                algoliaClient = algolia.Client(algoliaAppId, algoliaApiKey);
+            }
             var resources = {
                 session: $resource(
                     url + '/session',
@@ -232,6 +259,9 @@ var azureProvidersModule = angular
                     paramDefaults,
                     actions
                 );
+                if (algoliaClient && algoliaIndexNames.hasOwnProperty(model)) {
+                    resources[model].algolia = algoliaClient.initIndex(algoliaIndexNames[model]);
+                }
             });
             return resources;
         }]
