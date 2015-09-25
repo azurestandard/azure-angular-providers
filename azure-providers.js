@@ -566,6 +566,7 @@ var azureProvidersModule = angular
                 }
             } else if (product.hasOwnProperty('id')) {
                 id = product.id;
+                cache.addObject(product);
             } else {
                 id = product;
             }
