@@ -291,9 +291,14 @@ var azureProvidersModule = angular
                 return promisesEntry;
             } else {
                 var _this = this;
-                var parameters = {};
-                parameters[this.identifier] = id;
-                var promise = AzureAPI[this.model].get(parameters).$promise;
+                var promise;
+                if (AzureAPI[this.model].hasOwnProperty('algolia')) {
+                    promise = AzureAPI[this.model].algolia.getObject(id);
+                } else {
+                    var parameters = {};
+                    parameters[this.identifier] = id;
+                    promise = AzureAPI[this.model].get(parameters).$promise;
+                }
                 this.promises[id] = promise;
                 promise.then(function(object) {
                     _this.objects[id] = object;
