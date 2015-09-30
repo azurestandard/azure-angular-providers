@@ -542,8 +542,8 @@ var azureProvidersModule = angular
                 });
                 return $q.all(promises).then(function() {
                     _this.packaging.sort(function(a, b) {
-                        return a.packaged.price.dollars -
-                            b.packaged.price.dollars;
+                        return a.packaged.price.retail.dollars -
+                            b.packaged.price.retail.dollars;
                     });
                     _this.selectPackaging(code);
                 }).then(function() {
