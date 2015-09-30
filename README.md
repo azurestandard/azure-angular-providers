@@ -290,8 +290,8 @@ will return an `OrderLine` instance with the following properties:
 * `orderLine`, the order-line object as returned by
   `AzureAPI['order-line'].get(…)`.
 * `product`, the `Product` instance associated with the line
-  (`product` is just the product's code).  See `AzureProduct` for
-  details on this class.
+  (`orderLine['packaged-product']` is just the product's code).  See
+  `AzureProduct` for details on this class.
 
 AzureOrder
 ==========
