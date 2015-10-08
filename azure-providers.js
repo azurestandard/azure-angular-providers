@@ -542,8 +542,8 @@ var azureProvidersModule = angular
                 });
                 return $q.all(promises).then(function() {
                     _this.packaging.sort(function(a, b) {
-                        return a.packaged.price.dollars -
-                            b.packaged.price.dollars;
+                        return a.packaged.price.retail.dollars -
+                            b.packaged.price.retail.dollars;
                     });
                     _this.selectPackaging(code);
                 }).then(function() {
@@ -633,19 +633,7 @@ var azureProvidersModule = angular
     .factory('AzureOrderLine', ['AzureProduct', function AzureOrderLineFactory(AzureProduct) {
         var OrderLine = function (orderLine) {
             this.orderLine = orderLine;
-            this._calculatePrice();
             this.product = AzureProduct({code: orderLine['packaged-product']});
-        };
-
-        OrderLine.prototype._calculatePrice = function() {
-            if (this.orderLine.price['per-pound']) {
-                this.price =
-                    this.orderLine.price.dollars * this.orderLine.weight;
-            } else {
-                this.price =
-                    this.orderLine.price.dollars *
-                    this.orderLine['quantity-ordered'];
-            }
         };
 
         return OrderLine;
@@ -792,7 +780,6 @@ var azureProvidersModule = angular
             var resource = AzureAPI['order-line'].save(data);
             resource.$promise.then(function(line) {
                 _this.orderLine = line;
-                _this._calculatePrice();
                 _this.cart._calculateTotals();
                 return line;
             });
