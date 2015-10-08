@@ -1,0 +1,4 @@
+test:
+  override:
+    - npm install eslint
+    - eslint azure-providers.js
