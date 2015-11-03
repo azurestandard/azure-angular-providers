@@ -37,7 +37,7 @@ var azureProvidersModule = angular
             'person',
             'pickup',
             'product',
-            'purchase-order',
+            'purchase',
             'region',
             'route',
             'route-stop',
