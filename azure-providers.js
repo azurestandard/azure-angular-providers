@@ -40,6 +40,28 @@ var azureProvidersModule = angular
             'category': 'categories',
             'person': 'people',
         };
+
+        // non-$resource endpoints that will use $http.post(...)
+        var _posts = {
+            login: {
+                url: '/login',
+                withCredentials: true,
+            },
+            logout: {
+                url: '/logout',
+                withCredentials: true,
+            },
+            register: {
+                url: '/registration/register',
+            },
+            activate: {
+                url: '/registration/confirm',
+            },
+            resendConfirmationEmail: {
+                url: '/registration/resend',
+            },
+        };
+
         var _headers = {
             'Accept': 'application/json',
         };
@@ -80,6 +102,13 @@ var azureProvidersModule = angular
             if (algoliaAppId && algoliaApiKey) {
                 algoliaClient = algolia.Client(algoliaAppId, algoliaApiKey);
             }
+            var payloadHeaders = {};
+            for (var header in _headers) {
+                payloadHeaders[header] = _headers[header];
+            }
+            for (var header in _payloadHeaders) {
+                payloadHeaders[header] = _payloadHeaders[header];
+            }
             var resources = {
                 session: $resource(
                     url + '/session',
@@ -92,74 +121,32 @@ var azureProvidersModule = angular
                         }
                     }
                 ),
-                login: function(username, password) {
-                    return $http.post(
-                        url + '/login',
-                        {
-                            'username': username,
-                            'password': password,
-                        },
-                        {
-                            headers: _headers,
-                            withCredentials: true
-                        }
-                    );
-                },
-                logout: function() {
-                    return $http.post(
-                        url + '/logout',
-                        {},
-                        {
-                            headers: _headers,
-                            withCredentials: true
-                        }
-                    );
-                },
-                register: function(baseURL, person, address, telephone, drop) {
-                    return $http.post(
-                        url + '/registration/register',
-                        {
-                            'base-url': baseURL,
-                            person: person,
-                            address: address,
-                            telephone: telephone,
-                            drop: drop,
-                        },
-                        {
-                            headers: _headers,
-                        }
-                    );
-                },
-                activate: function(token) {
-                    return $http.post(
-                        url + '/registration/confirm',
-                        {
-                            token: token,
-                        },
-                        {
-                            headers: _headers,
-                        }
-                    );
-                },
-                resendConfirmationEmail: function(token, baseURL) {
-                    return $http.post(
-                        url + '/registration/resend',
-                        {
-                            token: token,
-                            'base-url': baseURL,
-                        },
-                        {
-                            headers: _headers,
-                        }
-                    );
-                }
             };
+
             var payloadHeaders = {};
             for (var header in _headers) {
                 payloadHeaders[header] = _headers[header];
             }
             for (var header in _payloadHeaders) {
                 payloadHeaders[header] = _payloadHeaders[header];
+            }
+            for (var name in _posts) {
+                var postConfig = _posts[name];
+                var config = {
+                    headers: payloadHeaders,
+                };
+                if (postConfig.withCredentials) {
+                    config.withCredentials = true;
+                }
+                resources[name] = (function(postConfig, config) {
+                    return function(data) {
+                        return $http.post(
+                            url + postConfig.url,
+                            data,
+                            config
+                        );
+                    };
+                })(postConfig, config);
             }
             _models.forEach(function(model) {
                 var plural = _plurals[model] || model + 's';
