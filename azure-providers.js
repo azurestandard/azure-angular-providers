@@ -27,6 +27,7 @@ var azureProvidersModule = angular
             'payment-method',
             'packaged-product',
             'person',
+            'piece_audit',
             'product',
             'purchase-order',
             'route',
