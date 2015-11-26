@@ -61,6 +61,7 @@ Currently supported models:
 * payment-method
 * packaged-product
 * person
+* piece_audit
 * product
 * purchase-order
 * route
