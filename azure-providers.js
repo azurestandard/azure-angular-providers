@@ -741,7 +741,7 @@ var azureProvidersModule = angular
             return orderSets[personId];
         };
     }])
-    .factory('AzureCarts', ['AzureAPI', 'AzureOrder', 'AzureOrderLine', function AzureCartsFactory(AzureAPI, AzureOrder, AzureOrderLine) {
+    .factory('AzureCarts', ['$q', 'AzureAPI', 'AzureOrder', 'AzureOrderLine', function AzureCartsFactory($q, AzureAPI, AzureOrder, AzureOrderLine) {
         var cartSets = {};
 
         var OrderLine = function(orderLine, cart) {
@@ -881,14 +881,18 @@ var azureProvidersModule = angular
                 if (select) {
                     _this.cart = cart;
                 }
+                return cart;
             };
 
             if (order.id === undefined) {
                 order = AzureAPI.order.create(order);
-                order.$promise.then(createCart);
-            } else {
-                createCart(order);
+                return order.$promise.then(createCart);
             }
+            var cart = createCart(order);
+            var deferred = $q.defer();
+            var promise = deferred.promise;
+            deferred.resolve(cart);
+            return promise;
         };
 
         var objectSubset = function(a, b) {  /* Is 'a' a subset of 'b'? */

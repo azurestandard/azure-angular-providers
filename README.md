@@ -356,7 +356,12 @@ with the following properties:
   an object containing the data to be used for a new `AzureAPI.order`
   $resource (in which case `createCart` will create the order
   $resource internally).  If `select` is truthy, the new cart will be
-  selected as the current default cart.
+  selected as the current default cart.  The method returns a promise
+  that resolves after the the cart is created, so you can do things
+  like:
+
+        carts.CreateCart(…).then(function(cart) {…});
+
 * `findCart(parameters)`, a method that returns the cart who's value
   is a subset of `parameters` and throws an `Error` if no match is
   found.  For example:
