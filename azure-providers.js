@@ -674,7 +674,7 @@ var azureProvidersModule = angular
             totalQuantityOrdered = {};
             totalQuantityShipped = {};
             this.orderLines.forEach(function(line) {
-                _this.price += line.price;
+                _this.price += line.orderLine.price;
                 _this.weight += line.orderLine.weight;
                 _this.volume += line.orderLine.volume;
                 _this.products += line.orderLine['quantity-ordered'];
