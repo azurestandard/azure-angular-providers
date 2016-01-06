@@ -32,9 +32,9 @@ mapping the model name to your Algolia index name:
 
 By default, indexes are provided for the following models:
 
+* brand
 * category
 * drop
-* packaged-product
 * product
 
 Where the default index name is just the plural model name

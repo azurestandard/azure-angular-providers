@@ -85,9 +85,9 @@ var azureProvidersModule = angular
         };
 
         var algoliaIndexNames = {
+            'brand': 'brands',
             'category': 'categories',
             'drop': 'drops',
-            'packaged-product': 'packaged-products',
             'product': 'products',
         };
 
