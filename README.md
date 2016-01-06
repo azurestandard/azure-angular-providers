@@ -394,6 +394,7 @@ Examples
 
 See the [demo page][demo] for a brief example.
 
+[algolia-search]: https://www.algolia.com/doc/javascript#search
 [api]: https://github.com/azurestandard/api-spec
 [AngularJS]: https://angularjs.org/
 [resource]: https://docs.angularjs.org/api/ngResource/service/$resource
