@@ -60,6 +60,8 @@ Currently supported models:
 * order-line
 * payment-method
 * packaged-product
+* packaged-product-tag
+* packaged-product-tag-association
 * person
 * product
 * purchase-order
@@ -72,10 +74,16 @@ Each model currently supports the following actions:
 
 * query
 * count
-* create
-* get
-* save
-* delete
+* create, except for the following models:
+  * packaged-product-tag
+* get, except for the following models:
+  * packaged-product-tag
+  * packaged-product-tag-association
+* save, except for the following models:
+  * packaged-product-tag
+  * packaged-product-tag-association
+* delete, except for the following models:
+  * packaged-product-tag
 
 with the usual Angular $resource semantics, except that `create`
 creates new instances while `save` updates existing instances.  For
