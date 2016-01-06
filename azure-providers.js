@@ -634,6 +634,7 @@ var azureProvidersModule = angular
                 this._drop();
             }
             if (order.trip) {
+                this._trip();
                 this._stop();
             }
             if (order['checkout-payment']) {
@@ -650,6 +651,12 @@ var azureProvidersModule = angular
         Order.prototype._drop = function() {
             this.drop = AzureAPI.drop.get({
                 id: this.order.drop,
+            });
+        };
+
+        Order.prototype._trip = function() {
+            this.trip = AzureAPI.trip.get({
+                id: this.order.trip
             });
         };
 
