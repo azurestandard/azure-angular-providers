@@ -316,11 +316,15 @@ the additional property:
 
 * `payment`, the payment the customer used for the order.
 
-For orders scheduled for delivery by a trip, the `Order` instance will
-have the additional properties:
+For orders scheduled for delivery on a drop and trip,
+the `Order` instance will have the additional properties:
 
 * `drop`, the drop to which the customer wants the order delivered.
 * `stop`, the stop on which the customer's order will be delivered.
+* `trip`, the trip on which the customer's order will be delivered.
+
+Each of those fields is a $resource (e.g. so they have the usual
+`$promise`) attribute.
 
 The `AzureOrder` factory also adds the following properties to each
 `OrderLine` instance:

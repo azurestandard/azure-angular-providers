@@ -634,6 +634,7 @@ var azureProvidersModule = angular
                 this._drop();
             }
             if (order.trip) {
+                this._trip();
                 this._stop();
             }
             if (order['checkout-payment']) {
@@ -650,6 +651,12 @@ var azureProvidersModule = angular
         Order.prototype._drop = function() {
             this.drop = AzureAPI.drop.get({
                 id: this.order.drop,
+            });
+        };
+
+        Order.prototype._trip = function() {
+            this.trip = AzureAPI.trip.get({
+                id: this.order.trip
             });
         };
 
@@ -848,16 +855,51 @@ var azureProvidersModule = angular
             this.cart = null;
             var orders = AzureAPI.order.query({
                 'filter-person': personId,
-                'status': 'cart',
+                'status': ['cart','placed'].join(),
                 'limit': 250,
             });
             orders.$promise.then(function(orders) {
-                orders.forEach(function(order) {
-                    if (order.drop) {   // Filter out carts from old website
-                        _this.carts.push(new Cart(order));
+                var now = new Date();
+                var pushTripCartFactory = function(cart, now) {
+                    var getDate = function(cart) {
+                        if (cart.trip.cutoff) {
+                            var date = new Date(cart.trip.cutoff);
+                            if (date > now) {
+                                return date;
+                            }
+                        }
+                        /* the distant future (around year 4707), but
+                         * still sorts by order id */
+                        return new Date(86400000 * 1000000 + cart.order.id);
+                    };
+
+                    return function(trip) {
+                        if (cart.order.status === 'placed' && trip.cutoff) {
+                            var date = new Date(trip.cutoff);
+                            if (date < now) {
+                                /* this order is no longer editable */
+                                return cart.trip;
+                            }
+                        }
+                        _this.carts.push(cart);
+                        _this.carts.sort(function(a, b) {
+                            return getDate(a) - getDate(b);
+                        });
+                        _this.cart = _this.carts[0];
+                        return cart.trip;
+                    };
+                };
+                angular.forEach(orders, function(order) {
+                    var cart = new Cart(order);
+                    if (cart.trip) {
+                        cart.trip.$promise.then(pushTripCartFactory(cart, now));
+                    } else {
+                        _this.carts.push(cart); // no trip (e.g. old-website cart)
+                        if (!_this.cart) {
+                            _this.cart = cart;
+                        }
                     }
                 });
-                _this.cart = _this.carts[0];  // TODO: pick next-to-cutoff cart
             });
         };
 
