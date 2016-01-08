@@ -21,6 +21,7 @@ var azureProvidersModule = angular
             'category',
             'drop',
             'favorite',
+            'faq',
             'notification',
             'notification-dismissal',
             'order',
