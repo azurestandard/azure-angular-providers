@@ -103,7 +103,7 @@ var azureProvidersModule = angular
         this.$get = ['$http', '$resource', 'algolia', 'AzureModelIdentifiers', function AzureAPIFactory($http, $resource, algolia, AzureModelIdentifiers) {
             var algoliaClient;
             if (algoliaAppId && algoliaApiKey) {
-                algoliaClient = algolia.Client(algoliaAppId, algoliaApiKey);
+                algoliaClient = algolia.Client(algoliaAppId, algoliaApiKey, {protocol: 'https:'});
             }
             var payloadHeaders = {};
             for (var header in _headers) {
