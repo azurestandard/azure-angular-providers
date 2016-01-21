@@ -65,6 +65,7 @@ Currently supported models:
 * packaged-product-tag
 * packaged-product-tag-association
 * person
+* piece_audit
 * product
 * purchase-order
 * route
