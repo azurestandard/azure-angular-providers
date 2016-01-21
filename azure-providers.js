@@ -31,6 +31,7 @@ var azureProvidersModule = angular
             'packaged-product-tag',
             'packaged-product-tag-association',
             'person',
+            'pickup',
             'product',
             'purchase-order',
             'route',
