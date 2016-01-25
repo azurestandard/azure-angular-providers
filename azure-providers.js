@@ -126,6 +126,7 @@ var azureProvidersModule = angular
                         }
                     }
                 ),
+                algolia: algoliaClient,
             };
 
             var payloadHeaders = {};
