@@ -131,10 +131,12 @@ The drop model also supports the following action:
 Algolia search
 --------------
 
-If you've [configured the Algolia client](#configuration), models
-listed in `algoliaIndexNames` will have an initialized index attached
-as the `.algolia` property. For example, with the earlier
-[configuration examples](#configuration), you could use:
+If you've [configured the Algolia client](#configuration), the [Algolia
+client](https://github.com/algolia/algoliasearch-client-js) will be available 
+as `AzureAPI.algolia()`. In addition, models listed in `algoliaIndexNames`
+will have an initialized index attached as the `.algolia` property. For
+example, with the earlier [configuration examples](#configuration), you could
+use:
 
     AzureAPI.category.algolia.search(…);
     AzureAPI.drop.algolia.search(…);
