@@ -406,6 +406,26 @@ additional properties:
   was less than or equal to one, this is a no-op.
 * `cart`, the `Cart` that the order belongs to.
 
+AzureLocalCarts
+===============
+
+Use the `AzureLocalCarts` factory to manage an anonymous cart.  Calling:
+
+    AzureLocalCarts()
+
+`AzureLocalCarts` exposes the same interface as `AzureCarts` minus the
+following properties:
+
+* `carts`
+* `selectCart()`
+* `createCart()`
+* `findCart()`
+
+The `OrderLine` instances subclass `AzureOrderLine` minus the following
+property:
+
+* `save`
+
 Examples
 ========
 
