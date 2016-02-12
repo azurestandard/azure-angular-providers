@@ -11,6 +11,7 @@ var azureProvidersModule = angular
     .module('azureProviders', ['ngResource', 'ngStorage', 'algoliasearch'])
     .constant('AzureModelIdentifiers', {
         'packaged-product': 'code',
+        'audit-product': 'code',
         route: 'name',
     })
     .provider('AzureAPI', function AzureAPIProvider() {
@@ -39,6 +40,7 @@ var azureProvidersModule = angular
             'route-stop',
             'stop',
             'trip',
+            'audit-product'
         ];
         var _plurals = {
             'account-entry': 'account-entries',
@@ -225,6 +227,30 @@ var azureProvidersModule = angular
                         withCredentials: true,
                         headers: payloadHeaders,
                     };
+                }
+                if (model === 'audit-product'){
+                    actions = {
+                        query: {
+                            method: "GET",
+                            url: url + "/audit/products",
+                            isArray: true,
+                            withCredentials: true,
+                            headers: _headers,
+                            interceptor: {
+                                response: function(response) {
+                                    response.resource.count = parseInt(
+                                        response.headers('Count'));
+                                    return response;
+                                },
+                            },
+                        },
+                        save: {
+                            method: 'POST',
+                            url: url + "/audit/packaged-product/" + ":" + identifier,
+                            withCredentials: true,
+                            headers: payloadHeaders,
+                        },
+                    }
                 }
                 if (model === 'packaged-product') {
                     var categoryUrl = url + '/' + model + '/:' + identifier +
