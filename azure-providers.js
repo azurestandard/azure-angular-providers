@@ -681,13 +681,15 @@ var azureProvidersModule = angular
             _this = this;
             this.price = 0;
             this.weight = 0;
+            this.volume = 0;
             this.products = 0;
             this.shipping = 0;
             totalQuantityOrdered = {};
             totalQuantityShipped = {};
             this.orderLines.forEach(function(line) {
-                _this.price += line.price;
+                _this.price += line.orderLine.price;
                 _this.weight += line.orderLine.weight;
+                _this.volume += line.orderLine.volume;
                 _this.products += line.orderLine['quantity-ordered'];
                 var code = line.orderLine['packaged-product'];
                 totalQuantityOrdered[code] = (
@@ -771,6 +773,7 @@ var azureProvidersModule = angular
             var ignore = {
                 'price': true,
                 'weight': true,
+                'volume': true,
             };
             for (var attr in this.orderLine) {
                 if (this.orderLine.hasOwnProperty(attr) && !ignore[attr]) {
