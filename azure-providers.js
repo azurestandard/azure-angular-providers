@@ -1102,4 +1102,56 @@ var azureProvidersModule = angular
             }
             return cart;
         };
+    }])
+    .factory('AzureDrop', ['AzureAPI', function AzureDropFactory(AzureAPI) {
+        var Drop = function (drop, tripID) {
+            this.drop = drop;
+            this._getContact();
+            if (tripID) {
+                this._getTrip(tripID);
+            } else {
+                this._getNextTrip();
+            }
+        };
+
+        Drop.prototype._getContact = function () {
+            if (this.drop.coordinators) {
+                var contactId = this.drop.coordinators[0];
+
+                this.contact = AzureAPI.person.get({id: contactId});
+            }
+        };
+
+        Drop.prototype._getTrip = function (tripID) {
+            var _this = this;
+            AzureAPI.trip.get({
+                id: tripID
+            }).$promise.then(function (trip) {
+                _this.trip = trip;
+                _this._getStop(trip.id);
+            });
+        };
+
+        Drop.prototype._getNextTrip = function () {
+            var _this = this, now = new Date();
+            AzureAPI.trip.query({
+                drop: this.drop.id,
+                'cutoff-after': now.toISOString(),
+                start: -1
+            }).$promise.then(function (trip) {
+                _this.trip = trip[0];
+                _this._getStop(trip[0].id);
+            });
+        };
+
+        Drop.prototype._getStop = function (tripID) {
+            var _this = this;
+            var stop = AzureAPI.stop.query({
+                trip: tripID,
+                drop: this.drop.id
+            }).$promise.then(function (stop) {
+                _this.stop = stop[0];
+            });
+        };
+        return Drop;
     }]);

@@ -427,6 +427,26 @@ property:
 
 * `save`
 
+AzureDrop
+=========
+
+Use the `AzureDrop` factory to manage a drop. Calling:
+
+    new AzureDrop(drop, trip.id);
+
+will return a `Drop` instance with the following properties:
+
+* `contact`, the primary contact information for this drop as returned
+  by `AzureAPI.person.get(...)`. The primary contact is the first id
+  in `drop.coordinators`, and will be unset if the drop has no
+  coordinators.
+* `drop`, the drop object as returned by `AzureAPI.drop.get(...)`.
+* `stop`, the stop object associated with this trip as returned by
+  `AzureAPI.stop.query(...)`.
+* `trip`, the trip object as returned by`AzureAPI.trip.get(...)`.
+  The `trip.id` is optional. If a trip is not specified, the
+  next-to-cutoff trip will be used.
+
 Examples
 ========
 
