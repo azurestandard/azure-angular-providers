@@ -447,6 +447,31 @@ will return a `Drop` instance with the following properties:
   The `trip.id` is optional. If a trip is not specified, the
   next-to-cutoff trip will be used.
 
+AzureCoordinatorDrop
+====================
+
+Use the `AzureCoordinatorDrop` factory to manage a coordinator
+drop. Calling:
+
+    new AzureCoordinatorDrop(drop, trip.id);
+
+will return a `Drop` instance that subclasses `AzureDrop`
+with the following additional properties:
+
+* `members`, an array of `Person` instances associated with this drop.
+* `orders`, an array of `Order` instances, associated with this drop
+  and trip.  See `AzureOrder` for details on the `Order` class.
+* `pastStops`, an array of past stops and related information.
+
+`pastStops` entries have the following properties:
+
+* `stop`, the stop object as returned by `AzureAPI.stop.query(...)`.
+* `trip`, the trip object associated with that stop, as returned
+  by`AzureAPI.trip.get(...)`.
+* `orders`, an array of order objects as returned by
+  `AzureAPI.order.query(...)`.  This is only set after the `trip`
+  $resource resolves.
+
 Examples
 ========
 

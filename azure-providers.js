@@ -1154,4 +1154,83 @@ var azureProvidersModule = angular
             });
         };
         return Drop;
+    }])
+    .factory('AzureCoordinatorDrop', ['$filter', 'AzureAPI', 'AzureOrder', 'AzureDrop', function AzureCoordinatorDropFactory($filter, AzureAPI, AzureOrder, AzureDrop) {
+        var CoordinatorDrop = function (drop, tripID) {
+            AzureDrop.call(this, drop, tripID);
+            this._getMembers();
+            this._getPastStops();
+        };
+
+        CoordinatorDrop.prototype = Object.create(AzureDrop.prototype);
+        CoordinatorDrop.prototype.constructor = CoordinatorDrop;
+
+        CoordinatorDrop.prototype._getMembers = function () {
+            var _this = this;
+            this.members = AzureAPI.person.query({
+                drop: this.drop.id
+            });
+            this.members.$promise.then(function () {
+                _this._getOrders();
+            });
+        };
+
+        CoordinatorDrop.prototype._getOrders = function () {
+            var _this = this;
+            this.orders = [];
+            AzureAPI.order.query({
+                drop: this.drop.id,
+                trip: this.trip.id
+            }).$promise.then(function (orders) {
+                orders.forEach(function (order) {
+                    var customer = AzureAPI.person.get({
+                        id: order.customer
+                    });
+                    customer.$promise.then(function (matchedCustomer) {
+                        order.customerObject = matchedCustomer;
+                    });
+                    _this.orders.push(new AzureOrder(order));
+                    _this._calculateOrderTotals();
+                });
+            });
+        };
+
+        CoordinatorDrop.prototype._calculateOrderTotals = function () {
+            var _this = this;
+            this.total_price = 0;
+            this.total_weight = 0;
+            this.total_volume = 0;
+            this.orders.forEach(function (order) {
+                _this.total_price += order.price;
+                _this.total_weight += order.weight;
+                _this.total_volume += order.volume;
+            });
+        };
+
+        CoordinatorDrop.prototype._getPastStops = function () {
+                var _this = this, now = new Date();
+                this.pastStops = [];
+                AzureAPI.stop.query({
+                    drop: this.drop.id,
+                    'target-time-before': now.toISOString(),
+                    limit: 10
+                }).$promise.then(function (stops) {
+                    var sorted = stops.reverse();
+                    sorted.forEach(function (stop) {
+                        var delivered = {};
+                        delivered.stop = stop;
+                        delivered.trip = AzureAPI.trip.get({
+                            id: stop.trip,
+                        });
+                        delivered.trip.$promise.then(function (trip) {
+                            delivered.orders = AzureAPI.order.query({
+                                drop: _this.drop.id,
+                                trip: trip.id
+                            });
+                        });
+                        _this.pastStops.push(delivered);
+                    });
+                });
+        };
+        return CoordinatorDrop;
     }]);
