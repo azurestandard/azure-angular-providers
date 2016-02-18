@@ -316,6 +316,10 @@ will return an `Order` instance with the following properties:
 * `shipping`, the shipping amount in dollars.
 * `volume`, the total volume of all products on the order.
 * `weight`, the total weight of all products on the order.
+* `$promise`, an object with promises for data that may be filled in
+  on the fly.  Keys:
+    * `orderLines`, resolves to the `Order` instance after the
+      `Order.orderLines` setup completes.
 
 For orders that have been placed, the `Order` instance will have
 the additional property:

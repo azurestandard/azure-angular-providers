@@ -634,6 +634,7 @@ var azureProvidersModule = angular
     .factory('AzureOrder', ['AzureAPI', 'AzureOrderLine', function AzureOrderFactory(AzureAPI, AzureOrderLine) {
         var Order = function(order) {
             this.order = order;
+            this.$promise = {};
             if (order.drop) {
                 this._drop();
             }
@@ -716,7 +717,7 @@ var azureProvidersModule = angular
             var _this = this;
             this.orderLines = [];
 
-            AzureAPI['order-line'].query({
+            this.$promise.orderLines = AzureAPI['order-line'].query({
                 order: this.order.id,
                 limit: 250,
             }).$promise.then(function(lines) {
@@ -725,6 +726,7 @@ var azureProvidersModule = angular
                 });
                 _this._calculateTotals();
                 _this._calculateShipping();
+                return _this;
             });
         };
 
@@ -1189,8 +1191,11 @@ var azureProvidersModule = angular
                     customer.$promise.then(function (matchedCustomer) {
                         order.customerObject = matchedCustomer;
                     });
-                    _this.orders.push(new AzureOrder(order));
-                    _this._calculateOrderTotals();
+                    var azureOrder = new AzureOrder(order);
+                    azureOrder.$promise.orderLines.then(function (order) {
+                        _this.orders.push(order)
+                        _this._calculateOrderTotals();
+                    });
                 });
             });
         };
