@@ -325,6 +325,7 @@ the additional property:
 For orders scheduled for delivery on a drop and trip,
 the `Order` instance will have the additional properties:
 
+* `contact`, the primary contact for this drop.
 * `drop`, the drop to which the customer wants the order delivered.
 * `stop`, the stop on which the customer's order will be delivered.
 * `trip`, the trip on which the customer's order will be delivered.

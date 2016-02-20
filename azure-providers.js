@@ -653,8 +653,14 @@ var azureProvidersModule = angular
         };
 
         Order.prototype._drop = function() {
+            var _this = this;
             this.drop = AzureAPI.drop.get({
                 id: this.order.drop,
+            });
+            this.drop.$promise.then(function (drop) {
+                if (drop.coordinators && drop.coordinators.length > 0) {
+                    _this._contact();
+                }
             });
         };
 
@@ -673,6 +679,12 @@ var azureProvidersModule = angular
         Order.prototype._payment = function() {
             this.payment = AzureAPI['payment-method'].get({
                 id: this.order['checkout-payment'].method
+            });
+        };
+
+        Order.prototype._contact = function () {
+            this.contact = AzureAPI.person.get({
+                id: this.drop.coordinators[0]
             });
         };
 
