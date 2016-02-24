@@ -892,7 +892,9 @@ var azureProvidersModule = angular
                         _this.carts.sort(function(a, b) {
                             return getDate(a) - getDate(b);
                         });
-                        _this.cart = _this.carts[0];
+                        if (cart.order.status === 'cart') {
+                            _this.cart = cart;
+                        }
                         return cart.trip;
                     };
                 };
