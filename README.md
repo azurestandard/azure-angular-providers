@@ -314,6 +314,7 @@ will return an `Order` instance with the following properties:
 * `price`, the total price of all order-lines.
 * `products`, a count of all the products on the order.
 * `shipping`, the shipping amount in dollars.
+* `volume`, the total volume of all products on the order.
 * `weight`, the total weight of all products on the order.
 
 For orders that have been placed, the `Order` instance will have
@@ -405,6 +406,26 @@ additional properties:
   the ordered quantity was greater than one.  If the ordered quantity
   was less than or equal to one, this is a no-op.
 * `cart`, the `Cart` that the order belongs to.
+
+AzureLocalCarts
+===============
+
+Use the `AzureLocalCarts` factory to manage an anonymous cart.  Calling:
+
+    AzureLocalCarts()
+
+`AzureLocalCarts` exposes the same interface as `AzureCarts` minus the
+following properties:
+
+* `carts`
+* `selectCart()`
+* `createCart()`
+* `findCart()`
+
+The `OrderLine` instances subclass `AzureOrderLine` minus the following
+property:
+
+* `save`
 
 Examples
 ========
