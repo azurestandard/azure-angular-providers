@@ -634,6 +634,7 @@ var azureProvidersModule = angular
     .factory('AzureOrder', ['AzureAPI', 'AzureOrderLine', function AzureOrderFactory(AzureAPI, AzureOrderLine) {
         var Order = function(order) {
             this.order = order;
+            this.$promise = {};
             if (order.drop) {
                 this._drop();
             }
@@ -716,7 +717,7 @@ var azureProvidersModule = angular
             var _this = this;
             this.orderLines = [];
 
-            AzureAPI['order-line'].query({
+            this.$promise.orderLines = AzureAPI['order-line'].query({
                 order: this.order.id,
                 limit: 250,
             }).$promise.then(function(lines) {
@@ -725,6 +726,7 @@ var azureProvidersModule = angular
                 });
                 _this._calculateTotals();
                 _this._calculateShipping();
+                return _this;
             });
         };
 
@@ -1102,4 +1104,138 @@ var azureProvidersModule = angular
             }
             return cart;
         };
+    }])
+    .factory('AzureDrop', ['AzureAPI', function AzureDropFactory(AzureAPI) {
+        var Drop = function (drop, tripID) {
+            this.drop = drop;
+            this._getContact();
+            if (tripID) {
+                this._getTrip(tripID);
+            } else {
+                this._getNextTrip();
+            }
+        };
+
+        Drop.prototype._getContact = function () {
+            if (this.drop.coordinators) {
+                var contactId = this.drop.coordinators[0];
+
+                this.contact = AzureAPI.person.get({id: contactId});
+            }
+        };
+
+        Drop.prototype._getTrip = function (tripID) {
+            var _this = this;
+            AzureAPI.trip.get({
+                id: tripID
+            }).$promise.then(function (trip) {
+                _this.trip = trip;
+                _this._getStop(trip.id);
+            });
+        };
+
+        Drop.prototype._getNextTrip = function () {
+            var _this = this, now = new Date();
+            AzureAPI.trip.query({
+                drop: this.drop.id,
+                'cutoff-after': now.toISOString(),
+                start: -1
+            }).$promise.then(function (trip) {
+                _this.trip = trip[0];
+                _this._getStop(trip[0].id);
+            });
+        };
+
+        Drop.prototype._getStop = function (tripID) {
+            var _this = this;
+            var stop = AzureAPI.stop.query({
+                trip: tripID,
+                drop: this.drop.id
+            }).$promise.then(function (stop) {
+                _this.stop = stop[0];
+            });
+        };
+        return Drop;
+    }])
+    .factory('AzureCoordinatorDrop', ['$filter', 'AzureAPI', 'AzureOrder', 'AzureDrop', function AzureCoordinatorDropFactory($filter, AzureAPI, AzureOrder, AzureDrop) {
+        var CoordinatorDrop = function (drop, tripID) {
+            AzureDrop.call(this, drop, tripID);
+            this._getMembers();
+            this._getPastStops();
+        };
+
+        CoordinatorDrop.prototype = Object.create(AzureDrop.prototype);
+        CoordinatorDrop.prototype.constructor = CoordinatorDrop;
+
+        CoordinatorDrop.prototype._getMembers = function () {
+            var _this = this;
+            this.members = AzureAPI.person.query({
+                drop: this.drop.id
+            });
+            this.members.$promise.then(function () {
+                _this._getOrders();
+            });
+        };
+
+        CoordinatorDrop.prototype._getOrders = function () {
+            var _this = this;
+            this.orders = [];
+            AzureAPI.order.query({
+                drop: this.drop.id,
+                trip: this.trip.id
+            }).$promise.then(function (orders) {
+                orders.forEach(function (order) {
+                    var customer = AzureAPI.person.get({
+                        id: order.customer
+                    });
+                    customer.$promise.then(function (matchedCustomer) {
+                        order.customerObject = matchedCustomer;
+                    });
+                    var azureOrder = new AzureOrder(order);
+                    azureOrder.$promise.orderLines.then(function (order) {
+                        _this.orders.push(order)
+                        _this._calculateOrderTotals();
+                    });
+                });
+            });
+        };
+
+        CoordinatorDrop.prototype._calculateOrderTotals = function () {
+            var _this = this;
+            this.total_price = 0;
+            this.total_weight = 0;
+            this.total_volume = 0;
+            this.orders.forEach(function (order) {
+                _this.total_price += order.price;
+                _this.total_weight += order.weight;
+                _this.total_volume += order.volume;
+            });
+        };
+
+        CoordinatorDrop.prototype._getPastStops = function () {
+                var _this = this, now = new Date();
+                this.pastStops = [];
+                AzureAPI.stop.query({
+                    drop: this.drop.id,
+                    'target-time-before': now.toISOString(),
+                    limit: 10
+                }).$promise.then(function (stops) {
+                    var sorted = stops.reverse();
+                    sorted.forEach(function (stop) {
+                        var delivered = {};
+                        delivered.stop = stop;
+                        delivered.trip = AzureAPI.trip.get({
+                            id: stop.trip,
+                        });
+                        delivered.trip.$promise.then(function (trip) {
+                            delivered.orders = AzureAPI.order.query({
+                                drop: _this.drop.id,
+                                trip: trip.id
+                            });
+                        });
+                        _this.pastStops.push(delivered);
+                    });
+                });
+        };
+        return CoordinatorDrop;
     }]);

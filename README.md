@@ -316,6 +316,10 @@ will return an `Order` instance with the following properties:
 * `shipping`, the shipping amount in dollars.
 * `volume`, the total volume of all products on the order.
 * `weight`, the total weight of all products on the order.
+* `$promise`, an object with promises for data that may be filled in
+  on the fly.  Keys:
+    * `orderLines`, resolves to the `Order` instance after the
+      `Order.orderLines` setup completes.
 
 For orders that have been placed, the `Order` instance will have
 the additional property:
@@ -426,6 +430,51 @@ The `OrderLine` instances subclass `AzureOrderLine` minus the following
 property:
 
 * `save`
+
+AzureDrop
+=========
+
+Use the `AzureDrop` factory to manage a drop. Calling:
+
+    new AzureDrop(drop, trip.id);
+
+will return a `Drop` instance with the following properties:
+
+* `contact`, the primary contact information for this drop as returned
+  by `AzureAPI.person.get(...)`. The primary contact is the first id
+  in `drop.coordinators`, and will be unset if the drop has no
+  coordinators.
+* `drop`, the drop object as returned by `AzureAPI.drop.get(...)`.
+* `stop`, the stop object associated with this trip as returned by
+  `AzureAPI.stop.query(...)`.
+* `trip`, the trip object as returned by`AzureAPI.trip.get(...)`.
+  The `trip.id` is optional. If a trip is not specified, the
+  next-to-cutoff trip will be used.
+
+AzureCoordinatorDrop
+====================
+
+Use the `AzureCoordinatorDrop` factory to manage a coordinator
+drop. Calling:
+
+    new AzureCoordinatorDrop(drop, trip.id);
+
+will return a `Drop` instance that subclasses `AzureDrop`
+with the following additional properties:
+
+* `members`, an array of `Person` instances associated with this drop.
+* `orders`, an array of `Order` instances, associated with this drop
+  and trip.  See `AzureOrder` for details on the `Order` class.
+* `pastStops`, an array of past stops and related information.
+
+`pastStops` entries have the following properties:
+
+* `stop`, the stop object as returned by `AzureAPI.stop.query(...)`.
+* `trip`, the trip object associated with that stop, as returned
+  by`AzureAPI.trip.get(...)`.
+* `orders`, an array of order objects as returned by
+  `AzureAPI.order.query(...)`.  This is only set after the `trip`
+  $resource resolves.
 
 Examples
 ========
