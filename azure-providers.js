@@ -65,6 +65,12 @@ var azureProvidersModule = angular
             resendConfirmationEmail: {
                 url: '/registration/resend',
             },
+            resetPassword: {
+                url: '/password/reset',
+            },
+            resetPasswordConfirm: {
+                url: '/password/confirm',
+            },
         };
 
         var _headers = {

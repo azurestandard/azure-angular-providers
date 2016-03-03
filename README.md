@@ -184,6 +184,10 @@ There's also:
 * `AzureAPI.resendConfirmationEmail({token: ..., 'base-url': ...})` to
   resend the confirmation email to the user with the given resend
   token. It returns an [HttpPromise][] for a 204 response.
+* `AzureAPI.resetPassword({email: ..., 'base-url': ...})` to
+  send a password-reset confirmation email to the user.
+* `AzureAPI.resetPasswordConfirm({token: ..., password: ...})` to
+  reset a password using a confirmation token.
 
 AzureCategory
 =============
