@@ -54,6 +54,7 @@ Currently supported models:
 * brand
 * category
 * drop
+* drop-membership
 * favorite
 * faq
 * notification
