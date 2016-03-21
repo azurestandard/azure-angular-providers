@@ -679,7 +679,7 @@ var azureProvidersModule = angular
 
         Order.prototype._payment = function() {
             this.payment = AzureAPI['payment-method'].get({
-                id: this.order['checkout-payment'].method
+                id: this.order['checkout-payment']['payment-method']
             });
         };
 
