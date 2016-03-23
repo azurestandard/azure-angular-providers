@@ -638,7 +638,7 @@ var azureProvidersModule = angular
             if (order.drop) {
                 this._drop();
             }
-            if (order.trip) {
+            if (order.drop && order.trip) {
                 this._trip();
                 this._stop();
             }
@@ -672,9 +672,14 @@ var azureProvidersModule = angular
         };
 
         Order.prototype._stop = function() {
-            this.stop = AzureAPI.stop.query({
+            var _this = this;
+            var stop = AzureAPI.stop.query({
+                drop: this.order.drop,
                 trip: this.order.trip
             });
+            stop.$promise.then(function(stop) {
+                _this.stop = stop[0];
+            })
         };
 
         Order.prototype._payment = function() {
