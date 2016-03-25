@@ -317,6 +317,7 @@ will return an `Order` instance with the following properties:
 * `orderLines`, an array of `OrderLine` instances wrapping order-line
   $resources with the requested products, quantities, prices, ….
 * `linePrice`, the total price of all order-lines.
+* `totalPrice`, the total of `linePrice` + `order.fees`.
 * `products`, a count of all the products on the order.
 * `shipping`, the shipping amount in dollars.
 * `volume`, the total volume of all products on the order.

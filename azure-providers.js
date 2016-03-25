@@ -705,6 +705,7 @@ var azureProvidersModule = angular
             var _this, totalQuantityOrdered, totalQuantityShipped;
             _this = this;
             this.linePrice = 0;
+            this.totalPrice = 0;
             this.weight = 0;
             this.volume = 0;
             this.products = 0;
@@ -729,6 +730,12 @@ var azureProvidersModule = angular
                 line['total-quantity-ordered'] = totalQuantityOrdered[code];
                 line['total-quantity-shipped'] = totalQuantityShipped[code];
             });
+            this.totalPrice = this.linePrice;
+            if (this.order.fees && this.order.fees.length > 0) {
+                this.order.fees.forEach(function(fee) {
+                    _this.totalPrice += fee.amount;
+                });
+            }
         };
 
         Order.prototype._calculateShipping = function() {
