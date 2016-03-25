@@ -133,7 +133,7 @@ Algolia search
 --------------
 
 If you've [configured the Algolia client](#configuration), the [Algolia
-client](https://github.com/algolia/algoliasearch-client-js) will be available 
+client](https://github.com/algolia/algoliasearch-client-js) will be available
 as `AzureAPI.algolia()`. In addition, models listed in `algoliaIndexNames`
 will have an initialized index attached as the `.algolia` property. For
 example, with the earlier [configuration examples](#configuration), you could
@@ -319,7 +319,6 @@ will return an `Order` instance with the following properties:
 * `linePrice`, the total price of all order-lines.
 * `totalPrice`, the total of `linePrice` + `order.fees`.
 * `products`, a count of all the products on the order.
-* `shipping`, the shipping amount in dollars.
 * `volume`, the total volume of all products on the order.
 * `weight`, the total weight of all products on the order.
 * `$promise`, an object with promises for data that may be filled in

@@ -738,12 +738,6 @@ var azureProvidersModule = angular
             }
         };
 
-        Order.prototype._calculateShipping = function() {
-            if (this.order['checkout-payment']) {
-                this.shipping = this.order['checkout-payment'].amount - this.linePrice;
-            }
-        };
-
         Order.prototype._getOrderLines = function() {
             var _this = this;
             this.orderLines = [];
@@ -756,7 +750,6 @@ var azureProvidersModule = angular
                     _this.orderLines.push(_this._newOrderLine(line));
                 });
                 _this._calculateTotals();
-                _this._calculateShipping();
                 return _this;
             });
         };
