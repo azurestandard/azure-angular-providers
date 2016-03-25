@@ -704,7 +704,7 @@ var azureProvidersModule = angular
         Order.prototype._calculateTotals = function() {
             var _this, totalQuantityOrdered, totalQuantityShipped;
             _this = this;
-            this.price = 0;
+            this.linePrice = 0;
             this.weight = 0;
             this.volume = 0;
             this.products = 0;
@@ -712,7 +712,7 @@ var azureProvidersModule = angular
             totalQuantityOrdered = {};
             totalQuantityShipped = {};
             this.orderLines.forEach(function(line) {
-                _this.price += line.orderLine.price;
+                _this.linePrice += line.orderLine.price;
                 _this.weight += line.orderLine.weight;
                 _this.volume += line.orderLine.volume;
                 _this.products += line.orderLine['quantity-ordered'];
@@ -733,7 +733,7 @@ var azureProvidersModule = angular
 
         Order.prototype._calculateShipping = function() {
             if (this.order['checkout-payment']) {
-                this.shipping = this.order['checkout-payment'].amount - this.price;
+                this.shipping = this.order['checkout-payment'].amount - this.linePrice;
             }
         };
 
@@ -1056,13 +1056,13 @@ var azureProvidersModule = angular
         Cart.prototype._calculateTotals = function() {
             var _this, totalQuantityOrdered;
             _this = this;
-            this.price = 0;
+            this.linePrice = 0;
             this.weight = 0;
             this.volume = 0;
             this.products = 0;
             totalQuantityOrdered = {};
             this.orderLines.forEach(function(line) {
-                _this.price += line.orderLine.price;
+                _this.linePrice += line.orderLine.price;
                 _this.weight += line.orderLine.weight;
                 _this.volume += line.orderLine.volume;
                 _this.products += line.orderLine['quantity-ordered'];

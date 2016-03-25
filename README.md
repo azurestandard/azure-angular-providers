@@ -316,7 +316,7 @@ will return an `Order` instance with the following properties:
 * `order`, the order object as returned by `AzureAPI.order.get(…)`.
 * `orderLines`, an array of `OrderLine` instances wrapping order-line
   $resources with the requested products, quantities, prices, ….
-* `price`, the total price of all order-lines.
+* `linePrice`, the total price of all order-lines.
 * `products`, a count of all the products on the order.
 * `shipping`, the shipping amount in dollars.
 * `volume`, the total volume of all products on the order.
