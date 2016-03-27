@@ -816,11 +816,11 @@ var azureProvidersModule = angular
         };
 
         OrderLine.prototype.delete = function() {
-            var resource = this.orderLine.$delete();
+            var promise = this.orderLine.$delete();
             var index = this.cart.orderLines.indexOf(this);
             this.cart.orderLines.splice(index, 1);
             this.cart._calculateTotals();
-            return resource.$promise;
+            return promise;
         };
 
         OrderLine.prototype.increment = function() {
