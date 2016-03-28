@@ -704,7 +704,8 @@ var azureProvidersModule = angular
         Order.prototype._calculateTotals = function() {
             var _this, totalQuantityOrdered, totalQuantityShipped;
             _this = this;
-            this.price = 0;
+            this.linePrice = 0;
+            this.totalPrice = 0;
             this.weight = 0;
             this.volume = 0;
             this.products = 0;
@@ -712,7 +713,7 @@ var azureProvidersModule = angular
             totalQuantityOrdered = {};
             totalQuantityShipped = {};
             this.orderLines.forEach(function(line) {
-                _this.price += line.orderLine.price;
+                _this.linePrice += line.orderLine.price;
                 _this.weight += line.orderLine.weight;
                 _this.volume += line.orderLine.volume;
                 _this.products += line.orderLine['quantity-ordered'];
@@ -729,11 +730,11 @@ var azureProvidersModule = angular
                 line['total-quantity-ordered'] = totalQuantityOrdered[code];
                 line['total-quantity-shipped'] = totalQuantityShipped[code];
             });
-        };
-
-        Order.prototype._calculateShipping = function() {
-            if (this.order['checkout-payment']) {
-                this.shipping = this.order['checkout-payment'].amount - this.price;
+            this.totalPrice = this.linePrice;
+            if (this.order.fees && this.order.fees.length > 0) {
+                this.order.fees.forEach(function(fee) {
+                    _this.totalPrice += fee.amount;
+                });
             }
         };
 
@@ -749,7 +750,6 @@ var azureProvidersModule = angular
                     _this.orderLines.push(_this._newOrderLine(line));
                 });
                 _this._calculateTotals();
-                _this._calculateShipping();
                 return _this;
             });
         };
@@ -1056,13 +1056,13 @@ var azureProvidersModule = angular
         Cart.prototype._calculateTotals = function() {
             var _this, totalQuantityOrdered;
             _this = this;
-            this.price = 0;
+            this.linePrice = 0;
             this.weight = 0;
             this.volume = 0;
             this.products = 0;
             totalQuantityOrdered = {};
             this.orderLines.forEach(function(line) {
-                _this.price += line.orderLine.price;
+                _this.linePrice += line.orderLine.price;
                 _this.weight += line.orderLine.weight;
                 _this.volume += line.orderLine.volume;
                 _this.products += line.orderLine['quantity-ordered'];
