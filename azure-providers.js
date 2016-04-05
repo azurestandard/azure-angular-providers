@@ -738,6 +738,17 @@ var azureProvidersModule = angular
             }
         };
 
+        Order.prototype._calculateOrder = function() {
+            var _this = this;
+            var resource = AzureAPI.order.get({
+                id: this.order.id
+            });
+            resource.$promise.then(function(order) {
+                _this.order = order;
+                _this._calculateTotals();
+            });
+        };
+
         Order.prototype._getOrderLines = function() {
             var _this = this;
             this.orderLines = [];
@@ -749,7 +760,7 @@ var azureProvidersModule = angular
                 lines.forEach(function(line) {
                     _this.orderLines.push(_this._newOrderLine(line));
                 });
-                _this._calculateTotals();
+                _this._calculateOrder();
                 return _this;
             });
         };
@@ -809,7 +820,7 @@ var azureProvidersModule = angular
             var resource = AzureAPI['order-line'].save(data);
             resource.$promise.then(function(line) {
                 _this.orderLine = line;
-                _this.cart._calculateTotals();
+                _this.cart._calculateOrder();
                 return line;
             });
             return resource.$promise;
@@ -819,7 +830,7 @@ var azureProvidersModule = angular
             var promise = this.orderLine.$delete();
             var index = this.cart.orderLines.indexOf(this);
             this.cart.orderLines.splice(index, 1);
-            this.cart._calculateTotals();
+            this.cart._calculateOrder();
             return promise;
         };
 
@@ -876,7 +887,7 @@ var azureProvidersModule = angular
             resource.$promise.then(function(orderLine) {
                 var line = _this._newOrderLine(orderLine);
                 _this.orderLines.push(line);
-                _this._calculateTotals();
+                _this._calculateOrder();
                 return orderLine;
             });
             return resource.$promise;
