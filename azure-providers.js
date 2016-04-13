@@ -11,7 +11,6 @@ var azureProvidersModule = angular
     .module('azureProviders', ['ngResource', 'ngStorage', 'algoliasearch'])
     .constant('AzureModelIdentifiers', {
         'packaged-product': 'code',
-        'audit-products': 'code',
         route: 'name',
     })
     .provider('AzureAPI', function AzureAPIProvider() {
