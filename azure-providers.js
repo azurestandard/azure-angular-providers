@@ -40,7 +40,6 @@ var azureProvidersModule = angular
             'stop',
             'trip',
             'audit-product',
-            'audit-products'
         ];
         var _plurals = {
             'account-entry': 'account-entries',
@@ -228,8 +227,14 @@ var azureProvidersModule = angular
                         headers: payloadHeaders,
                     };
                 }
-                if (model === 'audit-products'){
+                if (model === 'audit-product'){
                     actions = {
+                        get: {
+                            method: 'GET',
+                            url: url + "/audit/product/" + ":" + identifier,
+                            withCredentials: true,
+                            headers: _headers,
+                        },
                         query: {
                             method: "GET",
                             url: url + "/audit/products",
@@ -249,16 +254,6 @@ var azureProvidersModule = angular
                             url: url + "/audit/packaged-product/" + ":" + identifier,
                             withCredentials: true,
                             headers: payloadHeaders,
-                        },
-                    }
-                }
-                if (model === 'audit-product'){
-                    actions = {
-                        get: {
-                            method: 'GET',
-                            url: url + "/audit/product/" + ":" + identifier,
-                            withCredentials: true,
-                            headers: _headers,
                         },
                     }
                 }
