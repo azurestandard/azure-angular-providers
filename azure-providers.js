@@ -17,6 +17,7 @@ var azureProvidersModule = angular
         var _models = [
             'account-entry',
             'address',
+            'audit-product',
             'brand',
             'category',
             'drop',
@@ -39,7 +40,6 @@ var azureProvidersModule = angular
             'route-stop',
             'stop',
             'trip',
-            'audit-product',
         ];
         var _plurals = {
             'account-entry': 'account-entries',
