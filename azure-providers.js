@@ -17,6 +17,7 @@ var azureProvidersModule = angular
         var _models = [
             'account-entry',
             'address',
+            'audit-product',
             'brand',
             'category',
             'drop',
@@ -225,6 +226,36 @@ var azureProvidersModule = angular
                         withCredentials: true,
                         headers: payloadHeaders,
                     };
+                }
+                if (model === 'audit-product'){
+                    actions = {
+                        get: {
+                            method: 'GET',
+                            url: url + "/audit/product/" + ":" + identifier,
+                            withCredentials: true,
+                            headers: _headers,
+                        },
+                        query: {
+                            method: "GET",
+                            url: url + "/audit/products",
+                            isArray: true,
+                            withCredentials: true,
+                            headers: _headers,
+                            interceptor: {
+                                response: function(response) {
+                                    response.resource.count = parseInt(
+                                        response.headers('Count'));
+                                    return response;
+                                },
+                            },
+                        },
+                        save: {
+                            method: 'POST',
+                            url: url + "/audit/packaged-product/" + ":" + identifier,
+                            withCredentials: true,
+                            headers: payloadHeaders,
+                        },
+                    }
                 }
                 if (model === 'packaged-product') {
                     var categoryUrl = url + '/' + model + '/:' + identifier +

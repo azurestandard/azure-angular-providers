@@ -51,6 +51,7 @@ Currently supported models:
 
 * account-entry
 * address
+* audit-product
 * brand
 * category
 * drop
