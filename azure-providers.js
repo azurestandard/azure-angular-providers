@@ -671,6 +671,7 @@ var azureProvidersModule = angular
         return OrderLine;
     }])
     .factory('AzureOrder', ['AzureAPI', 'AzureOrderLine', function AzureOrderFactory(AzureAPI, AzureOrderLine) {
+
         var Order = function(order) {
             this.order = order;
             this.$promise = {};
@@ -741,7 +742,6 @@ var azureProvidersModule = angular
             this.weight = 0;
             this.volume = 0;
             this.products = 0;
-            this.shipping = 0;
             totalQuantityOrdered = {};
             totalQuantityShipped = {};
             this.orderLines.forEach(function(line) {
@@ -775,9 +775,12 @@ var azureProvidersModule = angular
             var resource = AzureAPI.order.get({
                 id: this.order.id
             });
+            _this._calculateTotals(); // Once before order request
+            _this.orderLoading = true;
             resource.$promise.then(function(order) {
                 _this.order = order;
-                _this._calculateTotals();
+                _this._calculateTotals(); // Once more after request is finished
+                _this.orderLoading = false;
             });
         };
 
@@ -869,7 +872,7 @@ var azureProvidersModule = angular
 
         OrderLine.prototype.increment = function() {
             this.orderLine['quantity-ordered'] += 1;
-            save(this)
+            save(this);
         };
 
         OrderLine.prototype.decrement = function() {
@@ -884,6 +887,7 @@ var azureProvidersModule = angular
             resource.save().then(function(newResource) {
                 if (newResource['quantity-ordered'] === resource['$quantity-ordered']) {
                     delete resource['$quantity-ordered'];
+                    resource.cart._calculateOrder();
                 } else {
                     saveUntilItSticks(resource);
                 }
