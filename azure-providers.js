@@ -858,11 +858,12 @@ var azureProvidersModule = angular
         };
 
         OrderLine.prototype.delete = function() {
-            var promise = this.orderLine.$delete();
-            var index = this.cart.orderLines.indexOf(this);
-            this.cart.orderLines.splice(index, 1);
-            this.cart._calculateOrder();
-            return promise;
+            var _this = this;
+            return this.orderLine.$delete().then(function() {
+                var index = _this.cart.orderLines.indexOf(_this);
+                _this.cart.orderLines.splice(index, 1);
+                _this.cart._calculateOrder();
+            });
         };
 
         OrderLine.prototype.increment = function() {
