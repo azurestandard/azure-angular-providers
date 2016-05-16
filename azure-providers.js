@@ -939,24 +939,15 @@ var azureProvidersModule = angular
                 var pushTripCartFactory = function(cart, now) {
                     var getDate = function(cart) {
                         if (cart.trip.cutoff) {
-                            var date = new Date(cart.trip.cutoff);
-                            if (date > now) {
-                                return date;
-                            }
+                            return new Date(cart.trip.cutoff);
+                        } else {
+                            /* the distant future (around year 4707), but
+                            * still sorts by order id */
+                            return new Date(86400000 * 1000000 + cart.order.id);
                         }
-                        /* the distant future (around year 4707), but
-                         * still sorts by order id */
-                        return new Date(86400000 * 1000000 + cart.order.id);
                     };
 
                     return function(trip) {
-                        if (cart.order.status === 'placed' && trip.cutoff) {
-                            var date = new Date(trip.cutoff);
-                            if (date < now) {
-                                /* this order is no longer editable */
-                                return cart.trip;
-                            }
-                        }
                         _this.carts.push(cart);
                         _this.carts.sort(function(a, b) {
                             return getDate(a) - getDate(b);
