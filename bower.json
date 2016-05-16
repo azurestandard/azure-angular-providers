@@ -10,7 +10,7 @@
 		"service",
 		"provider"
 	],
-	"version": "0.8.1",
+	"version": "0.8.2",
 	"license": "MIT",
 	"main": "./azure-providers.js",
 	"homepage": "https://github.com/azurestandard/azure-angular-providers",
