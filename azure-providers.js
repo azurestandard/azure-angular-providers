@@ -1070,6 +1070,18 @@ var azureProvidersModule = angular
         OrderLine.prototype = Object.create(AzureOrderLine.prototype);
         OrderLine.prototype.constructor = OrderLine;
 
+        OrderLine.prototype._calculate = function () {
+            var quantityOrdered = this.orderLine['quantity-ordered'];
+            this.orderLine.price = this.product.packaged.packaged.price.retail.dollars * quantityOrdered;
+            this.orderLine.volume = this.product.packaged.packaged.volume * quantityOrdered;
+            this.orderLine.weight = this.product.packaged.packaged.weight.average * quantityOrdered;
+        };
+
+        OrderLine.prototype.save = function() {
+            this._calculate();
+            this.cart._calculateTotals();
+        };
+
         OrderLine.prototype.delete = function() {
             var index = this.cart.orderLines.indexOf(this);
             $localStorage.orderLines.splice(index, 1);
@@ -1079,15 +1091,13 @@ var azureProvidersModule = angular
 
         OrderLine.prototype.increment = function() {
             this.orderLine['quantity-ordered'] += 1;
-            this.orderLine.price = this.orderLine['quantity-ordered'] * this.product.packaged.packaged.price.retail.dollars;
-            this.cart._calculateTotals();
+            this.save();
         };
 
         OrderLine.prototype.decrement = function() {
             if (this.orderLine['quantity-ordered'] > 1) {
                 this.orderLine['quantity-ordered'] -= 1;
-                this.orderLine.price = this.orderLine['quantity-ordered'] * this.product.packaged.packaged.price.retail.dollars;
-                this.cart._calculateTotals();
+                this.save();
             }
         };
 
@@ -1141,23 +1151,17 @@ var azureProvidersModule = angular
 
         Cart.prototype.addLine = function(productCode, quantityOrdered) {
             var _this = this;
-            var product = AzureAPI['packaged-product'].get({
-                code: productCode
-            });
-            product.$promise.then(function(product) {
-                var line = {};
-                line['packaged-product'] = product.code;
-                line['quantity-ordered'] = quantityOrdered;
-                line.price = product.price.retail.dollars * quantityOrdered;
-                line.volume = product.volume * quantityOrdered;
-                line.weight = product.weight.average * quantityOrdered;
-                line = _this._newOrderLine(line);
+            var line = {};
+            line['packaged-product'] = productCode;
+            line['quantity-ordered'] = quantityOrdered;
+            line = this._newOrderLine(line);
+            $localStorage.orderLines.push(line.orderLine);
+            return line.product.$promise.then(function() {
+                line._calculate();
                 _this.orderLines.push(line);
-                $localStorage.orderLines.push(line.orderLine);
                 _this._calculateTotals();
-
+                return line.product;
             });
-            return product.$promise;
         };
 
         var Carts = function(personId) {
