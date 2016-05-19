@@ -28,6 +28,7 @@ var azureProvidersModule = angular
             'notification-dismissal',
             'order',
             'order-line',
+            'payment',
             'payment-method',
             'packaged-product',
             'packaged-product-tag',

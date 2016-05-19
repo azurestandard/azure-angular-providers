@@ -62,6 +62,7 @@ Currently supported models:
 * notification-dismissal
 * order
 * order-line
+* payment
 * payment-method
 * packaged-product
 * packaged-product-tag
