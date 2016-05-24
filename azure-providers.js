@@ -741,7 +741,6 @@ var azureProvidersModule = angular
             this.weight = 0;
             this.volume = 0;
             this.products = 0;
-            this.shipping = 0;
             totalQuantityOrdered = {};
             totalQuantityShipped = {};
             this.orderLines.forEach(function(line) {
