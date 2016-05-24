@@ -310,6 +310,20 @@ var azureProvidersModule = angular
             this.objects[id] = object;
         };
 
+        ObjectPromiseCache.prototype._getFromApi = function(id) {
+            var parameters = {};
+            parameters[this.identifier] = id;
+            return AzureAPI[this.model].get(parameters).$promise;
+        }
+
+        ObjectPromiseCache.prototype._getFromAlgolia = function(id) {
+            var _this = this;
+            return AzureAPI[this.model].algolia.getObject(id)
+                .catch(function() {
+                    return _this._getFromApi(id);
+                });
+        }
+
         ObjectPromiseCache.prototype.getObjectPromise = function(id) {
             var objectsEntry = this.objects[id];
             var promisesEntry = this.promises[id];
@@ -324,11 +338,9 @@ var azureProvidersModule = angular
                 var _this = this;
                 var promise;
                 if (AzureAPI[this.model].hasOwnProperty('algolia')) {
-                    promise = AzureAPI[this.model].algolia.getObject(id);
+                    promise = this._getFromAlgolia(id);
                 } else {
-                    var parameters = {};
-                    parameters[this.identifier] = id;
-                    promise = AzureAPI[this.model].get(parameters).$promise;
+                    promise = this._getFromApi(id);
                 }
                 this.promises[id] = promise;
                 promise.then(function(object) {
@@ -615,6 +627,31 @@ var azureProvidersModule = angular
             return cache.getObjectPromise(products[0].id);
         }
 
+        function _getProductFromApi(code, queryParameters) {
+            queryParameters['packaged-product'] = code;
+            return AzureAPI.product.query(
+                queryParameters
+            ).$promise.then(function(products) {
+                return _handleProducts(code, products);
+            });
+        }
+
+        function _getProductFromAlgolia(code, queryParameters) {
+            var algoliaParameters = {
+                facets: '*',
+                facetFilters: ['packaging.code:'+code],
+            };
+            angular.extend(algoliaParameters, queryParameters);
+            return AzureAPI.product.algolia.search(
+                algoliaParameters
+            ).then(function(response) {
+                if (response.hits.length < 1) {
+                    return _getProductFromApi(code, queryParameters);
+                }
+                return _handleProducts(code, response.hits);
+            });
+        }
+
         return function(product, queryParameters) {
             var promise = null;
             var id;
@@ -628,23 +665,9 @@ var azureProvidersModule = angular
                     }
 
                     if (AzureAPI.product.algolia) {
-                        var algoliaParameters = {
-                            facets: '*',
-                            facetFilters: ['packaging.code:'+code],
-                        };
-                        angular.extend(algoliaParameters, queryParameters);
-                        promise = AzureAPI.product.algolia.search(
-                            algoliaParameters
-                        ).then(function(response) {
-                            return _handleProducts(code, response.hits);
-                        });
+                        promise = _getProductFromAlgolia(code, queryParameters);
                     } else {
-                        queryParameters['packaged-product'] = code;
-                        promise = AzureAPI.product.query(
-                            queryParameters
-                        ).$promise.then(function(products) {
-                            return _handleProducts(code, products);
-                        });
+                        promise = _getProductFromApi(code, queryParameters)
                     }
 
                     packagedCache[code] = promise;
