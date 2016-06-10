@@ -54,6 +54,7 @@ Currently supported models:
 * audit-product
 * brand
 * category
+* country
 * drop
 * drop-membership
 * favorite
@@ -71,6 +72,7 @@ Currently supported models:
 * pickup
 * product
 * purchase-order
+* region
 * route
 * route-stop
 * stop

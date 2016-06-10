@@ -20,6 +20,7 @@ var azureProvidersModule = angular
             'audit-product',
             'brand',
             'category',
+            'country',
             'drop',
             'drop-membership',
             'favorite',
@@ -37,6 +38,7 @@ var azureProvidersModule = angular
             'pickup',
             'product',
             'purchase-order',
+            'region',
             'route',
             'route-stop',
             'stop',
@@ -46,6 +48,7 @@ var azureProvidersModule = angular
             'account-entry': 'account-entries',
             'address': 'addresses',
             'category': 'categories',
+            'country': 'countries',
             'person': 'people',
         };
 
