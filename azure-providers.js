@@ -966,37 +966,34 @@ var azureProvidersModule = angular
                 'limit': 250,
             });
             orders.$promise.then(function(orders) {
-                var now = new Date();
-                var pushTripCartFactory = function(cart, now) {
-                    var getDate = function(cart) {
-                        if (cart.trip.cutoff) {
-                            return new Date(cart.trip.cutoff);
-                        } else {
-                            /* the distant future (around year 4707), but
-                            * still sorts by order id */
-                            return new Date(86400000 * 1000000 + cart.order.id);
+                var shouldSetCart = function(cart) {
+                    if (!cart.order.drop && !cart.order.address) {
+                        // the given cart is an old website cart
+                        if (!_this.cart || _this.cart.order.drop || _this.cart.order.address) {
+                            // the current cart is either not set, has a drop, or has an address
+                            // the cart should be set to the given old website cart
+                            _this.cart = cart;
                         }
-                    };
-
-                    return function(trip) {
-                        _this.carts.push(cart);
-                        _this.carts.sort(function(a, b) {
-                            return getDate(a) - getDate(b);
-                        });
-                        _this.cart = _this.carts[0];
-                        return cart.trip;
-                    };
-                };
-                angular.forEach(orders, function(order) {
-                    var cart = new Cart(order);
-                    if (cart.trip) {
-                        cart.trip.$promise.then(pushTripCartFactory(cart, now));
+                    } else if (cart.order.drop) {
+                        // the given cart is a drop
+                        if (!_this.cart || _this.cart.order.address) {
+                            // the current cart is not set or the set cart is a parcel carrier
+                            // the current cart should be set to the given drop cart
+                            _this.cart = cart;
+                        }
                     } else {
-                        _this.carts.push(cart); // no trip (e.g. old-website cart)
+                        // the given cart is a parcel carrier
                         if (!_this.cart) {
+                            // only set this as the cart if it is not already set.
                             _this.cart = cart;
                         }
                     }
+                };
+
+                _this.carts = orders.map(function(order) {
+                    var cart = new Cart(order);
+                    shouldSetCart(cart);
+                    return cart;
                 });
             });
         };
