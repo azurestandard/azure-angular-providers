@@ -962,7 +962,7 @@ var azureProvidersModule = angular
             this.cart = null;
             var orders = AzureAPI.order.query({
                 'filter-person': personId,
-                'status': ['cart','placed'].join(),
+                'status': ['open','placed'].join(),
                 'limit': 250,
             });
             orders.$promise.then(function(orders) {

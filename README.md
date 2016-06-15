@@ -106,7 +106,7 @@ example:
     var favorites = AzureAPI.product.query({'filter-person': you.id});
     var order = AzureAPI.order.create({
       customer: you,
-      status: 'cart',
+      status: 'open',
       drop: 456,
       trip: 789,
     });
