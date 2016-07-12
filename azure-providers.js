@@ -628,7 +628,7 @@ var azureProvidersModule = angular
                         'product code ' + code + ', but got ' +
                         products.length);
             }
-            return cache.getObjectPromise(products[0].id);
+            return products[0];
         }
 
         function _getProductFromApi(code, queryParameters) {
