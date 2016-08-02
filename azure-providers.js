@@ -365,7 +365,7 @@ var azureProvidersModule = angular
         var children = {};
 
         var getParent = function(category, ancestor) {
-            if (ancestor.parent !== null) {
+            if (ancestor.parent) {
                 cache.getObjectPromise(ancestor.parent).then(function(cat) {
                     category.ancestors.push(cat);
                     getParent(category, cat);
