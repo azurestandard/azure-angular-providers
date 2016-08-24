@@ -384,7 +384,8 @@ var azureProvidersModule = angular
 
         var _categoryByPathCheck = function(
                 category, _slug, slugs, parent, deferred, pathString) {
-            if (slug(category.name) === _slug) {
+            var name = category['short-name'] || category.name;
+            if (slug(name) === _slug) {
                 if (slugs.length) {
                     _categoryByPath(slugs, category.id, deferred, pathString);
                 } else {
@@ -482,7 +483,8 @@ var azureProvidersModule = angular
                 if (cat.id === id) {
                     var chunks = [];
                     for (var i = _this.ancestors.length - 1; i >= index; i--) {
-                        chunks.push(slug(_this.ancestors[i].name));
+                        var name = _this.ancestors[i]['short-name'] || _this.ancestors[i].name;
+                        chunks.push(slug(name));
                     }
                     p = chunks.join('/');
                     return true;
