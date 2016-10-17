@@ -59,140 +59,6 @@
 			</form>
 		</div>
 
-		<p ng-if="!orders.orders.length">You don't have any orders.</p>
-		<div ng-if="orders.orders.length">
-			<p>You have {{orders.orders.length}} orders. They are:</p>
-			<table>
-				<thead>
-					<th>ID</th>
-					<th>Status</th>
-					<th>Drop</th>
-					<th>Trip</th>
-					<th>Lines</th>
-					<th>Products</th>
-					<th>Weight</th>
-					<th>Price</th>
-				</thead>
-				<tbody>
-					<tr ng-repeat="order in orders.orders">
-						<td>{{order.order.id}}</td>
-						<td>{{order.order.status}}</td>
-						<td>{{order.drop.name}}</td>
-						<td>{{order.trip.route}} - {{order.trip.cutoff}}</td>
-						<td>
-							<table>
-								<thead>
-									<tr>
-										<th>Product</th>
-										<th>Requested</th>
-										<th>Shipped</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr ng-repeat="line in order.orderLines">
-										<td>{{line.product.product.name}}</td>
-										<td>{{line.orderLine['quantity-ordered']}}</td>
-										<td>{{line.orderLine['quantity-shipped']}}</td>
-									</tr>
-								</tbody>
-							</table>
-						</td>
-						<td>{{order.products}}</td>
-						<td>{{order.weight}}</td>
-						<td>{{order.price}}</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-
-		<p ng-if="!carts.carts.length">You don't have any carts.</p>
-		<div ng-if="carts.carts.length">
-			<p>You have {{carts.carts.length}} carts. They are:</p>
-			<table>
-				<thead>
-					<th>ID</th>
-					<th>Drop</th>
-					<th>Trip</th>
-					<th>Lines</th>
-					<th>Products</th>
-					<th>Weight</th>
-					<th>Price</th>
-				</thead>
-				<tbody>
-					<tr ng-repeat="cart in carts.carts">
-						<td>
-							<button ng-click="carts.selectCart(cart.order.id)"
-							        title="select as the primary cart">
-								{{cart.order.id}}
-							</button>
-						</td>
-						<td>{{cart.drop.name}}</td>
-						<td>{{cart.trip.route}} - {{cart.trip.cutoff}}</td>
-						<td>
-							<table>
-								<thead>
-									<tr>
-										<th>Product</th>
-										<th>Requested</th>
-										<th>+</th>
-										<th>-</th>
-										<th>Delete</td>
-									</tr>
-								</thead>
-								<tbody>
-									<tr ng-repeat="line in cart.orderLines">
-										<td>
-											{{line.product.product.name}}
-										</td>
-										<td>
-											<form>
-												<input type="number"
-												       ng-model="line.orderLine['quantity-ordered']"
-												       ng-model-options="{updateOn: 'blur'}"
-												       ng-change="line.save()"
-												       min="0" step="1" required="" />
-											</form>
-										</td>
-										<td>
-											<a class="btn" ng-click="line.increment()"
-											   title="increment order-line {{line.id}}">
-												+
-											</a>
-										</td>
-										<td>
-											<a class="btn" ng-click="line.decrement()"
-											   title="decrement order-line {{line.id}}">
-												-
-											</a>
-										</td>
-										<td>
-											<a class="btn" ng-click="line.delete()"
-											   title="delete order-line {{line.id}}">
-												x
-											</a>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</td>
-						<td>{{cart.products}}</td>
-						<td>{{cart.weight}}</td>
-						<td>{{cart.price}}</td>
-					</tr>
-				</tbody>
-			</table>
-			<p>Your primary cart is {{carts.cart.order.id}}.</p>
-			<form ng-submit="add()" ng-controller="OrderLineCreate">
-				<p>Add an order line:</p>
-				<input type="text" ng-model="line.product"
-				       placeholder="product code" /><br />
-				<input type="number" ng-model="line['quantity-ordered']"
-				       placeholder="quantity" /><br />
-				<input type="submit" value="Add to cart" />
-				<p ng-if="warning" class="warning">{{warning}}</p>
-			</form>
-		</div>
-
 		<form ng-controller="CategoryByPathCtrl">
 			<p>Category lookup by path.</p>
 			<p>
@@ -234,8 +100,8 @@
 			angular.module('AzureApp', ['azureProviders'])
 				.controller(
 					'AzureCtrl',
-					['$rootScope', '$scope', 'AzureAPI', 'AzureOrders', 'AzureCarts', 'AzureCategory', 'AzureProduct',
-					function($rootScope, $scope, AzureAPI, AzureOrders, AzureCarts, AzureCategory, AzureProduct) {
+					['$rootScope', '$scope', 'AzureAPI', 'AzureCategory', 'AzureProduct',
+					function($rootScope, $scope, AzureAPI, AzureCategory, AzureProduct) {
 						$scope.category = new AzureCategory(null);
 						$scope.category.children().$promise.then(function(categories) {
 							categories.forEach(function(category, index) {
@@ -245,8 +111,6 @@
 						$rootScope.setupPerson = function(person) {
 							$scope.person = person;
 							$scope.session = AzureAPI.session.get();
-							$scope.orders = new AzureOrders(person.id);
-							$scope.carts = new AzureCarts(person.id);
 							$scope.favoritesCount = AzureAPI.product.count({
 								'filter-person': person.id,
 							});
@@ -264,8 +128,6 @@
 							AzureAPI.logout();
 							$scope.person = null;
 							$scope.session = null;
-							$scope.carts = null;
-							$scope.orders = null;
 							$scope.favoritesCount = null;
 							$scope.favorites = null;
 						};
@@ -275,36 +137,12 @@
 								AzureAPI.person.get().$promise.then(function(person) {
 									$rootScope.setupPerson(person);
 								});
-							} /* else {
-								TODO: anonymous carts
-								$scope.carts = new AzureCarts();
-							} */
+							}
 						});
 						$scope.productPackagingLabel = function(packagedProduct) {
 							return packagedProduct.packaged.code + ' (' +
 								packagedProduct.packaged.size + ', $' +
-								packagedProduct.packaged.price.dollars + ')';
-						};
-					}])
-				.controller(
-					'OrderLineCreate',
-					['$scope', '$timeout',
-					function($scope, $timeout) {
-						$scope.line = {
-							'product': null,
-							'quantity-ordered': 1,
-						};
-						$scope.warning = null;
-						$scope.add = function() {
-							$scope.warning = null;
-							$scope.carts.cart.addLine(
-								$scope.line.product, $scope.line['quantity-ordered']
-							).catch(function(response) {
-								if (response.status === 400) {
-									$scope.warning = response.data.message;
-									$timeout(function() {$scope.warning = null;}, 5000);
-								}
-							});
+								packagedProduct.packaged.price.retail.dollars + ')';
 						};
 					}])
 				.controller(
