@@ -57,6 +57,7 @@ Currently supported models:
 * country
 * drop
 * drop-membership
+* email
 * favorite
 * faq
 * notification

@@ -23,6 +23,7 @@ var azureProvidersModule = angular
             'country',
             'drop',
             'drop-membership',
+            'email',
             'favorite',
             'faq',
             'notification',
@@ -261,6 +262,20 @@ var azureProvidersModule = angular
                             headers: payloadHeaders,
                         },
                     }
+                }
+                if (model === 'email'){
+                    actions.confirm = {
+                        method: 'POST',
+                        url: url + '/' + plural + '/confirm',
+                        withCredentials: true,
+                        headers: _headers,
+                    };
+                    actions.confirmResend = {
+                        method: 'POST',
+                        url: url + '/email/:' + identifier + '/resend',
+                        withCredentials: true,
+                        headers: _headers,
+                    };
                 }
                 if (model === 'packaged-product') {
                     var categoryUrl = url + '/' + model + '/:' + identifier +
