@@ -17,8 +17,7 @@
 	"dependencies": {
 		"angular": "^1.2.0",
 		"angular-resource": "^1.2.0",
-		"algoliasearch": "^3.0.0",
-		"ngstorage": "^0.3.10"
+		"algoliasearch": "^3.0.0"
 	},
 	"repository": {
 		"type": "git",

@@ -8,7 +8,7 @@
  */
 
 var azureProvidersModule = angular
-    .module('azureProviders', ['ngResource', 'ngStorage', 'algoliasearch'])
+    .module('azureProviders', ['ngResource', 'algoliasearch'])
     .constant('AzureModelIdentifiers', {
         'packaged-product': 'code',
         route: 'name',
