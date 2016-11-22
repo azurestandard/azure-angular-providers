@@ -313,7 +313,12 @@ var azureProvidersModule = angular
                 if (model === 'bartender-print-configuration') {
                     actions.testPrint = {
                         method: 'POST',
-                        url: url + '/' + model + '/:' + identifier + '/actions/test-print'
+                        url: url + '/' + model + '/:' + identifier + '/actions/test-print',
+                        withCredentials: true,
+                        headers: _headers,
+                        transformRequest: function(data, headersGetter) {
+                          return null;
+                        },
                     }
                 }
                 resources[model] = $resource(
