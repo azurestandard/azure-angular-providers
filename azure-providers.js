@@ -65,9 +65,6 @@ var azureProvidersModule = angular
             },
             register: {
                 url: '/registration/register',
-            },
-            activate: {
-                url: '/registration/confirm',
                 withCredentials: true,
             },
             resendConfirmationEmail: {
