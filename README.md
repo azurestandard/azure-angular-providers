@@ -180,13 +180,12 @@ There's also:
   object.
 * `AzureAPI.logout()` to leave an authenticated session.  It returns
   an [HttpPromise][] for an unauthenticated session object.
-* `AzureAPI.register({'base-url': ..., person: ..., address: ...,
-  telephone: ..., drop: ...})` to register a new user. It returns an
-  [HttpPromise][] for an object containing the resend token.
-* `AzureAPI.activate({token: ...})` to activate a registration using
-  the confirmation token (which was emailed to the registrant, and is
-  different from the resend token returned by `AzureAPI.register`). It
-  returns an [HttpPromise][] for a the activated person object.
+* `AzureAPI.register({'base-url': ..., email: ..., person: ...,
+  address: ..., telephone: ..., drop: ..., catalog: ...})` to register
+  a new user. It returns an [HttpPromise][] for an object containing
+  the resend token and a session object. If a new user was created,
+  the session object will have a person property and the response will
+  authenticate the user.
 * `AzureAPI.resendConfirmationEmail({token: ..., 'base-url': ...})` to
   resend the confirmation email to the user with the given resend
   token. It returns an [HttpPromise][] for a 204 response.
