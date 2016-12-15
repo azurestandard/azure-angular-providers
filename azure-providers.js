@@ -594,6 +594,14 @@ var azureProvidersModule = angular
             return this.categories()[0];  // TODO: shortest chain through Bulk?
         };
 
+        PackagedProduct.prototype.averagePrice = function(level) {
+            var price = this.packaged.price[level].dollars;
+            if (this.packaged.price[level]['per-pound']) {
+                price *= this.packaged.weight.average;
+            }
+            return price;
+        }
+
         var Product = function(promise, code) {
             var _this = this;
             this.$promise = promise.then(function(product) {
@@ -607,8 +615,7 @@ var azureProvidersModule = angular
                 });
                 return $q.all(promises).then(function() {
                     _this.packaging.sort(function(a, b) {
-                        return a.packaged.price.retail.dollars -
-                            b.packaged.price.retail.dollars;
+                        return a.averagePrice('retail') - b.averagePrice('retail');
                     });
                     _this.selectPackaging(code);
                 }).then(function() {
