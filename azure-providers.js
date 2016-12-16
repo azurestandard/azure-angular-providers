@@ -67,7 +67,7 @@ var azureProvidersModule = angular
                 url: '/registration/register',
                 withCredentials: true,
             },
-            resendConfirmationEmail: {
+            resendRegistrationEmail: {
                 url: '/registration/resend',
             },
             resetPassword: {

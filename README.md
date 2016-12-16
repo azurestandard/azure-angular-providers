@@ -186,8 +186,8 @@ There's also:
   the resend token and a session object. If a new user was created,
   the session object will have a person property and the response will
   authenticate the user.
-* `AzureAPI.resendConfirmationEmail({token: ..., 'base-url': ...})` to
-  resend the confirmation email to the user with the given resend
+* `AzureAPI.resendRegistrationEmail({token: ..., 'base-url': ...})` to
+  resend the registration email to the user with the given resend
   token. It returns an [HttpPromise][] for a 204 response.
 * `AzureAPI.resetPassword({email: ..., 'base-url': ...})` to
   send a password-reset confirmation email to the user.
