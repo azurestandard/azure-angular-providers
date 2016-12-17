@@ -63,6 +63,7 @@ Currently supported models:
 * notification
 * notification-dismissal
 * order
+* order-fee
 * order-line
 * payment
 * payment-method
