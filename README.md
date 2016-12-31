@@ -52,6 +52,9 @@ Currently supported models:
 * account-entry
 * address
 * audit-product
+* bartender-host
+* bartender-print-configuration
+* bartender-template
 * brand
 * category
 * country
@@ -72,6 +75,7 @@ Currently supported models:
 * packaged-product-tag-association
 * person
 * pickup
+* printer
 * product
 * purchase
 * region
@@ -79,6 +83,7 @@ Currently supported models:
 * route-stop
 * stop
 * trip
+* warehouse
 
 Each model currently supports the following actions:
 
@@ -134,6 +139,10 @@ The drop model also supports the following action:
 
 * locations, which returns an array of all active drops with name and
   location for map display.
+
+The bartender-print-configuration model supports the following action:
+
+* testPrint, which creates a test BarTender print request using the given print configuration.  The print request uses hard-coded dummy data.
 
 Algolia search
 --------------
