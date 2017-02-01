@@ -10,14 +10,19 @@
 var azureProvidersModule = angular
     .module('azureProviders', ['ngResource', 'algoliasearch'])
     .constant('AzureModelIdentifiers', {
+        'bartender-host': 'code',
         'packaged-product': 'code',
-        route: 'name',
+        'route': 'name',
+        'warehouse': 'code',
     })
     .provider('AzureAPI', function AzureAPIProvider() {
         var _models = [
             'account-entry',
             'address',
             'audit-product',
+            'bartender-host',
+            'bartender-print-configuration',
+            'bartender-template',
             'brand',
             'category',
             'country',
@@ -38,6 +43,7 @@ var azureProvidersModule = angular
             'packaged-product-tag-association',
             'person',
             'pickup',
+            'printer',
             'product',
             'purchase',
             'region',
@@ -45,6 +51,7 @@ var azureProvidersModule = angular
             'route-stop',
             'stop',
             'trip',
+            'warehouse',
         ];
         var _plurals = {
             'account-entry': 'account-entries',
@@ -301,6 +308,14 @@ var azureProvidersModule = angular
                         isArray: true,
                         withCredentials: true,
                         headers: _headers,
+                    };
+                }
+                if (model === 'bartender-print-configuration') {
+                    actions.testPrint = {
+                        method: 'POST',
+                        url: url + '/' + model + '/:' + identifier + '/actions/test-print',
+                        withCredentials: true,
+                        headers: _headers
                     };
                 }
                 resources[model] = $resource(
