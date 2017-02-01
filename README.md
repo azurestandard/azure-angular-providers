@@ -142,7 +142,9 @@ The drop model also supports the following action:
 
 The bartender-print-configuration model supports the following action:
 
-* testPrint, which creates a test BarTender print request using the given print configuration.  The print request uses hard-coded dummy data.
+* testPrint({ stock: ... }), which creates a test BarTender print request
+  using the given print configuration.  The print request uses hard-coded
+  dummy data if a stock ID is not provided.
 
 Algolia search
 --------------
