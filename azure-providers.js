@@ -315,11 +315,8 @@ var azureProvidersModule = angular
                         method: 'POST',
                         url: url + '/' + model + '/:' + identifier + '/actions/test-print',
                         withCredentials: true,
-                        headers: _headers,
-                        transformRequest: function(data, headersGetter) {
-                          return null;
-                        },
-                    }
+                        headers: _headers
+                    };
                 }
                 resources[model] = $resource(
                     url + '/' + model + '/:' + identifier,
