@@ -10,41 +10,10 @@
 		<div ng-if="session.person">
 			<p>Hello {{person.name}},</p>
 			<button ng-click="logout()">Logout</button>
-			<div ng-if="favorites.length">
+			<div ng-if="favoritesCount.count">
 				<p>
-					You have {{favoritesCount.count}} favorites. The first
-					{{favorites.length}} are:
+					You have {{favoritesCount.count}} favorites.
 				</p>
-				<table>
-					<thead>
-						<th>Code</th>
-						<th>Name</th>
-						<th>Packaging</th>
-						<th>Categories</th>
-					</thead>
-					<tbody>
-						<tr ng-repeat="product in favorites">
-							<td>{{product.code}}</td>
-							<td>{{product.product.name}}</td>
-							<td>
-								<select ng-options="prod.packaged.code as productPackagingLabel(prod) for prod in product.packaging"
-								        ng-model="product.code"
-								        ng-change="product.selectPackaging(product.code)" />
-							</td>
-							<td>
-								<ul ng-if="product.packaged.categories().length">
-									<li ng-repeat="category in product.packaged.categories()">
-										<span ng-repeat="cat in category.ancestors.slice().reverse()"
-										      title="id: {{cat.id}}, path: {{category.path(cat)}}">
-											{{cat.name}}
-											<span ng-if="!$last">→</span>
-										</span>
-									</li>
-								<ul>
-							</td>
-						</tr>
-					</tbody>
-				</table>
 			</div>
 		</div>
 		<div ng-if="!session.person">
@@ -59,68 +28,22 @@
 			</form>
 		</div>
 
-		<form ng-controller="CategoryByPathCtrl">
-			<p>Category lookup by path.</p>
-			<p>
-				Path:
-				<input type="text" ng-model="path" ng-trim="true" size="80"
-				       ng-change="getCategory()" />
-			</p>
-			<p ng-if="warning" class="warning">{{warning}}</p>
-			<p ng-if="category.ancestors.length">
-				<span ng-repeat="cat in category.ancestors.slice().reverse()"
-				      title="id: {{cat.id}}, path: {{category.path(cat)}}">
-					{{cat.name}}
-					<span ng-if="!$last">→</span>
-				</span>
-			</p>
-		</form>
-
-		<div ng-if="category.children().length">
-			<p>First two category levels:</p>
-			<ul>
-				<li ng-repeat="cat in category.children()"
-				    title="id: {{cat.category.id}}">
-					{{cat.category.name}} ({{cat.$index}})
-					<ul>
-						<li ng-repeat="c in cat.children()"
-								title="id: {{c.category.id}}">
-							{{c.category.name}}
-						</li>
-					</ul>
-				</li>
-		</div>
 
 		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.min.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular-resource.min.js"></script>
-		<script src="https://cdn.jsdelivr.net/algoliasearch/3.9.2/algoliasearch.angular.min.js"></script>
 		<script src="azure-providers.js"></script>
 		<script type="text/javascript">
 			angular.module('AzureApp', ['azureProviders'])
 				.controller(
 					'AzureCtrl',
-					['$rootScope', '$scope', 'AzureAPI', 'AzureCategory', 'AzureProduct',
-					function($rootScope, $scope, AzureAPI, AzureCategory, AzureProduct) {
-						$scope.category = new AzureCategory(null);
-						$scope.category.children().$promise.then(function(categories) {
-							categories.forEach(function(category, index) {
-								category.$index = index;
-							});
-						});
+					['$rootScope', '$scope', 'AzureAPI',
+					function($rootScope, $scope, AzureAPI) {
+						
 						$rootScope.setupPerson = function(person) {
 							$scope.person = person;
-							$scope.session = AzureAPI.session.get();
+							//$scope.session = AzureAPI.session.get();
 							$scope.favoritesCount = AzureAPI.product.count({
-								'filter-person': person.id,
-							});
-							$scope.favorites = [];
-							AzureAPI['packaged-product'].query({
-								'filter-person': person.id,
-								'limit': 3,
-							}).$promise.then(function(packagedProducts) {
-								packagedProducts.forEach(function(packagedProduct) {
-									$scope.favorites.push(new AzureProduct(packagedProduct));
-								});
+								'filter-person': person.id
 							});
 						};
 						$scope.logout = function() {
@@ -138,11 +61,6 @@
 								});
 							}
 						});
-						$scope.productPackagingLabel = function(packagedProduct) {
-							return packagedProduct.packaged.code + ' (' +
-								packagedProduct.packaged.size + ', $' +
-								packagedProduct.packaged.price.retail.dollars + ')';
-						};
 					}])
 				.controller(
 					'LoginCtrl',
@@ -170,22 +88,6 @@
 								})
 							}).catch(function(response) {
 								$scope.warning = 'unable to authenticate ' + response.status;
-								$timeout(function() {$scope.warning = null;}, 5000);
-							});
-						};
-					}])
-				.controller(
-					'CategoryByPathCtrl',
-					['$scope', '$timeout', 'AzureCategory',
-					function($scope, $timeout, AzureCategory) {
-						$scope.path = null;
-						$scope.warning = null;
-						$scope.getCategory = function() {
-							var x = AzureCategory($scope.path).then(function(category) {
-								$scope.category = category;
-							}, function(reason) {
-								$scope.warning = reason;
-								$scope.category = null;
 								$timeout(function() {$scope.warning = null;}, 5000);
 							});
 						};
