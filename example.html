@@ -38,7 +38,7 @@
 					'AzureCtrl',
 					['$rootScope', '$scope', 'AzureAPI',
 					function($rootScope, $scope, AzureAPI) {
-						
+
 						$rootScope.setupPerson = function(person) {
 							$scope.person = person;
 							//$scope.session = AzureAPI.session.get();
@@ -81,11 +81,11 @@
 								var person = AzureAPI.person.get({id: session.person});
 								person.$promise.then(function(person) {
 									$rootScope.setupPerson(person);
-								})
+								});
 								person.$promise.catch(function(error) {
 									$scope.warning = 'unable to get person ' + session.person;
 									$timeout(function() {$scope.warning = null;}, 5000);
-								})
+								});
 							}).catch(function(response) {
 								$scope.warning = 'unable to authenticate ' + response.status;
 								$timeout(function() {$scope.warning = null;}, 5000);

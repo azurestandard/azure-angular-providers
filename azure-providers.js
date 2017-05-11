@@ -5,7 +5,7 @@
  * (https://github.com/azurestandard/api-spec).
  */
 
-(function (angular) {
+(function(angular) {
     'use strict';
 
     angular
@@ -97,7 +97,7 @@
         };
         var _apiUrl = 'https://api.azurestandard.com';
 
-        this.setUrl = function (value) {
+        this.setUrl = function(value) {
             _apiUrl = value;
         };
 
@@ -131,7 +131,7 @@
                 }
                 resources[name] = createPost(postConfig, config);
             }
-            _models.forEach(function (model) {
+            _models.forEach(function(model) {
                 var plural = _plurals[model] || model + 's';
                 var identifier = AzureModelIdentifiers[model] || 'id';
                 var paramDefaults = {};
@@ -153,7 +153,7 @@
                         withCredentials: true,
                         headers: _headers,
                         interceptor: {
-                            response: function (response) {
+                            response: function(response) {
                                 response.resource.count = parseInt(
                                     response.headers('Count'));
                                 return response;
@@ -200,18 +200,18 @@
                     actions = {
                         get: {
                             method: 'GET',
-                            url: _apiUrl + "/audit/product/" + ":" + identifier,
+                            url: _apiUrl + '/audit/product/' + ':' + identifier,
                             withCredentials: true,
                             headers: _headers,
                         },
                         query: {
-                            method: "GET",
-                            url: _apiUrl + "/audit/products",
+                            method: 'GET',
+                            url: _apiUrl + '/audit/products',
                             isArray: true,
                             withCredentials: true,
                             headers: _headers,
                             interceptor: {
-                                response: function (response) {
+                                response: function(response) {
                                     response.resource.count = parseInt(
                                         response.headers('Count'));
                                     return response;
@@ -220,7 +220,7 @@
                         },
                         save: {
                             method: 'POST',
-                            url: _apiUrl + "/audit/packaged-product/" + ":" + identifier,
+                            url: _apiUrl + '/audit/packaged-product/' + ':' + identifier,
                             withCredentials: true,
                             headers: payloadHeaders,
                         },
@@ -287,7 +287,7 @@
             //================================================================================
 
             function createPost(postConfig, config) {
-                return function (data) {
+                return function(data) {
                     return $http.post(
                         _apiUrl + postConfig.url,
                         data,
