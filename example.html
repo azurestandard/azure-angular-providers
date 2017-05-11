@@ -82,7 +82,7 @@
 								person.$promise.then(function(person) {
 									$rootScope.setupPerson(person);
 								});
-								person.$promise.catch(function(error) {
+								person.$promise.catch(function() {
 									$scope.warning = 'unable to get person ' + session.person;
 									$timeout(function() {$scope.warning = null;}, 5000);
 								});
