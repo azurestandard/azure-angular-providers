@@ -240,6 +240,15 @@
                         headers: _headers,
                     };
                 }
+                if (model === 'order') {
+                    actions.parcelCarrierEstimates = {
+                        method: 'GET',
+                        url: _apiUrl + '/order/:' + identifier + '/parcel-carrier-fee-estimates',
+                        isArray: true,
+                        withCredentials: true,
+                        headers: _headers
+                    };
+                }
                 if (model === 'packaged-product') {
                     var categoryUrl = _apiUrl + '/' + model + '/:' + identifier + '/category/:categoryId';
                     var params = {
