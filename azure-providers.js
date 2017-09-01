@@ -226,20 +226,6 @@
                         },
                     };
                 }
-                if (model === 'email') {
-                    actions.confirm = {
-                        method: 'POST',
-                        url: _apiUrl + '/' + plural + '/confirm',
-                        withCredentials: true,
-                        headers: _headers,
-                    };
-                    actions.confirmResend = {
-                        method: 'POST',
-                        url: _apiUrl + '/email/:' + identifier + '/resend',
-                        withCredentials: true,
-                        headers: _headers,
-                    };
-                }
                 if (model === 'order') {
                     actions.parcelCarrierEstimates = {
                         method: 'GET',
