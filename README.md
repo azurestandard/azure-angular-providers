@@ -1,5 +1,5 @@
 azure-angular-providers is an [Azure Standard API][api] provider for
-[AngularJS][].
+[AngularJS][angularjs].
 
 # Configuration
 
@@ -139,18 +139,18 @@ There's also:
 -   `AzureAPI.session.get()` to get information about your existing
     session (e.g. whether it's anonymous or not).
 -   `AzureAPI.login({username: ..., password: ...})` to start an
-    authenticated session. It returns an [HttpPromise][] for a session
+    authenticated session. It returns an [HttpPromise][httppromise] for a session
     object.
 -   `AzureAPI.logout()` to leave an authenticated session. It returns
-    an [HttpPromise][] for an unauthenticated session object.
+    an [HttpPromise][httppromise] for an unauthenticated session object.
 -   `AzureAPI.register({'base-url': ..., email: ..., person: ..., address: ..., telephone: ..., drop: ..., catalog: ...})` to register
-    a new user. It returns an [HttpPromise][] for an object containing
+    a new user. It returns an [HttpPromise][httppromise] for an object containing
     the resend token and a session object. If a new user was created,
     the session object will have a person property and the response will
     authenticate the user.
 -   `AzureAPI.resendRegistrationEmail({token: ..., 'base-url': ...})` to
     resend the registration email to the user with the given resend
-    token. It returns an [HttpPromise][] for a 204 response.
+    token. It returns an [HttpPromise][httppromise] for a 204 response.
 -   `AzureAPI.resetPassword({email: ..., 'base-url': ...})` to
     send a password-reset confirmation email to the user.
 -   `AzureAPI.resetPasswordConfirm({token: ..., password: ...})` to
