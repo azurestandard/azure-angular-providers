@@ -9,10 +9,10 @@ The only configrable option is currently the base URL for the
 testing with something like:
 
 ```js
-    angular.module('yourModule', ['your', 'dependencies'])
-      .config(function(AzureAPIProvider) {
-        AzureAPIProvider.setUrl('https://example.com/your/testing/api');
-      });
+angular.module('yourModule', ['your', 'dependencies'])
+  .config(function(AzureAPIProvider) {
+    AzureAPIProvider.setUrl('https://example.com/your/testing/api');
+  });
 ```
 
 # AzureAPI
@@ -76,20 +76,20 @@ creates new instances while `save` updates existing instances. For
 example:
 
 ```js
-    var you = AzureAPI.person.get();
-    var person = AzureAPI.person.get({id: 123});
-    var product = AzureAPI.product.get(code='SC065', function() {
-      product.description = 'Delicious!';
-      product.$save();
-    });
-    var favorites = AzureAPI.product.query({'filter-person': you.id});
-    var order = AzureAPI.order.create({
-      customer: you,
-      status: 'open',
-      drop: 456,
-      trip: 789,
-    });
-    AzureAPI.category.delete({id: 135});
+var you = AzureAPI.person.get();
+var person = AzureAPI.person.get({id: 123});
+var product = AzureAPI.product.get(code='SC065', function() {
+  product.description = 'Delicious!';
+  product.$save();
+});
+var favorites = AzureAPI.product.query({'filter-person': you.id});
+var order = AzureAPI.order.create({
+  customer: you,
+  status: 'open',
+  drop: 456,
+  trip: 789,
+});
+AzureAPI.category.delete({id: 135});
 ```
 
 In addition, a few models support the following actions:
@@ -129,9 +129,9 @@ number of possible items matching your query (how many you'd get in a
 `query` that didn't set `limit`). Use it with controller code like:
 
 ```js
-    $scope.favoritesCount = AzureAPI.product.count({
-      'filter-person': person.id
-    });
+$scope.favoritesCount = AzureAPI.product.count({
+  'filter-person': person.id
+});
 ```
 
 and template code like:
