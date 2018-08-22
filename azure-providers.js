@@ -208,7 +208,7 @@
                             _apiUrl +
                             '/' +
                             plural +
-                            '/actions/find-affiliate-code-by-marketing-slug/:marketing-slug',
+                            '/actions/find-affiliate-code-by-marketing-slug/:marketingSlug',
                         withCredentials: true,
                         headers: _headers
                     };
