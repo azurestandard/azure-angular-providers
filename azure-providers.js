@@ -200,6 +200,18 @@
                         withCredentials: true,
                         headers: payloadHeaders
                     };
+                }
+                if (model === 'person') {
+                    actions.findAffiliateCodeByMarketingSlug = {
+                        method: 'GET',
+                        url:
+                            _apiUrl +
+                            '/' +
+                            plural +
+                            '/actions/find-affiliate-code-by-marketing-slug/:marketingSlug',
+                        withCredentials: true,
+                        headers: _headers
+                    };
                 } else if (model === 'audit-product') {
                     actions = {
                         get: {

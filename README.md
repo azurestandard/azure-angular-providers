@@ -109,6 +109,11 @@ The packaged-product model supports the following actions:
     dissociate the packaged product with the given category.
 -   old, which gets a packaged-product using the old `id`
 
+The person model supports the following action:
+
+-   findAffiliateCodeByMarketingSlug, which takes `marketing-slug` and
+    returns the `affiliate-code` of the person with that marketing slug.
+
 The drop model also supports the following action:
 
 -   locations, which returns an array of all active drops with name and
