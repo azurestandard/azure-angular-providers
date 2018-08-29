@@ -9,10 +9,9 @@ The only configrable option is currently the base URL for the
 testing with something like:
 
 ```js
-angular.module('yourModule', ['your', 'dependencies'])
-  .config(function(AzureAPIProvider) {
+angular.module('yourModule', ['your', 'dependencies']).config(function(AzureAPIProvider) {
     AzureAPIProvider.setUrl('https://example.com/your/testing/api');
-  });
+});
 ```
 
 # AzureAPI
@@ -22,6 +21,7 @@ Currently supported models:
 
 -   account-entry
 -   address
+-   affiliate-referral
 -   audit-product
 -   bartender-host
 -   bartender-print-configuration
@@ -61,14 +61,18 @@ Each model currently supports the following actions:
 -   query
 -   count
 -   create, except for the following models:
+    -   affiliate-referral
     -   packaged-product-tag
 -   get, except for the following models:
+    -   affiliate-referral
     -   packaged-product-tag
     -   packaged-product-tag-association
 -   save, except for the following models:
+    -   affiliate-referral
     -   packaged-product-tag
     -   packaged-product-tag-association
 -   delete, except for the following models:
+    -   affiliate-referral
     -   packaged-product-tag
 
 with the usual Angular $resource semantics, except that `create`
@@ -77,19 +81,19 @@ example:
 
 ```js
 var you = AzureAPI.person.get();
-var person = AzureAPI.person.get({id: 123});
-var product = AzureAPI.product.get(code='SC065', function() {
-  product.description = 'Delicious!';
-  product.$save();
+var person = AzureAPI.person.get({ id: 123 });
+var product = AzureAPI.product.get((code = 'SC065'), function() {
+    product.description = 'Delicious!';
+    product.$save();
 });
-var favorites = AzureAPI.product.query({'filter-person': you.id});
+var favorites = AzureAPI.product.query({ 'filter-person': you.id });
 var order = AzureAPI.order.create({
-  customer: you,
-  status: 'open',
-  drop: 456,
-  trip: 789,
+    customer: you,
+    status: 'open',
+    drop: 456,
+    trip: 789
 });
-AzureAPI.category.delete({id: 135});
+AzureAPI.category.delete({ id: 135 });
 ```
 
 In addition, a few models support the following actions:
@@ -135,7 +139,7 @@ number of possible items matching your query (how many you'd get in a
 
 ```js
 $scope.favoritesCount = AzureAPI.product.count({
-  'filter-person': person.id
+    'filter-person': person.id
 });
 ```
 

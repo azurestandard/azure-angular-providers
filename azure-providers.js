@@ -22,6 +22,7 @@
         var _models = [
             'account-entry',
             'address',
+            'affiliate-referral',
             'audit-product',
             'bartender-host',
             'bartender-print-configuration',
