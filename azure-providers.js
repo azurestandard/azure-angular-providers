@@ -51,6 +51,7 @@
             'product',
             'purchase',
             'region',
+            'reward',
             'route',
             'route-stop',
             'stop',

@@ -50,6 +50,7 @@ Currently supported models:
 -   product
 -   purchase
 -   region
+-   reward
 -   route
 -   route-stop
 -   stop
@@ -63,6 +64,7 @@ Each model currently supports the following actions:
 -   create, except for the following models:
     -   affiliate-referral
     -   packaged-product-tag
+    -   reward
 -   get, except for the following models:
     -   affiliate-referral
     -   packaged-product-tag
@@ -71,9 +73,11 @@ Each model currently supports the following actions:
     -   affiliate-referral
     -   packaged-product-tag
     -   packaged-product-tag-association
+    -   reward
 -   delete, except for the following models:
     -   affiliate-referral
     -   packaged-product-tag
+    -   reward
 
 with the usual Angular $resource semantics, except that `create`
 creates new instances while `save` updates existing instances. For
