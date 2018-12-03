@@ -39,6 +39,7 @@
             'notification-dismissal',
             'order',
             'order-fee',
+            'order-frequency-segment',
             'order-line',
             'payment',
             'payment-method',
