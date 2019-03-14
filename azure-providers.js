@@ -5,7 +5,7 @@
  * (https://github.com/azurestandard/api-spec).
  */
 
-(function(angular) {
+(function (angular) {
     'use strict';
 
     angular
@@ -100,7 +100,7 @@
         };
         var _apiUrl = 'https://api.azurestandard.com';
 
-        this.setUrl = function(value) {
+        this.setUrl = function (value) {
             _apiUrl = value;
         };
 
@@ -136,9 +136,9 @@
                 if (postConfig.withCredentials) {
                     config.withCredentials = true;
                 }
-                resources[name] = createPost(postConfig, config);
+                resources[name] = createPost(postConfig.url, config);
             }
-            _models.forEach(function(model) {
+            _models.forEach(function (model) {
                 var plural = _plurals[model] || model + 's';
                 var identifier = AzureModelIdentifiers[model] || 'id';
                 var paramDefaults = {};
@@ -160,7 +160,7 @@
                         withCredentials: true,
                         headers: _headers,
                         interceptor: {
-                            response: function(response) {
+                            response: function (response) {
                                 response.resource.count = parseInt(
                                     response.headers('Count')
                                 );
@@ -230,7 +230,7 @@
                             withCredentials: true,
                             headers: _headers,
                             interceptor: {
-                                response: function(response) {
+                                response: function (response) {
                                     response.resource.count = parseInt(
                                         response.headers('Count')
                                     );
@@ -322,9 +322,10 @@
 
             //================================================================================
 
-            function createPost(postConfig, config) {
-                return function(data) {
-                    return $http.post(_apiUrl + postConfig.url, data, config);
+            function createPost(url, config) {
+                return function (data, params) {
+                    var postConfig = angular.extend({}, config, { params: params });
+                    return $http.post(_apiUrl + url, data, postConfig);
                 };
             }
 
