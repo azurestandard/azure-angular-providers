@@ -98,7 +98,7 @@
         var _payloadHeaders = {
             'Content-Type': 'application/json; charset=UTF-8'
         };
-        var _apiUrl = 'https://api.azurestandard.com';
+        var _apiUrl = 'https://demo-api.azstd.com';
 
         this.setUrl = function (value) {
             _apiUrl = value;
