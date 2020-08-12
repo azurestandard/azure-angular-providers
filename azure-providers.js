@@ -184,6 +184,11 @@
                         withCredentials: true,
                         headers: payloadHeaders
                     },
+                    update: {
+                        method: 'PATCH',
+                        withCredentials: true,
+                        headers: payloadHeaders
+                    },
                     delete: {
                         method: 'DELETE',
                         withCredentials: true,
