@@ -75,6 +75,11 @@ Each model currently supports the following actions:
     -   packaged-product-tag
     -   packaged-product-tag-association
     -   reward
+-   update, except for the following models:
+    -   affiliate-referral
+    -   packaged-product-tag
+    -   packaged-product-tag-association
+    -   reward
 -   delete, except for the following models:
     -   affiliate-referral
     -   packaged-product-tag
