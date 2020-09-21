@@ -220,6 +220,13 @@
                         withCredentials: true,
                         headers: _headers
                     };
+                    actions.orderedPackagedProducts = {
+                        method: 'GET',
+                        url: _apiUrl + '/person/' + ':' + identifier + '/ordered-packaged-products',
+                        isArray: true,
+                        withCredentials: true,
+                        headers: _headers
+                    };
                 } else if (model === 'audit-product') {
                     actions = {
                         get: {
