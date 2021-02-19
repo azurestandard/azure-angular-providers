@@ -95,7 +95,8 @@
                 withCredentials: true
             },
             handleNmiStepThreeRedirect: {
-                url: '/nmi-process-step3'
+                url: '/nmi-process-step3',
+                withCredentials: true
             }
         };
 
