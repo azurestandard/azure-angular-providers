@@ -89,6 +89,14 @@
             },
             resetPasswordConfirm: {
                 url: '/password/confirm'
+            },
+            getNmiStepOneFormSubmitUrl: {
+                url: '/nmi-step1-form-url',
+                withCredentials: true
+            },
+            processNmiStepThree: {
+                url: '/nmi-process-step3',
+                withCredentials: true
             }
         };
 
