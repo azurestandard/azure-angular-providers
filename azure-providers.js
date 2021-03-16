@@ -230,7 +230,7 @@
                     };
                     actions.orderedPackagedProducts = {
                         method: 'GET',
-                        url: _apiUrl + '/person/' + ':' + identifier + '/ordered-packaged-products',
+                        url: _apiUrl + '/person/:' + identifier + '/ordered-packaged-products',
                         isArray: true,
                         withCredentials: true,
                         headers: _headers
