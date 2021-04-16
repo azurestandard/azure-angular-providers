@@ -97,6 +97,9 @@
             processNmiStepThree: {
                 url: '/nmi-process-step3',
                 withCredentials: true
+            },
+            checkCaptchaResponse: {
+                url: '/check-captcha'
             }
         };
 
