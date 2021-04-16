@@ -99,7 +99,8 @@
                 withCredentials: true
             },
             checkCaptchaResponse: {
-                url: '/check-captcha'
+                url: '/check-captcha',
+                withCredentials: true
             }
         };
 
