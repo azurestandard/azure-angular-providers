@@ -57,6 +57,7 @@
             'route-stop',
             'stop',
             'trip',
+            'truckload',
             'warehouse'
         ];
         var _plurals = {
@@ -64,7 +65,8 @@
             address: 'addresses',
             category: 'categories',
             country: 'countries',
-            person: 'people'
+            person: 'people',
+            truckload: 'truckloads'
         };
 
         // non-$resource endpoints that will use $http.post(...)
