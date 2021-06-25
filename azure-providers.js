@@ -57,6 +57,7 @@
             'route-stop',
             'stop',
             'trip',
+            'truckload',
             'warehouse'
         ];
         var _plurals = {
