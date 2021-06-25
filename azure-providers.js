@@ -65,8 +65,7 @@
             address: 'addresses',
             category: 'categories',
             country: 'countries',
-            person: 'people',
-            truckload: 'truckloads'
+            person: 'people'
         };
 
         // non-$resource endpoints that will use $http.post(...)
