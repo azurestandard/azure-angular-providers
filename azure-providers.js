@@ -41,6 +41,7 @@
             'order-fee',
             'order-frequency-segment',
             'order-line',
+            'order-promo-code',
             'payment',
             'payment-method',
             'packaged-product',
