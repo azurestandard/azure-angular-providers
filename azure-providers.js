@@ -210,15 +210,15 @@
                     }
                 };
                 if (['person', 'route', 'trip'].indexOf(model) !== -1) {
-                    actions.mail = {
+                    actions.message = {
                         method: 'POST',
-                        url: _apiUrl + '/mail/' + model + '/:' + identifier,
+                        url: _apiUrl + '/message/' + model + '/:' + identifier,
                         withCredentials: true,
                         headers: payloadHeaders
                     };
-                    actions.mails = {
+                    actions.messages = {
                         method: 'POST',
-                        url: _apiUrl + '/mail/' + plural,
+                        url: _apiUrl + '/message/' + plural,
                         withCredentials: true,
                         headers: payloadHeaders
                     };
