@@ -216,12 +216,6 @@
                         withCredentials: true,
                         headers: payloadHeaders
                     };
-                    actions.messages = {
-                        method: 'POST',
-                        url: _apiUrl + '/message/' + plural,
-                        withCredentials: true,
-                        headers: payloadHeaders
-                    };
                 }
                 if (model === 'person') {
                     actions.findAffiliateCodeByMarketingSlug = {
