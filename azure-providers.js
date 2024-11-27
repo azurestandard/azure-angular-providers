@@ -337,7 +337,7 @@
             } else if (model === 'drop-hierarchy') {
                actions.get = {
                   method: 'GET',
-                  url: _apiUrl + '/v2/drop-hierarchy',
+                  url: _apiUrl + '/v2/drops/drop-hierarchy',
                   withCredentials: true,
                   headers: _headers,
                   isArray: true,
