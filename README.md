@@ -1,3 +1,12 @@
+> [!WARNING]
+> **THIS REPOSITORY IS DEPRECATED!**
+>
+> No new code should be added.
+>
+> Prefer using AngularJS' `$http` module when possible.
+
+---
+
 azure-angular-providers is an [Azure Standard API][api] provider for
 [AngularJS][angularjs].
 
